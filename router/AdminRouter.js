@@ -22,6 +22,8 @@ router.post('/add-product', VerifyAdminAccessToken, AdminController.AddProduct);
 router.post('/add-product-image/:id', VerifyAdminAccessToken, upload.single("picture"), resize_product_images, AdminController.AddProductImage)
 router.post('/update-product/:id', VerifyAdminAccessToken, AdminController.UpdateProduct)
 
+router.post("/add-sale", VerifyAdminAccessToken, AdminController.AddSale)
+router.get("/get-sales", VerifyAdminAccessToken, AdminController.GetSales)
 
 router.get('/products', VerifyAdminAccessToken, AdminController.GetProducts)
 

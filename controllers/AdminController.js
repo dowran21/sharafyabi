@@ -372,6 +372,46 @@ const UpdateProduct = async (req, res) =>{
     }
 }
 
+const AddSale = async (req, res) =>{
+    const {start_date, end_date, coupon, discount_type_id, discount_value, product_id, min_value} = req.body;
+    const query_text = `
+        INSERT INTO discounts(validity, discount_value, coupon, discount_type_id, product_id, min_value)
+            VALUES ('[${start_date}, ${end_date}]',${discount_value}, 
+                ${discount_type_id == 4 ? `'${coupon}'` : `null`}, 
+                    ${discount_type_id}, ${discount_type_id == 1 ? `${product_id}` : `null`}, '${min_value}' )
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).send(true)
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
+const GetSales = async (req, res) =>{
+    const query_text = `
+        SELECT (
+            SELECT COUNT(*) FROM discounts
+        ), (SELECT json_agg(dis) FROM (
+            SELECT dt.name, d.discount_value, d.coupon, d.discount_type_id, d.product_id, d.min_value, 
+                lower(d.validity)::text AS low, upper(d.validity)::text, pt.name 
+                FROM discounts d
+                    INNER JOIN discount_types dt
+                        ON dt.id = d.discount_type_id
+                    LEFT JOIN product_translations pt 
+                        ON pt.product_id = d.product_id AND pt.language_id = 2
+        )dis) AS discounts 
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).json({rows:rows[0]})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
 module.exports = {
     Login,
     LoadAdmin,
@@ -390,5 +430,7 @@ module.exports = {
     UpdateProduct,
     
     AddNews,
-    GetProducts
+    GetProducts,
+    AddSale,
+    GetSales
 }

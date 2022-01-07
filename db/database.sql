@@ -26,16 +26,16 @@ CREATE TABLE users(
     created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT now(),
     UNIQUE(phone),
 
-    CONSTRAINT role_id_fk FOREIGN KEY (role_id) REFERENCES roles(id) 
+    CONSTRAINT role_id_fk FOREIGN KEY (role_id) REFERENCES roles(id) ON UPDATE CASCADE 
 );
 
 CREATE TABLE categories(
     id SMALLSERIAL PRIMARY KEY NOT NULL,
     "name" VARCHAR (150) NOT NULL,
-    destination VARCHAR(200), 
-    ---main_category_id SMALLINT, ----nawerno nado budet ubrat yego tak kak on ne nuzhen
+    destination VARCHAR(200)
+    ---, main_category_id SMALLINT, ----nawerno nado budet ubrat yego tak kak on ne nuzhen
 
-    CONSTRAINT main_category_id_fk FOREIGN KEY (main_category_id) REFERENCES categories(id)
+    -- CONSTRAINT main_category_id_fk FOREIGN KEY (main_category_id) REFERENCES categories(id) ON UPDATE CASCADE
 );
 
 CREATE TABLE category_translations(
@@ -44,8 +44,8 @@ CREATE TABLE category_translations(
     category_id SMALLINT NOT NULL,
     "name" VARCHAR(150) NOT NULL,
 
-    CONSTRAINT language_id_fk FOREIGN KEY (language_id) REFERENCES languages(id),
-    CONSTRAINT category_id_fk FOREIGN KEY (category_id) REFERENCES categories(id)
+    CONSTRAINT language_id_fk FOREIGN KEY (language_id) REFERENCES languages(id) ON UPDATE CASCADE,
+    CONSTRAINT category_id_fk FOREIGN KEY (category_id) REFERENCES categories(id) ON UPDATE CASCADE
 );
 
 CREATE TABLE producers(
@@ -63,8 +63,8 @@ CREATE TABLE products(
     price NUMERIC(8,2) NOT NULL,
     destination VARCHAR (350),
    
-    CONSTRAINT producer_id_fk FOREIGN KEY (producer_id) REFERENCES producers(id),
-    CONSTRAINT category_id_fk FOREIGN KEY (category_id) REFERENCES categories(id)
+    CONSTRAINT producer_id_fk FOREIGN KEY (producer_id) REFERENCES producers(id) ON UPDATE CASCADE,
+    CONSTRAINT category_id_fk FOREIGN KEY (category_id) REFERENCES categories(id) ON UPDATE CASCADE
 );
 
 CREATE TABLE product_translations(
@@ -74,8 +74,8 @@ CREATE TABLE product_translations(
     "name" VARCHAR(150) NOT NULL,
     "description" TEXT NOT NULL,
 
-    CONSTRAINT product_id_fk FOREIGN KEY (product_id) REFERENCES products(id),
-    CONSTRAINT language_id_fk FOREIGN KEY (language_id) REFERENCES languages(id)
+    CONSTRAINT product_id_fk FOREIGN KEY (product_id) REFERENCES products(id) ON UPDATE CASCADE,
+    CONSTRAINT language_id_fk FOREIGN KEY (language_id) REFERENCES languages(id) ON UPDATE CASCADE
 );
 
 CREATE TABLE orders(
@@ -86,7 +86,7 @@ CREATE TABLE orders(
     position point,
     order_notice VARCHAR(500) NOT NULL,
 
-    CONSTRAINT user_id_fk FOREIGN KEY (user_id) REFERENCES users(id)
+    CONSTRAINT user_id_fk FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE
 );
 
 CREATE TABLE order_products(
@@ -96,7 +96,7 @@ CREATE TABLE order_products(
     quantity SMALLINT NOT NULL,
     price NUMERIC(8, 2) NOT NULL,
 
-    CONSTRAINT product_id_fk FOREIGN KEY (product_id) REFERENCES products(id)
+    CONSTRAINT product_id_fk FOREIGN KEY (product_id) REFERENCES products(id) ON UPDATE CASCADE
 );
 
 CREATE TABLE main_page_images(
@@ -119,8 +119,8 @@ CREATE TABLE news_descriptions(
     title VARCHAR(150),
     article TEXT NOT NULL,
 
-    CONSTRAINT news_id_fk FOREIGN KEY (news_id) REFERENCES news(id),
-    CONSTRAINT language_id_fk FOREIGN KEY (language_id) REFERENCES languages(id)  
+    CONSTRAINT news_id_fk FOREIGN KEY (news_id) REFERENCES news(id) ON UPDATE CASCADE,
+    CONSTRAINT language_id_fk FOREIGN KEY (language_id) REFERENCES languages(id) ON UPDATE CASCADE
 );
 
 
@@ -138,7 +138,8 @@ CREATE TABLE discounts(
     product_id BIGINT,
     created_at TIMESTAMP WITHOUT TIME ZONE  NOT NULL DEFAULT now(),
     validity tsrange NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE,
 
-    CONSTRAINT discount_type_id_fk FOREIGN KEY (discount_type_id) REFERENCES discount_types(id),
-    CONSTRAINT product_id_fk FOREIGN KEY (product_id) REFERENCES products(id)
+    CONSTRAINT discount_type_id_fk FOREIGN KEY (discount_type_id) REFERENCES discount_types(id) ON UPDATE CASCADE,
+    CONSTRAINT product_id_fk FOREIGN KEY (product_id) REFERENCES products(id) ON UPDATE CASCADE
 );
