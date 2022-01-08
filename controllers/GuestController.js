@@ -57,7 +57,7 @@ const GetProducts = async (req, res) =>{
     }
     let producers = []
     try {
-        producers = JSON.parse(product_id)
+        producers = JSON.parse(producer_id)
     } catch (e) {
         console.log(e)
     }
