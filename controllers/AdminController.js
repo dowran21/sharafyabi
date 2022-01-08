@@ -116,7 +116,7 @@ const UpdateCategory = async (req, res) =>{
 
 const GetCategories = async (req, res) =>{
     const query_text = `
-        SELECT c.id, ct.name AS name_tm, ctt.name AS name_ru, cttt.name AS name_en
+        SELECT c.id, ct.name AS name_tm, ctt.name AS name_ru, cttt.name AS name_en, c.destination
         FROM categories c
             INNER JOIN category_translations ct 
                 ON ct.category_id = c.id AND ct.language_id = 1
@@ -379,7 +379,7 @@ const AddSale = async (req, res) =>{
         INSERT INTO discounts(validity, discount_value, coupon, discount_type_id, product_id, min_value)
             VALUES ('[${start_date}, ${end_date}]',${discount_value}, 
                 ${discount_type_id == 4 ? `'${coupon}'` : `null`}, 
-                    ${discount_type_id}, ${discount_type_id == 1 ? `${product_id}` : `null`}, '${min_value}' )
+                    ${discount_type_id}, ${discount_type_id == 1 ? `${product_id}` : `null`}, ${discount_type_id == 4 ? `null` : `${min_value}` } )
     `
     try {
         console.log(query_text)

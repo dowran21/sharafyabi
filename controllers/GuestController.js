@@ -4,8 +4,10 @@ const {status} = require("../utils/status");
 const GetCategories = async (req, res) =>{
     const {lang} = req.params
     const query_text = `
-        SELECT ct.name, ct.category_id, (SELECT COUNT(*) FROM products p WHERE p.category_id = ct.category_id)
+        SELECT ct.name, c.id, (SELECT COUNT(*) FROM products p WHERE p.category_id = ct.category_id), c.destination
         FROM category_translations ct
+            INNER JOIN categories c
+                ON c.id = ct.category_id
             INNER JOIN languages l
                 ON l.language_code = '${lang}'
         WHERE ct.language_id = l.id
@@ -42,13 +44,25 @@ const GetProducts = async (req, res) =>{
     }
     let wherePart = ``
     if(search){
-        wherePart = ` AND (pt.name = '${search}' OR pr.description = '${search}')`
+        wherePart = ` AND (pt.name *~ '${search}' OR pr.description *~ '${search}')`
     }
-    if(category_id){
-        wherePart = ` AND p.category_id = ${category_id}`
+    let categories = []
+    try {
+        categories = JSON.parse(category_id)
+    } catch (e) {
+        console.log(e)
     }
-    if(producer_id){
-        wherePart = ` AND p.producer_id = ${producer_id}`
+    if(categories.length > 0){
+        wherePart = ` AND p.producer_id IN ( ${categories.map(item => `${item}`).join(',')} )`
+    }
+    let producers = []
+    try {
+        producers = JSON.parse(product_id)
+    } catch (e) {
+        console.log(e)
+    }
+    if(producers.length > 0){
+        wherePart = ` AND p.producer_id IN ( ${producers.map(item => `${item}`).join(',')} )`
     }
     const query_text = `
         SELECT 
