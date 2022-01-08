@@ -108,7 +108,8 @@ CREATE TABLE news(
     id BIGSERIAL PRIMARY KEY NOT NULL,
     created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT now(),
     deleted BOOLEAN DEFAULT FALSE,
-    image_destination VARCHAR(150)
+    image_destination VARCHAR(150),
+    title VARCHAR(150)
 
 );
 

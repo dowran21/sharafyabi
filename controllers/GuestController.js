@@ -94,7 +94,13 @@ const GetProducts = async (req, res) =>{
 const GetCartProducts = async (req, res) => {
     const {products} = req.query
     const {lang} = req.query
-    if(!products.length){
+    let obj = []
+    try {
+        obj = JSON.parse(products)
+    } catch (e) {
+        console.log(e)
+    }
+    if(!obj.length){
         return res.status(status.success).json({"rows":null})
     }
     const query_text = `
@@ -109,7 +115,7 @@ const GetCartProducts = async (req, res) => {
                 ON prod.id = p.producer_id
             INNER JOIN category_translations ct
                 ON ct.category_id = p.category_id AND ct.language_id = l.id
-            WHERE p.id IN (${products.map(item => `${item}`).join(', ')})
+            WHERE p.id IN (${obj.map(item => `${item}`).join(', ')})
         ORDER BY p.id ASC
     `
     try {
