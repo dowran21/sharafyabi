@@ -1,0 +1,1 @@
+{"version":3,"sources":["pages/Orders/index.js"],"names":["Orders"],"mappings":"qHAQeA,UARf,WACI,OACI","file":"static/js/13.4e6e4d44.chunk.js","sourcesContent":["function Orders (){\n    return (\n        <div>\n            Hello Orders\n        </div>\n    )\n}\n\nexport default Orders"],"sourceRoot":""}

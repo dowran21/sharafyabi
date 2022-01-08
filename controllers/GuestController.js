@@ -92,9 +92,9 @@ const GetProducts = async (req, res) =>{
                         INNER JOIN category_translations ct
                             ON ct.category_id = p.category_id AND ct.language_id = l.id
                     WHERE p.id > 0 ${wherePart}
-                    ${offSet}
                     ORDER BY p.id ASC
-                )pro) AS products
+                    ${offSet}
+                    )pro) AS products
     `
     try {
         const {rows} = await database.query(query_text, [])

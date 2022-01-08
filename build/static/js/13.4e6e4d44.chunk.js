@@ -1,0 +1,2 @@
+(this.webpackJsonpgamysh=this.webpackJsonpgamysh||[]).push([[13],{274:function(s,e,t){"use strict";t.r(e);var n=t(2);e.default=function(){return Object(n.jsx)("div",{children:"Hello Orders"})}}}]);
+//# sourceMappingURL=13.4e6e4d44.chunk.js.map
