@@ -75,6 +75,18 @@ const GetProducts = async (req, res) =>{
     }else{
         wherePart +=``
     }
+    let column = ``
+    let direction = ``
+    if(sort_column){
+        column = `${sort_column}`
+    }else{
+        column = `p.id`
+    }
+    if(sort_direction){
+        direction = `${sort_direction}`
+    }else{
+        direction = `ASC`
+    }
     const query_text = `
         SELECT 
             (SELECT COUNT(*) 
@@ -104,7 +116,7 @@ const GetProducts = async (req, res) =>{
                         LEFT JOIN discounts d 
                             ON d.product_id = p.id AND d.discount_type_id = 1 AND d.validity::tsrange @> localtimestamp 
                     WHERE p.id > 0 ${wherePart}
-                    ORDER BY p.id ASC
+                    ORDER BY ${column} ${direction}
                     ${offSet}
                     )pro) AS products
     `
@@ -146,7 +158,7 @@ const GetProductByID = async (req, res) =>{
 
 const GetCartProducts = async (req, res) => {
     const {products} = req.query
-    const {lang} = req.query
+    const {lang} = req.params
     let obj = []
 
     try {
@@ -183,11 +195,102 @@ const GetCartProducts = async (req, res) => {
     }
 }
 
+const CreateOrder = async (req, res) =>{
+    const {lang} = req.params;
+    const {products, coupon, phone, address, user_id} = req.body;
+    if(!products.length){
+        return res.status(status.success).send("free cart")
+    }
+    const query_text = `
+        SELECT p.id, p.price, p.stock, p.destination, p.category_id, p.producer_id, pt.name, pt.description, 
+            prod.name AS producer_name, ct.name AS category_name, d.discount_value, d.min_value
+        FROM products p
+            INNER JOIN languages l
+                ON l.language_code = '${lang}'
+            LEFT JOIN product_translations pt 
+                ON pt.product_id = p.id AND pt.language_id = l.id
+            LEFT JOIN producers prod
+                ON prod.id = p.producer_id
+            LEFT JOIN category_translations ct
+                ON ct.category_id = p.category_id AND ct.language_id = l.id
+            LEFT JOIN discounts d 
+                ON d.product_id = p.id AND d.discount_type_id = 1 AND d.validity::tsrange @> localtimestamp 
+            WHERE p.id IN (${products.map(item => `${item.id}`).join(', ')})
+        `
+    try {
+        const {rows} = await database.query(query_text, [])
+        // console.log("After first query")
+        const cart = rows;
+        // console.log(rows)
+        let totalPrice = 0
+        for(let i = 0; i<cart.length; i++){
+            for(let j= 0; j<cart.length; j++){
+                if(cart[i]?.id == products[j]?.id){
+                    console.log("I am in if")
+                    cart[i].quantity = products[j].quantity
+                }
+            }
+        }
+        console.log(cart)
+        for(let i = 0; i<cart.length; i++){
+            
+            // console.log(cart)
+            if(cart[i].discunt_value){
+                // console.log(parseFloat(cart[i].price)*parseFloat(cart[i].discount_value)*0.01*parseFloat(cart[i].quantity))
+                totalPrice = totalPrice +  parseFloat(cart[i].price)*(cart[i].discount_value)*0.01*(cart[i].quantity)
+            }else{
+                // console.log(parseFloat(cart[i].price)*parseFloat(cart[i].quantity))
+                totalPrice = totalPrice +  parseFloat(cart[i].price)*(cart[i].quantity)
+            }
+        }
+        console.log(totalPrice)
+        let discount = {}
+        if(coupon){
+            discount = await database.query(`SELECT * FROM discounts WHERE discount_type_id = 4 AND validity:: tsrange @> localtimestamp AND coupon = '${coupon}'`, [])
+        }else{
+            console.log(`SELECT * FROM discounts WHERE discount_type_id = 3 AND validity:: tsrange @> localtimestamp AND min_value < ${totalPrice}`)
+            discount = await database.query(`SELECT * FROM discounts WHERE discount_type_id = 3 AND validity:: tsrange @> localtimestamp AND min_value < ${totalPrice}`, [])
+        }
+        console.log("After second query")
+
+        if(discount?.rows[0]){
+            totalPrice = totalPrice * discount.rows[0].discount_value*0.01
+        }
+        // let orderItemQuery = ``
+        // for (let i=0; i<cart.length; i++){
+        //     orderItemQuery += `
+
+        //     `
+        // }
+        console.log(cart)
+        const order_query = `
+            WITH inserted AS (
+                INSERT INTO orders(coupon, phone, address, user_id, total_price, discount_id)
+                VALUES (${coupon ? `${coupon}` : `null`}, '${phone}', '${address}', ${user_id ? `${user_id}` : null}, 
+                    ${totalPrice}, ${discount?.rows[0] ? discount?.rows[0].id : `null`})
+                RETURNING *
+            ), inserted_items AS (
+                INSERT INTO order_items(product_id, quantity, price, order_id)
+                VALUES ${cart.map(item => `(${item.id}, ${item.quantity}, ${item.price}, (SELECT id FROM inserted))`).join(', ')}
+            ) SELECT id FROM inserted
+        `
+        console.log(order_query)
+        await database.query(order_query, [])
+        console.log("After third query")
+
+        return res.status(status.success).send(true)
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
 module.exports = {
     GetCategories,
     GetProducers,
     GetProducts,
     GetCartProducts,
     GetCartProducts,
-    GetProductByID
+    GetProductByID,
+    CreateOrder
 }

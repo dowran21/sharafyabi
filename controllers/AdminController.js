@@ -262,7 +262,20 @@ const AddNews = async (req, res) =>{
     `
     try {
         const {rows} = await database.query(query_text, [])
-        return res.status(status.success).send(true)
+        const s_query = `
+            SELECT n.id, nd.title AS title_tm, n.destination, nd.article AS article_tm, ndd.title AS title_ru, ndd.article AS article_ru, 
+                nddd.title AS title_en, nddd.title AS title_en, to_char(n.created_at, 'YYYY/MM/DD' ) AS created_at
+            FROM news n
+                INNER JOIN news_descriptions nd
+                    ON nd.news_id = n.id AND nd.language_id = 1
+                INNER JOIN news_descriptions ndd
+                    ON ndd.news_id = n.id AND ndd.language_id = 2
+                INNER JOIN news_descriptions nddd
+                    ON nddd.news_id = n.id AND nddd.language_id = 3
+            WHERE n.id = ${rows[0].id}
+        `
+        const k = await database.query(s_query, [])
+        return res.status(status.success).json({rows:k.rows[0]})
     } catch (e) {
         console.log(e)
         return res.status(status.error).send(false)
@@ -274,7 +287,7 @@ const GetNews = async (req, res) =>{
         SELECT (
             SELECT COUNT (*) FROM news n
         ), (SELECT json_agg(ne) FROM (
-            SELECT n.id, nd.title AS title_tm, nd.article AS article_tm, ndd.title AS title_ru, ndd.article AS article_ru, 
+            SELECT n.id, nd.title AS title_tm, n.destination, nd.article AS article_tm, ndd.title AS title_ru, ndd.article AS article_ru, 
                 nddd.title AS title_en, nddd.title AS title_en, to_char(n.created_at, 'YYYY/MM/DD' ) AS created_at
             FROM news n
                 INNER JOIN news_descriptions nd
@@ -283,6 +296,7 @@ const GetNews = async (req, res) =>{
                     ON ndd.news_id = n.id AND ndd.language_id = 2
                 INNER JOIN news_descriptions nddd
                     ON nddd.news_id = n.id AND nddd.language_id = 3
+                ORDER BY n.id DESC
         )ne) AS news
     `
     try {
@@ -290,6 +304,21 @@ const GetNews = async (req, res) =>{
         return res.status(status.success).json({rows:rows[0]})
     } catch (e) {
         console.log(e);
+        return res.status(status.error).send(false)
+    }
+}
+
+const AddNewsImage = async (req, res) =>{
+    const {id} = req.params;
+    const file = req.file
+    const query_text = `
+        UPDATE news SET destination = '${file.destination}' WHERE id = ${id} RETURNING *
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).json({rows:rows[0]})
+    } catch (e) {
+        console.log(e)
         return res.status(status.error).send(false)
     }
 }
@@ -442,7 +471,58 @@ const GetSales = async (req, res) =>{
     }
 }
 
+// const UpdateNews
+const DeleteNews = async (req, res) =>{
+    const {id} = req.params;
+    const query_text = `
+        DELETE FROM news WHERE id = ${id} 
+    `
+    try {
+        await database.query(query_text, [])
+        return res.status(status.success).send(true)
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
 
+const AddBanner = async (req, res) =>{
+    const {id} = req.params;
+    const file = req.file
+    try {
+        const {rows} = await database.query(`INSERT INTO banner (destination) VALUES ('${req.file.destination}')`, [])
+        return res.status(status.success).json({"rows":rows[0]})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
+const GetBanners = async (req, res) =>{
+    const query_text = `
+        SELECT * FROM banner
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).json({rows})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
+const DeleteBanner = async (req, res) =>{
+    const {id} = req.params;
+    const query_text  = ` 
+    DELETE FROM banner WHERE id = ${id}
+    `
+    try {
+        await database.query(query_text, [])
+        return res.status(status.success).send(true)
+    } catch (e) {
+        
+    }
+}
 
 module.exports = {
     Login,
@@ -462,8 +542,13 @@ module.exports = {
     UpdateProduct,
     
     AddNews,
+    AddNewsImage,
+    DeleteNews,
     GetProducts,
     AddSale,
     GetSales,
-    GetNews
+    GetNews,
+    AddBanner,
+    GetBanners,
+    DeleteBanner
 }

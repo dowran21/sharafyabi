@@ -35,6 +35,38 @@ const resize_producers_categories  = async (req, res, next) =>{
     next()
 }
 
+const resize_news  = async (req, res, next) =>{
+    // console.log(req.files)
+    if (req.file){
+        let dir = `./uploads/news`
+        if (!fs.existsSync(dir)){
+            fs.mkdirSync(dir);
+        } 
+        const date = moment().format('DDMMYYYY-HHmmss_SSS');
+        const name = req.file.originalname.replace(' ', '').split('.')[0];
+        req.file.path = `uploads/news/${date}-${name}`
+        await sharp(`./uploads/${req.file.filename}`)
+            .resize(300, 300)
+            .toFormat("webp")
+            .toFile(`./uploads/news/${date}-${name}-mini.webp`)
+
+        await sharp(`./uploads/${req.file.filename}`)
+            .resize(600, 600)
+            .toFormat("webp")
+            .toFile(`./uploads/news/${date}-${name}-big.webp`)
+
+        await sharp(`./uploads/${req.file.filename}`)
+            .toFormat("webp")
+            .resize(900, 900)
+            .toFile(`./uploads/news/${date}-${name}-large.webp`)
+        
+        fs.unlinkSync(`./uploads/${req.file.filename}`)
+    }else{
+        next()
+    }
+    next()
+}
+
 const resize_product_images  = async (req, res, next) =>{
     // console.log(req.files)
     const {id} =req.params
@@ -71,5 +103,6 @@ const resize_product_images  = async (req, res, next) =>{
 
 module.exports = {
     resize_producers_categories,
-    resize_product_images
+    resize_product_images,
+    resize_news
 }

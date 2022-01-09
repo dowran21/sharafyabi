@@ -108,7 +108,7 @@ CREATE TABLE news(
     id BIGSERIAL PRIMARY KEY NOT NULL,
     created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT now(),
     deleted BOOLEAN DEFAULT FALSE,
-    image_destination VARCHAR(150),
+    destination VARCHAR(150),
     title VARCHAR(150)
 
 );
@@ -120,8 +120,8 @@ CREATE TABLE news_descriptions(
     title VARCHAR(150),
     article TEXT NOT NULL,
 
-    CONSTRAINT news_id_fk FOREIGN KEY (news_id) REFERENCES news(id) ON UPDATE CASCADE,
-    CONSTRAINT language_id_fk FOREIGN KEY (language_id) REFERENCES languages(id) ON UPDATE CASCADE
+    CONSTRAINT news_id_fk FOREIGN KEY (news_id) REFERENCES news(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT language_id_fk FOREIGN KEY (language_id) REFERENCES languages(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 
@@ -149,9 +149,12 @@ CREATE TABLE orders(
     id SERIAL PRIMARY KEY NOT NULL,
     phone VARCHAR (8) NOT NULL,
     "address" VARCHAR(150) NOT NULL,
-    user_id BIGINT NOT NULL,
+    user_id BIGINT,
     created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT now(),
     accepted BOOLEAN DEFAULT true,
+    discount_id INTEGER,
+    coupon VARCHAR(150),
+    total_price NUMERIC (10, 2) NOT NULL,
 
     CONSTRAINT user_id_fk FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE
 );
@@ -164,5 +167,10 @@ CREATE TABLE order_items(
     order_id BIGINT NOT NULL,
 
     CONSTRAINT product_id_fk FOREIGN KEY (product_id) REFERENCES products(id) ON UPDATE CASCADE,
-    CONSTRAINT order_id_fk FOREIGN KEY (order_id_fk) REFERENCES orders(id) ON UPDATE CASCADE
-)
+    CONSTRAINT order_id_fk FOREIGN KEY (order_id) REFERENCES orders(id) ON UPDATE CASCADE
+);
+
+CREATE TABLE banner(
+    id SMALLSERIAL PRIMARY KEY NOT NULL,
+    destination VARCHAR(150) NOT NULL
+);
