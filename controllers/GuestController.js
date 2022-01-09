@@ -91,7 +91,7 @@ const GetProducts = async (req, res) =>{
             ),
 
                 (SELECT json_agg(pro) FROM (
-                    SELECT p.id, p.price, p.stock, p.destination, d.discount_value, d.min_value, pt.name
+                    SELECT p.id, p.price::text, p.stock, p.destination, d.discount_value, d.min_value, pt.name
                     FROM products p
                         INNER JOIN languages l
                             ON l.language_code = '${lang}'
@@ -120,7 +120,7 @@ const GetProducts = async (req, res) =>{
 const GetProductByID = async (req, res) =>{
     const {id, lang} = req.params;
     const query_text = `
-        SELECT p.id, p.price, p.stock, p.destination, p.category_id, p.producer_id, pt.name, pt.description, 
+        SELECT p.id, p.price::text, p.stock, p.destination, p.category_id, p.producer_id, pt.name, pt.description, 
         prod.name AS producer_name, ct.name AS category_name, d.discount_value, d.min_value
         FROM products p
             INNER JOIN languages l
