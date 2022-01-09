@@ -40,7 +40,7 @@ const GetProducts = async (req, res) =>{
     const {lang} = req.params
     let offSet = ``
     if(page && limit){
-        offSet = ` OFFSET  ${page*limit} LIMIT ${limit}`
+        offSet = ` OFFSET  ${(page-1)*limit} LIMIT ${limit}`
     }
     let wherePart = ``
     if(search){
@@ -67,11 +67,11 @@ const GetProducts = async (req, res) =>{
     }
 
     if (min_price && max_price){
-        wherePart += ` AND (rep.price > ${min_price} AND rep.price < ${max_price})`
+        wherePart += ` AND (p.price > ${min_price} AND p.price < ${max_price})`
     }else if(min_price && !max_price){
-        wherePart += ` AND rep.price > ${min_price}`
+        wherePart += ` AND p.price > ${min_price}`
     }else if(!min_price && max_price){
-        wherePart += ` AND rep.price < ${max_price}`
+        wherePart += ` AND p.price < ${max_price}`
     }else{
         wherePart +=``
     }
@@ -111,7 +111,6 @@ const GetProducts = async (req, res) =>{
     `
     try {
         const {rows} = await database.query(query_text, [])
-        console.log(rows)
         return res.status(status.success).json({"rows":rows[0]})
     } catch (e) {
         console.log(e)
@@ -122,13 +121,18 @@ const GetProducts = async (req, res) =>{
 const GetCartProducts = async (req, res) => {
     const {products} = req.query
     const {lang} = req.query
-   
-    if(!products.length){
+    let obj = []
+
+    try {
+        obj = JSON.parse(products)
+    } catch (e) {
+        console.log(e)
+    }
+    if(!obj.length){
         return res.status(status.success).json({"rows":null})
     }
-
     const query_text = `
-        SELECT DISTINCT ON (p.id) p.id, p.price, p.stock, p.destination, p.category_id, p.producer_id, pt.name, pt.description, 
+        SELECT p.id, p.price, p.stock, p.destination, p.category_id, p.producer_id, pt.name, pt.description, 
         prod.name AS producer_name, ct.name AS category_name, d.discount_value, d.min_value
         FROM products p
             INNER JOIN languages l
@@ -141,7 +145,7 @@ const GetCartProducts = async (req, res) => {
                 ON ct.category_id = p.category_id AND ct.language_id = l.id
             LEFT JOIN discounts d 
                 ON d.product_id = p.id AND d.discount_type_id = 1 AND d.validity::tsrange @> localtimestamp 
-            WHERE p.id IN (${products.map(item => `${item}`).join(', ')})
+            WHERE p.id IN (${obj.map(item => `${item}`).join(', ')})
         ORDER BY p.id ASC
     `
     try {
@@ -158,6 +162,5 @@ module.exports = {
     GetProducers,
     GetProducts,
     GetCartProducts,
-    GetCartProducts,
-    
+    GetCartProducts
 }

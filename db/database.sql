@@ -144,3 +144,25 @@ CREATE TABLE discounts(
     CONSTRAINT discount_type_id_fk FOREIGN KEY (discount_type_id) REFERENCES discount_types(id) ON UPDATE CASCADE,
     CONSTRAINT product_id_fk FOREIGN KEY (product_id) REFERENCES products(id) ON UPDATE CASCADE
 );
+
+CREATE TABLE orders(
+    id SERIAL PRIMARY KEY NOT NULL,
+    phone VARCHAR (8) NOT NULL,
+    "address" VARCHAR(150) NOT NULL,
+    user_id BIGINT NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT now(),
+    accepted BOOLEAN DEFAULT true,
+
+    CONSTRAINT user_id_fk FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE
+);
+
+CREATE TABLE order_items(
+    id BIGSERIAL PRIMARY KEY NOT NULL,
+    product_id BIGINT NOT NULL,
+    quantity SMALLINT NOT NULL,
+    price NUMERIC(8, 2) NOT NULL,
+    order_id BIGINT NOT NULL,
+
+    CONSTRAINT product_id_fk FOREIGN KEY (product_id) REFERENCES products(id) ON UPDATE CASCADE,
+    CONSTRAINT order_id_fk FOREIGN KEY (order_id_fk) REFERENCES orders(id) ON UPDATE CASCADE
+)
