@@ -91,8 +91,7 @@ const GetProducts = async (req, res) =>{
             ),
 
                 (SELECT json_agg(pro) FROM (
-                    SELECT p.id, p.price, p.stock, p.destination, p.category_id, p.producer_id, pt.name, pt.description, 
-                    prod.name AS producer_name, ct.name AS category_name, d.discount_value, d.min_value
+                    SELECT p.id, p.price, p.stock, p.destination, d.discount_value, d.min_value
                     FROM products p
                         INNER JOIN languages l
                             ON l.language_code = '${lang}'
@@ -112,6 +111,33 @@ const GetProducts = async (req, res) =>{
     try {
         const {rows} = await database.query(query_text, [])
         return res.status(status.success).json({"rows":rows[0]})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
+const GetProductByID = async (req, res) =>{
+    const {id, lang} = req.params;
+    const query_text = `
+        SELECT p.id, p.price, p.stock, p.destination, p.category_id, p.producer_id, pt.name, pt.description, 
+        prod.name AS producer_name, ct.name AS category_name, d.discount_value, d.min_value
+        FROM products p
+            INNER JOIN languages l
+                ON l.language_code = '${lang}'
+            INNER JOIN product_translations pt 
+                ON pt.product_id = p.id AND pt.language_id = l.id
+            INNER JOIN producers prod
+                ON prod.id = p.producer_id
+            INNER JOIN category_translations ct
+                ON ct.category_id = p.category_id AND ct.language_id = l.id
+            LEFT JOIN discounts d 
+                ON d.product_id = p.id AND d.discount_type_id = 1 AND d.validity::tsrange @> localtimestamp 
+        WHERE p.id = ${id}
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).json({rows:rows[0]})
     } catch (e) {
         console.log(e)
         return res.status(status.error).send(false)
@@ -162,5 +188,6 @@ module.exports = {
     GetProducers,
     GetProducts,
     GetCartProducts,
-    GetCartProducts
+    GetCartProducts,
+    GetProductByID
 }
