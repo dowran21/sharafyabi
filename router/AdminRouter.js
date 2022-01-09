@@ -4,7 +4,7 @@ const AdminController = require('../controllers/AdminController')
 const {VerifyAdminAccessToken, VerifyAdminRefreshToken} = require('../middleware/AuthMiddleware');
 const { resize_producer_image } = require('../middleware/resize');
 const upload = require('../middleware/upload');
-const {resize_producers_categories, resize_product_images} = require('../middleware/resize.js')
+const {resize_producers_categories, resize_product_images} = require('../middleware/resize.js');
 
 router.post('/login', AdminController.Login)
 router.get('/load-admin', VerifyAdminRefreshToken, AdminController.LoadAdmin )
@@ -21,6 +21,9 @@ router.get('/producers',VerifyAdminAccessToken, AdminController.GetProducers)
 router.post('/add-product', VerifyAdminAccessToken, AdminController.AddProduct);
 router.post('/add-product-image/:id', VerifyAdminAccessToken, upload.single("picture"), resize_product_images, AdminController.AddProductImage)
 router.post('/update-product/:id', VerifyAdminAccessToken, AdminController.UpdateProduct)
+
+router.post('/add-news', VerifyAdminAccessToken, AdminController.AddNews)
+router.get('/get-news', VerifyAdminAccessToken, AdminController.GetNews)
 
 router.post("/add-sale", VerifyAdminAccessToken, AdminController.AddSale)
 router.get("/get-sales", VerifyAdminAccessToken, AdminController.GetSales)

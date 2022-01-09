@@ -50,19 +50,20 @@ const GetProducts = async (req, res) =>{
     try {
         categories = JSON.parse(category_id)
     } catch (e) {
-        console.log(e)
+        console.log(e, "---categories")
     }
+    console.log(categories)
     if(categories.length > 0){
-        wherePart = ` AND p.producer_id IN ( ${categories.map(item => `${item}`).join(',')} )`
+        wherePart = ` AND p.category_id IN ( ${categories?.map(item => `${item}`).join(',')} )`
     }
     let producers = []
     try {
         producers = JSON.parse(producer_id)
     } catch (e) {
-        console.log(e)
+        console.log(e, "---producers")
     }
     if(producers.length > 0){
-        wherePart = ` AND p.producer_id IN ( ${producers.map(item => `${item}`).join(',')} )`
+        wherePart = ` AND p.producer_id IN ( ${producers?.map(item => `${item}`).join(',')} )`
     }
     const query_text = `
         SELECT 
@@ -81,7 +82,7 @@ const GetProducts = async (req, res) =>{
 
                 (SELECT json_agg(pro) FROM (
                     SELECT p.id, p.price, p.stock, p.destination, p.category_id, p.producer_id, pt.name, pt.description, 
-                    prod.name AS producer_name, ct.name AS category_name
+                    prod.name AS producer_name, ct.name AS category_name, d.discount_value, d.min_value
                     FROM products p
                         INNER JOIN languages l
                             ON l.language_code = '${lang}'
@@ -91,6 +92,8 @@ const GetProducts = async (req, res) =>{
                             ON prod.id = p.producer_id
                         INNER JOIN category_translations ct
                             ON ct.category_id = p.category_id AND ct.language_id = l.id
+                        LEFT JOIN discounts d 
+                            ON d.product_id = p.id AND d.discount_type_id = 1 AND d.validity::tsrange @> localtimestamp 
                     WHERE p.id > 0 ${wherePart}
                     ORDER BY p.id ASC
                     ${offSet}

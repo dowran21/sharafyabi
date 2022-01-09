@@ -251,11 +251,13 @@ const AddNews = async (req, res) =>{
     const {title_tm, title_ru, title_en, article_tm, article_ru, article_en} = req.body
     const query_text = `
         WITH inserted AS (
-            INSERT INTO news(created_at) 
-            VALUES(localtimastamp) RETURNING *
-        ) inserted_description AS (
-            INSERT INTO news_descriptions(news_id, title, article)
-            VALUES ((SELECT id FROM inserted), '${title}')
+            INSERT INTO news(title) 
+            VALUES('${title_ru}') RETURNING *
+        ), inserted_description AS (
+            INSERT INTO news_descriptions(news_id, title, article, language_id)
+            VALUES ((SELECT id FROM inserted), '${title_tm}', '${article_tm}', 1),
+            ((SELECT id FROM inserted), '${title_ru}', '${article_ru}', 2),
+            ((SELECT id FROM inserted), '${title_en}', '${article_en}', 3)
         ) SELECT id FROM inserted
     `
     try {
@@ -263,6 +265,31 @@ const AddNews = async (req, res) =>{
         return res.status(status.success).send(true)
     } catch (e) {
         console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
+const GetNews = async (req, res) =>{
+    const query_text = `
+        SELECT (
+            SELECT COUNT (*) FROM news n
+        ), (SELECT json_agg(ne) FROM (
+            SELECT n.id, nd.title AS title_tm, nd.article AS article_tm, ndd.title AS title_ru, ndd.article AS article_ru, 
+                nddd.title AS title_en, nddd.title AS title_en, to_char(n.created_at, 'YYYY/MM/DD' ) AS created_at
+            FROM news n
+                INNER JOIN news_descriptions nd
+                    ON nd.news_id = n.id AND nd.language_id = 1
+                INNER JOIN news_descriptions ndd
+                    ON ndd.news_id = n.id AND ndd.language_id = 2
+                INNER JOIN news_descriptions nddd
+                    ON nddd.news_id = n.id AND nddd.language_id = 3
+        )ne) AS news
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).json({rows:rows[0]})
+    } catch (e) {
+        console.log(e);
         return res.status(status.error).send(false)
     }
 }
@@ -415,43 +442,7 @@ const GetSales = async (req, res) =>{
     }
 }
 
-// const AddNews = async (req, res) =>{
-//     const {title_tm, title_ru, title_en, description_tm, description_ru, description_en} = req.body;
-//     const query_text = `
-//         WITH inserted AS (
-//             INSERT INTO news (title) VALUES ('${title_ru}') RETURNING *
-//         ), insert_tm AS(
-//             INSERT INTO news_descriptions (title, article, language_id, news_id) 
-//                 VALUES('${title_tm}', '${description_tm}', 1, (SELECT id FROM inserted))
-//         ), insert_ru AS(
-//             INSERT INTO news_descriptions (title, article, language_id, news_id) 
-//                 VALUES('${title_ru}', '${description_ru}', 2, (SELECT id FROM inserted))
-//         ), insert_en AS(
-//             INSERT INTO news_descriptions (title, article, language_id, news_id) 
-//                 VALUES('${title_en}', '${description_en}', 3, (SELECT id FROM inserted))
-//         ) SELECT id FROM inserted
-//     `;
-//     try {
-//         const {rows} = await database.query(query_text, [])
-//         return res.status(status.success).send(true)
-//     } catch (e) {
-//         console.log(e)
-//         return res.status(status.error).send(false)
-//     }
-// }
 
-const GetNews = async (req, res) =>{
-    const query_text = `
-        SELECT * FROM news
-    `;
-    try {
-        const {rows} = await database.query(query_text, [])
-        return res.status(status.success).send(true)
-    } catch (e) {
-        console.log(e);
-        return res.status(status.error).send(false)
-    }
-}
 
 module.exports = {
     Login,
