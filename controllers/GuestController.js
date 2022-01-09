@@ -91,7 +91,7 @@ const GetProducts = async (req, res) =>{
             ),
 
                 (SELECT json_agg(pro) FROM (
-                    SELECT p.id, p.price, p.stock, p.destination, d.discount_value, d.min_value
+                    SELECT p.id, p.price, p.stock, p.destination, d.discount_value, d.min_value, pt.name,
                     FROM products p
                         INNER JOIN languages l
                             ON l.language_code = '${lang}'
