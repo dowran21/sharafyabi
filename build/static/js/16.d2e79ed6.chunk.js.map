@@ -1,0 +1,1 @@
+{"version":3,"sources":["pages/Dashboard/index.js"],"names":["Dashboard"],"mappings":"qHAQeA,UARf,WACI,OACI","file":"static/js/16.d2e79ed6.chunk.js","sourcesContent":["function Dashboard (){\n    return (\n        <div>\n            Hello Dashboard\n        </div>\n    )\n}\n\nexport default Dashboard"],"sourceRoot":""}
