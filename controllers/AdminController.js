@@ -187,8 +187,8 @@ const AddProduct = async (req, res) =>{
 
     const query_text = `
         WITH inserted AS (
-            INSERT INTO products(category_id, producer_id, price, stock )
-            VALUES (${category_id}, ${producer_id}, ${price}, ${stock})
+            INSERT INTO products(category_id, producer_id, price, stock, name )
+            VALUES (${category_id}, ${producer_id}, ${price}, ${stock}, '${name_ru}')
             RETURNING *
         ), inserted_trans AS (
             INSERT INTO product_translations(product_id, language_id, name, description)
@@ -329,15 +329,19 @@ const GetProducts = async (req, res) =>{
     if(page && limit){
         offSet = ` OFFSET  ${page*limit} LIMIT ${limit}`
     }
-
+    let wherePart = ``
+    if(search){
+        wherePart += ` AND p.`
+    }
     const query_text = `
         SELECT 
             (SELECT COUNT(*) FROM products p),
 
                 (SELECT json_agg(pro) FROM (
-                    SELECT p.id, p.price, p.stock, p.destination, p.category_id, p.producer_id, pt.name AS name_tm, pt.description AS description_tm,
+                    SELECT p.id, p.price, p.stock, p.name, p.destination, p.category_id, p.producer_id, pt.name AS name_tm, pt.description AS description_tm,
                     ptt.name AS name_ru, ptt.description AS description_ru, pttt.name AS name_en, pttt.description AS description_en,
-                    prod.name AS producer_name, ct.name AS category_name
+                    prod.name AS producer_name, ct.name AS category_name, d.discount_value, 
+                    d.id AS discount_id, lower(validity)::text AS low_val, upper(validity)::text AS upper_val
                     FROM products p
                         LEFT JOIN product_translations pt 
                             ON pt.product_id = p.id AND pt.language_id = 1
@@ -349,6 +353,8 @@ const GetProducts = async (req, res) =>{
                             ON prod.id = p.producer_id
                         LEFT JOIN category_translations ct
                             ON ct.category_id = p.category_id AND ct.language_id = 2
+                        LEFT JOIN discounts d
+                            ON d.product_id = p.id AND d.discount_type_id = 1 AND upper(validity) > localtimestamp AND is_active = true
                     WHERE p.id > 0 
                     ORDER BY p.id ASC
                     ${offSet}
@@ -436,12 +442,22 @@ const AddSale = async (req, res) =>{
         INSERT INTO discounts(validity, discount_value, coupon, discount_type_id, product_id, min_value)
             VALUES ('[${start_date}, ${end_date}]',${discount_value}, 
                 ${discount_type_id == 4 ? `'${coupon}'` : `null`}, 
-                    ${discount_type_id}, ${discount_type_id == 1 ? `${product_id}` : `null`}, ${discount_type_id == 4 ? `null` : `${min_value}` } )
+                    ${discount_type_id}, ${discount_type_id == 1 ? `${product_id}` : `null`}, ${discount_type_id == 4 ? `null` : `${min_value}` } ) RETURNING *
     `
     try {
-        console.log(query_text)
         const {rows} = await database.query(query_text, [])
-        return res.status(status.success).send(true)
+        const s_query = `
+            SELECT dt.name AS discount_name, d.id,  d.discount_value, d.coupon, d.discount_type_id, d.product_id, d.min_value, 
+            lower(d.validity)::text AS low, upper(d.validity)::text AS upper, pt.name, (SELECT upper(d.validity) > localtimestamp) AS active, d.is_active
+            FROM discounts d
+                INNER JOIN discount_types dt
+                    ON dt.id = d.discount_type_id
+                LEFT JOIN product_translations pt 
+                    ON pt.product_id = d.product_id AND pt.language_id = 2
+                WHERE d.id = ${rows[0].id}
+        `
+        const s = await database.query(s_query, [])
+        return res.status(status.success).json({rows:s?.rows[0]})
     } catch (e) {
         console.log(e)
         return res.status(status.error).send(false)
@@ -454,7 +470,7 @@ const GetSales = async (req, res) =>{
             SELECT COUNT(*) FROM discounts
         ), (SELECT json_agg(dis) FROM (
             SELECT dt.name AS discount_name, d.id,  d.discount_value, d.coupon, d.discount_type_id, d.product_id, d.min_value, 
-                lower(d.validity)::text AS low, upper(d.validity)::text, pt.name, (SELECT d.validity::tsrange @> localtimestamp) AS active
+                lower(d.validity)::text AS low, upper(d.validity)::text, pt.name, (SELECT upper(d.validity) > localtimestamp) AS active, d.is_active
                 FROM discounts d
                     INNER JOIN discount_types dt
                         ON dt.id = d.discount_type_id
@@ -466,6 +482,20 @@ const GetSales = async (req, res) =>{
     try {
         const {rows} = await database.query(query_text, [])
         return res.status(status.success).json({rows:rows[0]})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
+const DeactivateSales = async (req, res) =>{
+    const {id} = req.params;
+    const query_text = `
+        UPDATE discounts SET is_active = false WHERE id = ${id}
+    `
+    try {
+        await database.query(query_text, [])
+        return res.status(status.success).send(true)
     } catch (e) {
         console.log(e)
         return res.status(status.error).send(false)
@@ -644,5 +674,6 @@ module.exports = {
     DeleteBanner,
     GetOrders,
     GetOrderByID,
-    GeneratePdf
+    GeneratePdf,
+    DeactivateSales
 }

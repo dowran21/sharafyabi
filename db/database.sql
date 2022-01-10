@@ -3,6 +3,7 @@ DROP DATABASE IF EXISTS sharafyabi;
 CREATE DATABASE sharafyabi;
 
 \c sharafyabi;
+CREATE EXTENSION IF NOT EXISTS "btree_gist";
 
 CREATE TABLE languages(
     id SMALLSERIAL PRIMARY KEY NOT NULL,
@@ -61,7 +62,7 @@ CREATE TABLE products(
     producer_id SMALLINT NOT NULL,
     stock BIGINT NOT NULL,
     price NUMERIC(8,2) NOT NULL,
-    "name" VARCHAR (150),
+    "name" VARCHAR (150) NOT NULL,
     destination VARCHAR (350),
    
     CONSTRAINT producer_id_fk FOREIGN KEY (producer_id) REFERENCES producers(id) ON UPDATE CASCADE,
@@ -141,6 +142,9 @@ CREATE TABLE discounts(
     created_at TIMESTAMP WITHOUT TIME ZONE  NOT NULL DEFAULT now(),
     validity tsrange NOT NULL,
     is_active BOOLEAN DEFAULT TRUE,
+    EXCLUDE USING gist(validity WITH &&, product_id WITH =) WHERE (discount_type_id = 1 AND is_active = TRUE),
+    EXCLUDE USING gist(validity WITH &&) WHERE (discount_type_id = 3 AND is_active = TRUE),
+    EXCLUDE USING gist(validity WITH &&) WHERE (discount_type_id = 4 AND is_active = TRUE),
 
     CONSTRAINT discount_type_id_fk FOREIGN KEY (discount_type_id) REFERENCES discount_types(id) ON UPDATE CASCADE,
     CONSTRAINT product_id_fk FOREIGN KEY (product_id) REFERENCES products(id) ON UPDATE CASCADE

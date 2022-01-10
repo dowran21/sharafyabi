@@ -29,6 +29,7 @@ router.post('/delete-news/:id', VerifyAdminAccessToken, AdminController.DeleteNe
 
 router.post("/add-sale", VerifyAdminAccessToken, AdminController.AddSale)
 router.get("/get-sales", VerifyAdminAccessToken, AdminController.GetSales)
+router.post('/deactivate-sale/:id', VerifyAdminAccessToken, AdminController.DeactivateSales)
 router.post('/add-banner', VerifyAdminAccessToken, upload.single("picture"), resize_news, AdminController.AddBanner)
 
 router.get('/products', VerifyAdminAccessToken, AdminController.GetProducts);

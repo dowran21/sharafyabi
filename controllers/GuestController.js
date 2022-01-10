@@ -115,7 +115,7 @@ const GetProducts = async (req, res) =>{
                         INNER JOIN category_translations ct
                             ON ct.category_id = p.category_id AND ct.language_id = l.id
                         LEFT JOIN discounts d 
-                            ON d.product_id = p.id AND d.discount_type_id = 1 AND d.validity::tsrange @> localtimestamp 
+                            ON d.product_id = p.id AND d.discount_type_id = 1 AND d.validity::tsrange @> localtimestamp AND is_active = true
                     WHERE p.id > 0 ${wherePart}
                     ORDER BY ${column} ${direction}
                     ${offSet}
@@ -184,7 +184,7 @@ const GetCartProducts = async (req, res) => {
             INNER JOIN category_translations ct
                 ON ct.category_id = p.category_id AND ct.language_id = l.id
             LEFT JOIN discounts d 
-                ON d.product_id = p.id AND d.discount_type_id = 1 AND d.validity::tsrange @> localtimestamp 
+                ON d.product_id = p.id AND d.discount_type_id = 1 AND d.validity::tsrange @> localtimestamp AND is_active = true
             WHERE p.id IN (${obj.map(item => `${item}`).join(', ')})
         ORDER BY p.id ASC
     `
@@ -216,7 +216,7 @@ const CreateOrder = async (req, res) =>{
             LEFT JOIN category_translations ct
                 ON ct.category_id = p.category_id AND ct.language_id = l.id
             LEFT JOIN discounts d 
-                ON d.product_id = p.id AND d.discount_type_id = 1 AND d.validity::tsrange @> localtimestamp 
+                ON d.product_id = p.id AND d.discount_type_id = 1 AND d.validity::tsrange @> localtimestamp AND is_active = true
             WHERE p.id IN (${products.map(item => `${item.id}`).join(', ')})
         `
     try {
@@ -248,10 +248,9 @@ const CreateOrder = async (req, res) =>{
         console.log(totalPrice)
         let discount = {}
         if(coupon){
-            discount = await database.query(`SELECT * FROM discounts WHERE discount_type_id = 4 AND validity:: tsrange @> localtimestamp AND coupon = '${coupon}'`, [])
+            discount = await database.query(`SELECT * FROM discounts WHERE discount_type_id = 4 AND validity:: tsrange @> localtimestamp AND coupon = '${coupon}' AND is_active = true`, [])
         }else{
-            console.log(`SELECT * FROM discounts WHERE discount_type_id = 3 AND validity:: tsrange @> localtimestamp AND min_value < ${totalPrice}`)
-            discount = await database.query(`SELECT * FROM discounts WHERE discount_type_id = 3 AND validity:: tsrange @> localtimestamp AND min_value < ${totalPrice}`, [])
+            discount = await database.query(`SELECT * FROM discounts WHERE discount_type_id = 3 AND validity:: tsrange @> localtimestamp AND is_active = true AND min_value < ${totalPrice}`, [])
         }
         console.log("After second query")
 
