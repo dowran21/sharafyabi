@@ -61,6 +61,7 @@ CREATE TABLE products(
     producer_id SMALLINT NOT NULL,
     stock BIGINT NOT NULL,
     price NUMERIC(8,2) NOT NULL,
+    "name" VARCHAR (150),
     destination VARCHAR (350),
    
     CONSTRAINT producer_id_fk FOREIGN KEY (producer_id) REFERENCES producers(id) ON UPDATE CASCADE,
@@ -149,6 +150,7 @@ CREATE TABLE orders(
     id SERIAL PRIMARY KEY NOT NULL,
     phone VARCHAR (8) NOT NULL,
     "address" VARCHAR(150) NOT NULL,
+    "name" VARCHAR(150) NOT NULL,
     user_id BIGINT,
     created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT now(),
     accepted BOOLEAN DEFAULT true,

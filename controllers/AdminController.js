@@ -188,7 +188,7 @@ const AddProduct = async (req, res) =>{
     const query_text = `
         WITH inserted AS (
             INSERT INTO products(category_id, producer_id, price, stock )
-            VALUES (${category_id}, ${producer_id}, ${price}, ${stock   })
+            VALUES (${category_id}, ${producer_id}, ${price}, ${stock})
             RETURNING *
         ), inserted_trans AS (
             INSERT INTO product_translations(product_id, language_id, name, description)
@@ -324,11 +324,12 @@ const AddNewsImage = async (req, res) =>{
 }
 
 const GetProducts = async (req, res) =>{
-    const {page, limit} = req.query;
+    const {page, limit, search} = req.query;
     let offSet = ``
     if(page && limit){
         offSet = ` OFFSET  ${page*limit} LIMIT ${limit}`
     }
+
     const query_text = `
         SELECT 
             (SELECT COUNT(*) FROM products p),
@@ -349,8 +350,8 @@ const GetProducts = async (req, res) =>{
                         LEFT JOIN category_translations ct
                             ON ct.category_id = p.category_id AND ct.language_id = 2
                     WHERE p.id > 0 
-                    ${offSet}
                     ORDER BY p.id ASC
+                    ${offSet}
                 )pro) AS products
     `
     try {
@@ -514,13 +515,103 @@ const GetBanners = async (req, res) =>{
 const DeleteBanner = async (req, res) =>{
     const {id} = req.params;
     const query_text  = ` 
-    DELETE FROM banner WHERE id = ${id}
+        DELETE FROM banner WHERE id = ${id}
     `
     try {
         await database.query(query_text, [])
         return res.status(status.success).send(true)
     } catch (e) {
         
+    }
+}
+
+const GetOrders = async (req, res) =>{
+    const {page, limit} = req.query;
+    let offSet = ``
+    if(page && limit){
+        offSet = `OFFSET ${page*limit} LIMIT ${limit}`
+    }
+    const query_text = `
+        SELECT 
+            (
+                SELECT COUNT(*) FROM orders
+            ), (SELECT json_agg(ord) FROM (
+                SELECT o.id, o.phone, o.address, o.name, to_char(o.created_at, 'YYYY-MM-DD HH24:MI') AS created_at,
+                    o.total_price, o.coupon, o.discount_id, d.discount_value
+                    FROM orders o
+                    LEFT JOIN discounts d
+                        ON d.id = o.discount_id
+                    ${offSet}
+            )ord) AS orders 
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).json({rows:rows[0]})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
+const GetOrderByID = async (req, res) =>{
+    const {id} = req.params;
+    const query_text = `
+        SELECT p.name, oi.price, oi.quantity, d.discount_value, pt.name AS name_ru
+        FROM order_items oi
+            INNER JOIN products p 
+                ON p.id = oi.product_id
+            INNER JOIN product_translations pt
+                ON pt.product_id = p.id AND pt.language_id = 2
+            INNER JOIN orders o
+                ON o.id = oi.order_id
+            LEFT JOIN discounts d
+                ON d.product_id = oi.product_id AND validity ::tsrange @> o.created_at
+            WHERE o.id = ${id}
+    `    
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).json({rows})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
+const GeneratePdf = async (req, res) =>{
+    const {OrderGenerator} = require("../pdfmaker/pdf.js")
+    const {id} = req.params;
+    const query_text = `
+        SELECT o.id, o.phone, o.address, o.name, to_char(o.created_at, 'YYYY-MM-DD HH24:MI') AS created_at,
+            o.total_price, o.coupon, o.discount_id, d.discount_value,
+            (SELECT json_agg(orde) FROM (
+                SELECT p.id, p.name, oi.price, oi.quantity, d.discount_value, pt.name AS name_ru
+                FROM order_items oi
+                    INNER JOIN products p 
+                        ON p.id = oi.product_id
+                    INNER JOIN product_translations pt
+                        ON pt.product_id = p.id AND pt.language_id = 2
+                    LEFT JOIN discounts d
+                        ON d.product_id = oi.product_id AND validity ::tsrange @> o.created_at
+                    WHERE oi.order_id = o.id
+            )orde) AS order_items
+        FROM orders o
+            LEFT JOIN discounts d
+                ON d.id = o.discount_id
+            WHERE o.id = ${id}
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        const data = rows[0]
+        if(data){
+            res.setHeader('Content-type', 'application/pdf');
+            res.setHeader('Access-Control-Allow-Origin', '*');
+            res.setHeader('Content-disposition', 'attachment; filename=Untitled.pdf');
+            const response = await OrderGenerator(data)
+            return res.status(status.success).send(response)
+        }
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
     }
 }
 
@@ -550,5 +641,8 @@ module.exports = {
     GetNews,
     AddBanner,
     GetBanners,
-    DeleteBanner
+    DeleteBanner,
+    GetOrders,
+    GetOrderByID,
+    GeneratePdf
 }

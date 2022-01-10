@@ -75,6 +75,7 @@ const GetProducts = async (req, res) =>{
     }else{
         wherePart +=``
     }
+
     let column = ``
     let direction = ``
     if(sort_column){
@@ -122,6 +123,7 @@ const GetProducts = async (req, res) =>{
     `
     try {
         const {rows} = await database.query(query_text, [])
+        console.log(rows)
         return res.status(status.success).json({"rows":rows[0]})
     } catch (e) {
         console.log(e)
@@ -197,7 +199,7 @@ const GetCartProducts = async (req, res) => {
 
 const CreateOrder = async (req, res) =>{
     const {lang} = req.params;
-    const {products, coupon, phone, address, user_id} = req.body;
+    const {products, coupon, phone, address, user_id, name} = req.body;
     if(!products.length){
         return res.status(status.success).send("free cart")
     }
@@ -265,9 +267,9 @@ const CreateOrder = async (req, res) =>{
         console.log(cart)
         const order_query = `
             WITH inserted AS (
-                INSERT INTO orders(coupon, phone, address, user_id, total_price, discount_id)
+                INSERT INTO orders(coupon, phone, address, user_id, total_price, discount_id, name)
                 VALUES (${coupon ? `${coupon}` : `null`}, '${phone}', '${address}', ${user_id ? `${user_id}` : null}, 
-                    ${totalPrice}, ${discount?.rows[0] ? discount?.rows[0].id : `null`})
+                    ${totalPrice}, ${discount?.rows[0] ? discount?.rows[0].id : `null`}, '${name}')
                 RETURNING *
             ), inserted_items AS (
                 INSERT INTO order_items(product_id, quantity, price, order_id)
@@ -284,6 +286,8 @@ const CreateOrder = async (req, res) =>{
         return res.status(status.error).send(false)
     }
 }
+
+
 
 module.exports = {
     GetCategories,

@@ -34,6 +34,8 @@ router.post('/add-banner', VerifyAdminAccessToken, upload.single("picture"), res
 router.get('/products', VerifyAdminAccessToken, AdminController.GetProducts);
 router.get('/get-banners', VerifyAdminAccessToken, AdminController.GetBanners)
 router.post('/delete-banner/:id', VerifyAdminAccessToken, AdminController.DeleteBanner)
-
+router.get('/get-orders', VerifyAdminAccessToken, AdminController.GetOrders)
+router.get('/get-order/:id', VerifyAdminAccessToken, AdminController.GetOrderByID)
+router.get('/generate-pdf/:id', VerifyAdminAccessToken, AdminController.GeneratePdf)
 
 module.exports = router;
