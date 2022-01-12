@@ -57,13 +57,14 @@ CREATE TABLE producers(
 
 CREATE TABLE products(
     id BIGSERIAL PRIMARY KEY NOT NULL,
-    -- unique_code VARCHAR(150) NOT NULL,
-    category_id SMALLINT NOT NULL,
-    producer_id SMALLINT NOT NULL,
+    category_id SMALLINT ,
+    producer_id SMALLINT ,
     stock BIGINT NOT NULL,
     price NUMERIC(8,2) NOT NULL,
     "name" VARCHAR (150) NOT NULL,
     destination VARCHAR (350),
+    articul VARCHAR(30),
+    UNIQUE("name", "articul"),
    
     CONSTRAINT producer_id_fk FOREIGN KEY (producer_id) REFERENCES producers(id) ON UPDATE CASCADE,
     CONSTRAINT category_id_fk FOREIGN KEY (category_id) REFERENCES categories(id) ON UPDATE CASCADE
@@ -75,20 +76,10 @@ CREATE TABLE product_translations(
     language_id SMALLINT NOT NULL,
     "name" VARCHAR(150) NOT NULL,
     "description" TEXT NOT NULL,
+    UNIQUE(product_id, language_id),
 
     CONSTRAINT product_id_fk FOREIGN KEY (product_id) REFERENCES products(id) ON UPDATE CASCADE,
     CONSTRAINT language_id_fk FOREIGN KEY (language_id) REFERENCES languages(id) ON UPDATE CASCADE
-);
-
-CREATE TABLE orders(
-    id BIGSERIAL PRIMARY KEY NOT NULL,
-    user_id SMALLINT,
-    owner_phone VARCHAR(8) NOT NULL,
-    delivery_address VARCHAR (150) NOT NULL,
-    position point,
-    order_notice VARCHAR(500) NOT NULL,
-
-    CONSTRAINT user_id_fk FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE
 );
 
 CREATE TABLE order_products(

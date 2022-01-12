@@ -395,15 +395,12 @@ const UpdateProduct = async (req, res) =>{
         WITH update_product AS (
             UPDATE products SET category_id = ${category_id}, producer_id = ${producer_id}, 
                 price = ${price}, stock = ${stock} WHERE id = ${id}
-        ), update_trans_tm AS ( 
-            UPDATE product_translations SET name = '${name_tm}', description = '${description_tm}'
-            WHERE product_id = ${id} AND language_id = 1
-        ), update_trans_ru AS ( 
-            UPDATE product_translations SET name = '${name_ru}', description = '${description_ru}'
-            WHERE product_id = ${id} AND language_id = 2
-        ) UPDATE product_translations SET name = '${name_en}', description = '${description_en}'
-        WHERE product_id = ${id} AND language_id = 3
-    `
+        ) INSERT INTO product_translations(product_id, language_id, name, description) 
+        VALUES (${id}, 1, '${name_tm}', '${description_tm}'), 
+            (${id}, 2, '${name_ru}', '${description_ru}'),
+            (${id}, 3, '${name_en}', '${description_en}')
+        ON CONFLICT (product_id, language_id) DO UPDATE SET name = EXCLUDED.name, description = EXCLUDED.description
+            `
     try {
         console.log(query_text)
         await database.query(query_text, [])

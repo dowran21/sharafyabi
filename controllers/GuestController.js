@@ -106,13 +106,13 @@ const GetProducts = async (req, res) =>{
                 (SELECT json_agg(pro) FROM (
                     SELECT p.id, p.price::text, p.stock, p.destination, d.discount_value, d.min_value, pt.name
                     FROM products p
-                        INNER JOIN languages l
+                        LEFT JOIN languages l
                             ON l.language_code = '${lang}'
                         INNER JOIN product_translations pt 
                             ON pt.product_id = p.id AND pt.language_id = l.id
-                        INNER JOIN producers prod
+                        LEFT JOIN producers prod
                             ON prod.id = p.producer_id
-                        INNER JOIN category_translations ct
+                        LEFT JOIN category_translations ct
                             ON ct.category_id = p.category_id AND ct.language_id = l.id
                         LEFT JOIN discounts d 
                             ON d.product_id = p.id AND d.discount_type_id = 1 AND d.validity::tsrange @> localtimestamp AND is_active = true
@@ -162,13 +162,14 @@ const GetCartProducts = async (req, res) => {
     const {products} = req.query
     const {lang} = req.params
     let obj = []
-
+    
     try {
-        obj = JSON.parse(products)
+        obj = await JSON.parse(products)
     } catch (e) {
         console.log(e)
     }
-    if(!obj.length){
+    console.log(obj)
+    if(!obj?.length){
         return res.status(status.success).json({"rows":null})
     }
     const query_text = `
@@ -185,10 +186,11 @@ const GetCartProducts = async (req, res) => {
                 ON ct.category_id = p.category_id AND ct.language_id = l.id
             LEFT JOIN discounts d 
                 ON d.product_id = p.id AND d.discount_type_id = 1 AND d.validity::tsrange @> localtimestamp AND is_active = true
-            WHERE p.id IN (${obj.map(item => `${item}`).join(', ')})
+            WHERE p.id IN (${obj.map(item => `${item.id}`).join(', ')})
         ORDER BY p.id ASC
     `
     try {
+        // console.log(query_text)
         const {rows} = await database.query(query_text, [])
         return res.status(status.success).json({rows})
     } catch (e) {
