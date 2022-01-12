@@ -1,2 +1,0 @@
-(this.webpackJsonpgamysh=this.webpackJsonpgamysh||[]).push([[16],{283:function(s,t,a){"use strict";a.r(t);var e=a(2);t.default=function(){return Object(e.jsx)("div",{children:"Hello Dashboard"})}}}]);
-//# sourceMappingURL=16.d2e79ed6.chunk.js.map
