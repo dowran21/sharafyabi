@@ -50,7 +50,87 @@ const UserLogin = async (req, res) =>{
     }   
 }
 
+const AddToWishList = async (req, res) =>{
+    const user_id = req.user?.id;
+    const {id} = req.params
+    const query_text = `
+        INSERT INTO wish_lists (user_id, product_id) VALUES (${user_id}, ${id})
+    `
+    try {
+        await database.query(query_text, [])
+        return res.status(status.success).send(true)
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
+const RemoveFromWishList = async (req, res) =>{
+    const user_id = req.user?.id;
+    const {id} = req.params
+    const query_text = `
+        DELETE FROM wish_lists WHERE user_id = ${user_id} AND product_id = ${id}
+    `
+    try {
+        await database.query(query_text, [])
+        return res.status(status.success).send(true)
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
+const GetOrders = async (req, res) =>{
+    const user_id = req.user?.id
+    const query_text = `
+        SELECT o.id, o.phone, o.address, o.name, to_char(o.created_at, 'YYYY-MM-DD HH24:MI') AS created_at,
+        o.total_price, o.coupon, o.discount_id, d.discount_value
+        FROM orders o
+        LEFT JOIN discounts d
+            ON d.id = o.discount_id
+        WHERE o.user_id = ${user_id}
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).json({rows})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
+const GetOrderByID = async (req, res) =>{
+    const user_id = req.user?.id
+    const {lang, id} = req.params
+    const query_text = `
+    SELECT p.id, oi.price, oi.quantity, d.discount_value, pt.name 
+        FROM order_items oi
+            INNER JOIN languages l
+                ON l.language_code = '${lang}'
+            INNER JOIN products p 
+                ON p.id = oi.product_id
+            INNER JOIN product_translations pt
+                ON pt.product_id = p.id AND pt.language_id = 2
+            INNER JOIN orders o
+                ON o.id = oi.order_id
+            LEFT JOIN discounts d
+                ON d.product_id = oi.product_id AND validity ::tsrange @> o.created_at
+            WHERE o.id = ${id}
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).json({rows})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
 module.exports = {
     UserRegistration,
-    UserLogin
+    UserLogin,
+    AddToWishList,
+    RemoveFromWishList,
+    GetOrders,
+    GetOrderByID
 }

@@ -38,5 +38,6 @@ router.post('/delete-banner/:id', VerifyAdminAccessToken, AdminController.Delete
 router.get('/get-orders', VerifyAdminAccessToken, AdminController.GetOrders)
 router.get('/get-order/:id', VerifyAdminAccessToken, AdminController.GetOrderByID)
 router.get('/generate-pdf/:id', VerifyAdminAccessToken, AdminController.GeneratePdf)
+router.post('/import-from-excel', VerifyAdminAccessToken, upload.single('excel'), AdminController.ImportFromExcel)
 
 module.exports = router;

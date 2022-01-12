@@ -324,41 +324,59 @@ const AddNewsImage = async (req, res) =>{
 }
 
 const GetProducts = async (req, res) =>{
-    const {page, limit, search} = req.query;
+    const {page, limit, search, category_id, producer_id} = req.query;
     let offSet = ``
     if(page && limit){
         offSet = ` OFFSET  ${page*limit} LIMIT ${limit}`
     }
     let wherePart = ``
     if(search){
-        wherePart += ` AND p.`
+        wherePart += ` AND p.name ~* '${search}'`
+    }
+    if(category_id){
+        wherePart += ` AND p.category_id = ${category_id}`
+    }
+    if(producer_id){
+        wherePart += ` AND p.producer_id = ${producer_id}`
     }
     const query_text = `
         SELECT 
-            (SELECT COUNT(*) FROM products p),
-
-                (SELECT json_agg(pro) FROM (
-                    SELECT p.id, p.price, p.stock, p.name, p.destination, p.category_id, p.producer_id, pt.name AS name_tm, pt.description AS description_tm,
-                    ptt.name AS name_ru, ptt.description AS description_ru, pttt.name AS name_en, pttt.description AS description_en,
-                    prod.name AS producer_name, ct.name AS category_name, d.discount_value, 
-                    d.id AS discount_id, lower(validity)::text AS low_val, upper(validity)::text AS upper_val
-                    FROM products p
-                        LEFT JOIN product_translations pt 
-                            ON pt.product_id = p.id AND pt.language_id = 1
-                        LEFT JOIN product_translations ptt 
-                            ON ptt.product_id = p.id AND ptt.language_id = 2
-                        LEFT JOIN product_translations pttt 
-                            ON pttt.product_id = p.id AND pttt.language_id = 3
-                        LEFT JOIN producers prod
-                            ON prod.id = p.producer_id
-                        LEFT JOIN category_translations ct
-                            ON ct.category_id = p.category_id AND ct.language_id = 2
-                        LEFT JOIN discounts d
-                            ON d.product_id = p.id AND d.discount_type_id = 1 AND upper(validity) > localtimestamp AND is_active = true
-                    WHERE p.id > 0 
-                    ORDER BY p.id ASC
-                    ${offSet}
-                )pro) AS products
+            (SELECT COUNT(*) 
+            FROM products p
+                LEFT JOIN product_translations pt 
+                    ON pt.product_id = p.id AND pt.language_id = 1
+                LEFT JOIN product_translations ptt 
+                    ON ptt.product_id = p.id AND ptt.language_id = 2
+                LEFT JOIN product_translations pttt 
+                    ON pttt.product_id = p.id AND pttt.language_id = 3
+                LEFT JOIN producers prod
+                    ON prod.id = p.producer_id
+                LEFT JOIN category_translations ct
+                    ON ct.category_id = p.category_id AND ct.language_id = 2
+            WHERE p.id > 0 ${wherePart}
+            ), 
+            (SELECT json_agg(pro) FROM (
+                SELECT p.id, p.price, p.stock, p.name, p.destination, p.category_id, p.producer_id, pt.name AS name_tm, pt.description AS description_tm,
+                ptt.name AS name_ru, ptt.description AS description_ru, pttt.name AS name_en, pttt.description AS description_en,
+                prod.name AS producer_name, ct.name AS category_name, d.discount_value, 
+                d.id AS discount_id, lower(validity)::text AS low_val, upper(validity)::text AS upper_val
+                FROM products p
+                    LEFT JOIN product_translations pt 
+                        ON pt.product_id = p.id AND pt.language_id = 1
+                    LEFT JOIN product_translations ptt 
+                        ON ptt.product_id = p.id AND ptt.language_id = 2
+                    LEFT JOIN product_translations pttt 
+                        ON pttt.product_id = p.id AND pttt.language_id = 3
+                    LEFT JOIN producers prod
+                        ON prod.id = p.producer_id
+                    LEFT JOIN category_translations ct
+                        ON ct.category_id = p.category_id AND ct.language_id = 2
+                    LEFT JOIN discounts d
+                        ON d.product_id = p.id AND d.discount_type_id = 1 AND upper(validity) > localtimestamp AND is_active = true
+                WHERE p.id > 0 ${wherePart}
+                ORDER BY p.id ASC
+                ${offSet}
+            )pro) AS products
     `
     try {
         const {rows} = await database.query(query_text, [])
@@ -518,7 +536,7 @@ const AddBanner = async (req, res) =>{
     const {id} = req.params;
     const file = req.file
     try {
-        const {rows} = await database.query(`INSERT INTO banner (destination) VALUES ('${req.file.destination}')`, [])
+        const {rows} = await database.query(`INSERT INTO banner (destination) VALUES ('${req.file.destination}') RETURNING *`, [])
         return res.status(status.success).json({"rows":rows[0]})
     } catch (e) {
         console.log(e)
@@ -642,6 +660,43 @@ const GeneratePdf = async (req, res) =>{
     }
 }
 
+const ImportFromExcel = async (req, res) =>{
+    const file = req.file;
+    console.log(file)
+    const xlsx = require('xlsx')
+    // const database = require('./index.js')
+
+    const wb = xlsx.readFile(`${file.path}`, {cellDates:true})
+    const ws = wb.Sheets["price"]
+
+    const data = xlsx.utils.sheet_to_json(ws)
+    let query_text = `
+        INSERT INTO products (name, articul, price, stock) VALUES 
+    `
+    let k=0;
+    for(let i=0; i<data.length; i++){
+        item = data[i];
+        if((item.stock || item.articul)){
+            if(k ){
+                query_text += ", "
+            }
+            query_text += `('${item.name}', '${item.articul ? item.articul : `null`}', ${item.price}, ${item.stock ? item.stock : 0 } )`
+            
+            k++;
+        }
+    }
+    query_text += `ON CONFLICT (name, articul) DO UPDATE SET price = EXCLUDED.price, stock = EXCLUDED.stock`
+    try {
+        // console.log(query_text)
+        await database.query(query_text, [])
+        console.log("Hey you hace added")
+        return res.status(status.success).json(true)
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
 module.exports = {
     Login,
     LoadAdmin,
@@ -672,5 +727,6 @@ module.exports = {
     GetOrders,
     GetOrderByID,
     GeneratePdf,
-    DeactivateSales
+    DeactivateSales,
+    ImportFromExcel
 }

@@ -8,5 +8,7 @@ router.get('/:lang/get-products', GuestController.GetProducts);
 router.get('/:lang/get-cart-products', GuestController.GetCartProducts)
 router.get('/:lang/get-product/:id', GuestController.GetProductByID)
 router.post('/:lang/create-order', GuestController.CreateOrder)
+router.get('/:lang/get-news', GuestController.GetNews);
+router.get('/:lang/get-banners', GuestController.GetBanners)
 
 module.exports = router;

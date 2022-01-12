@@ -103,7 +103,6 @@ CREATE TABLE news(
     deleted BOOLEAN DEFAULT FALSE,
     destination VARCHAR(150),
     title VARCHAR(150)
-
 );
 
 CREATE TABLE news_descriptions(
@@ -116,7 +115,6 @@ CREATE TABLE news_descriptions(
     CONSTRAINT news_id_fk FOREIGN KEY (news_id) REFERENCES news(id) ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT language_id_fk FOREIGN KEY (language_id) REFERENCES languages(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
-
 
 CREATE TABLE discount_types(
     id SMALLSERIAL PRIMARY KEY NOT NULL,
@@ -170,4 +168,14 @@ CREATE TABLE order_items(
 CREATE TABLE banner(
     id SMALLSERIAL PRIMARY KEY NOT NULL,
     destination VARCHAR(150) NOT NULL
+);
+
+CREATE TABLE wish_lists(
+    id BIGSERIAL PRIMARY KEY NOT NULL,
+    user_id BIGINT NOT NULL,
+    product_id BIGINT NOT NULL,
+    UNIQUE(product_id, user_id),
+
+    CONSTRAINT user_id_fk FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE,
+    CONSTRAINT product_id_fk FOREIGN KEY (product_id) REFERENCES products(id) ON UPDATE CASCADE
 );

@@ -288,6 +288,42 @@ const CreateOrder = async (req, res) =>{
     }
 }
 
+const GetNews = async (req, res) =>{
+    const {lang} = req.params;
+    const query_text = `
+        SELECT (
+            SELECT COUNT (*) FROM news n
+            ), (SELECT json_agg(ne) FROM (
+                SELECT n.created_at, n.destination, nt.title, nt.description
+                FROM news n
+                INNER JOIN languages l
+                    l.language_code = '${lang}'
+                INNER JOIN news_translations nt
+                    ON nt.news_id = n.id
+            )ne) AS news
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).json({rows:rows[0]})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
+const GetBanners = async (req, res) =>{
+    const query_text = `
+        SELECT * FROM banners
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).json({rows})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
 
 
 module.exports = {
@@ -297,5 +333,7 @@ module.exports = {
     GetCartProducts,
     GetCartProducts,
     GetProductByID,
-    CreateOrder
+    CreateOrder,
+    GetNews,
+    GetBanners
 }
