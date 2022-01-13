@@ -13,7 +13,8 @@ let dir = path.join(__dirname, 'uploads')
 
 app.use(morgan('dev'))
 
-const allowedOrigins = [`http://localhost:3000`, 'http://localhost:3001', 'http://45.93.136.141:7010']
+const allowedOrigins = [`http://localhost:3000`, 'http://localhost:3001', 'http://45.93.136.141:7010', 
+    'http://192.168.31.242:3000', 'http://192.168.31.240:3000', 'http://192.168.31.244:3000', 'http://192.168.31.245:3000']
 
 app.use(cors({
     origin: function (origin, callback) {

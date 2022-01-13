@@ -104,7 +104,7 @@ const GetProducts = async (req, res) =>{
             ),
 
                 (SELECT json_agg(pro) FROM (
-                    SELECT p.id, p.price::text, p.stock, p.destination, d.discount_value, d.min_value, pt.name
+                    SELECT p.id::int, p.price::text, p.stock, p.destination, d.discount_value, d.min_value, pt.name, SUBSTRING(pt.description, 1, 30) AS description
                     FROM products p
                         LEFT JOIN languages l
                             ON l.language_code = '${lang}'
@@ -134,7 +134,7 @@ const GetProducts = async (req, res) =>{
 const GetProductByID = async (req, res) =>{
     const {id, lang} = req.params;
     const query_text = `
-        SELECT p.id, p.price::text, p.stock, p.destination, p.category_id, p.producer_id, pt.name, pt.description, 
+        SELECT p.id::int, p.price::text, p.stock, p.destination, p.category_id, p.producer_id, pt.name, pt.description, 
         prod.name AS producer_name, ct.name AS category_name, d.discount_value, d.min_value
         FROM products p
             INNER JOIN languages l
@@ -173,7 +173,7 @@ const GetCartProducts = async (req, res) => {
         return res.status(status.success).json({"rows":null})
     }
     const query_text = `
-        SELECT p.id, p.price, p.stock, p.destination, p.category_id, p.producer_id, pt.name, pt.description, 
+        SELECT p.id::int, p.price, p.stock, p.destination, p.category_id, p.producer_id, pt.name, pt.description, 
         prod.name AS producer_name, ct.name AS category_name, d.discount_value, d.min_value
         FROM products p
             INNER JOIN languages l
@@ -313,7 +313,7 @@ const GetNews = async (req, res) =>{
 
 const GetBanners = async (req, res) =>{
     const query_text = `
-        SELECT * FROM banners
+        SELECT * FROM banner 
     `
     try {
         const {rows} = await database.query(query_text, [])
@@ -324,7 +324,37 @@ const GetBanners = async (req, res) =>{
     }
 }
 
-
+const GetWishList = async (req, res) =>{
+    const {lang} = req.params;
+    const {products} = req.query;
+    if(!products.length){
+        return res.status(status.success).json({rows:null})
+    }
+    const query_text = `
+        SELECT p.id::int, p.price, p.stock, p.destination, p.category_id, p.producer_id, pt.name, pt.description, 
+        prod.name AS producer_name, ct.name AS category_name, d.discount_value, d.min_value
+        FROM products p
+            INNER JOIN languages l
+                ON l.language_code = '${lang}'
+            INNER JOIN product_translations pt 
+                ON pt.product_id = p.id AND pt.language_id = l.id
+            INNER JOIN producers prod
+                ON prod.id = p.producer_id
+            INNER JOIN category_translations ct
+                ON ct.category_id = p.category_id AND ct.language_id = l.id
+            LEFT JOIN discounts d 
+                ON d.product_id = p.id AND d.discount_type_id = 1 AND d.validity::tsrange @> localtimestamp AND is_active = true
+            WHERE p.id IN (${products.map(item => `${item}`).join(', ')})
+        ORDER BY p.id ASC
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).json({rows})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
 
 module.exports = {
     GetCategories,

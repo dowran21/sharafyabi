@@ -46,19 +46,19 @@ const resize_news  = async (req, res, next) =>{
         const name = req.file.originalname.replace(' ', '').split('.')[0];
         req.file.path = `uploads/news/${date}-${name}`
         await sharp(`./uploads/${req.file.filename}`)
-            .resize(300, 300)
+            .resize(150, 450)
             .toFormat("webp")
             .toFile(`./uploads/news/${date}-${name}-mini.webp`)
 
         await sharp(`./uploads/${req.file.filename}`)
-            .resize(600, 600)
+            .resize(300, 600)
             .toFormat("webp")
             .toFile(`./uploads/news/${date}-${name}-big.webp`)
 
         await sharp(`./uploads/${req.file.filename}`)
             .toFormat("webp")
-            .resize(900, 900)
-            .toFile(`./uploads/news/${date}-${name}-large.webp`)
+            .resize(1920, 550)
+            .toFile(`./uploads/news/${date}-${name}-slide-big.webp`)
         
         fs.unlinkSync(`./uploads/${req.file.filename}`)
     }else{

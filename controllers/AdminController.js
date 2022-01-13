@@ -1,6 +1,6 @@
 const database = require('../db/index')
 const {status} = require('../utils/status')
-const {ComparePassword, HashPassword, GenerateAdminAccessToken, GenerateAdminRefreshToken} = require('../utils/index')
+const {ComparePassword, GenerateAdminAccessToken, GenerateAdminRefreshToken} = require('../utils/index')
 
 
 const Login = async (req, res) =>{
@@ -423,7 +423,7 @@ const UpdateProduct = async (req, res) =>{
         console.log(query_text)
         await database.query(query_text, [])
         try {
-            const s_query = `SELECT p.id, p.price, p.stock, p.destination, p.category_id, p.producer_id, pt.name AS name_tm, pt.description AS description_tm,
+            const s_query = `SELECT p.id, p.price, p.name, p.stock, p.destination, p.category_id, p.producer_id, pt.name AS name_tm, pt.description AS description_tm,
             ptt.name AS name_ru, ptt.description AS description_ru, pttt.name AS name_en, pttt.description AS description_en,
             prod.name AS producer_name, ct.name AS category_name
             FROM products p
@@ -517,7 +517,6 @@ const DeactivateSales = async (req, res) =>{
     }
 }
 
-// const UpdateNews
 const DeleteNews = async (req, res) =>{
     const {id} = req.params;
     const query_text = `
@@ -536,7 +535,7 @@ const AddBanner = async (req, res) =>{
     const {id} = req.params;
     const file = req.file
     try {
-        const {rows} = await database.query(`INSERT INTO banner (destination) VALUES ('${req.file.destination}') RETURNING *`, [])
+        const {rows} = await database.query(`INSERT INTO banner (destination) VALUES ('${req.file.path}') RETURNING *`, [])
         return res.status(status.success).json({"rows":rows[0]})
     } catch (e) {
         console.log(e)
