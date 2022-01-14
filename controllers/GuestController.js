@@ -347,8 +347,8 @@ const GetWishList = async (req, res) =>{
         return res.status(status.success).json({rows:null})
     }
     const query_text = `
-        SELECT p.id::int, p.price, p.stock, p.destination, p.category_id, p.producer_id, pt.name, pt.description, 
-        prod.name AS producer_name, ct.name AS category_name, d.discount_value, d.min_value
+        SELECT p.id::int, p.price, p.stock, p.destination, p.category_id, p.producer_id, pt.name, 
+            pt.description, prod.name AS producer_name, ct.name AS category_name, d.discount_value, d.min_value
         FROM products p
             INNER JOIN languages l
                 ON l.language_code = '${lang}'
@@ -381,5 +381,6 @@ module.exports = {
     GetProductByID,
     CreateOrder,
     GetNews,
-    GetBanners
+    GetBanners,
+    GetWishList
 }
