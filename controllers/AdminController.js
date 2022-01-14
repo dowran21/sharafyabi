@@ -324,7 +324,7 @@ const AddNewsImage = async (req, res) =>{
 }
 
 const GetProducts = async (req, res) =>{
-    const {page, limit, search, category_id, producer_id} = req.query;
+    const {page, limit, search, category_id, producer_id, sort_column, sort_direction} = req.query;
     let offSet = ``
     if(page && limit){
         offSet = ` OFFSET  ${page*limit} LIMIT ${limit}`
@@ -338,6 +338,18 @@ const GetProducts = async (req, res) =>{
     }
     if(producer_id){
         wherePart += ` AND p.producer_id = ${producer_id}`
+    }
+    let col = ``
+    if(sort_column){
+        col = sort_column
+    }else{
+        col = "p.id"
+    }
+    let direct = ""
+    if(sort_direction){
+        direct = sort_direction
+    }else{
+        direct = "ASC"
     }
     const query_text = `
         SELECT 
@@ -358,7 +370,7 @@ const GetProducts = async (req, res) =>{
             (SELECT json_agg(pro) FROM (
                 SELECT p.id, p.price, p.stock, p.name, p.destination, p.category_id, p.producer_id, pt.name AS name_tm, pt.description AS description_tm,
                 ptt.name AS name_ru, ptt.description AS description_ru, pttt.name AS name_en, pttt.description AS description_en,
-                prod.name AS producer_name, ct.name AS category_name, d.discount_value, 
+                prod.name AS producer_name, ct.name AS category_name, d.discount_value, p.recomended, p.new_in_come,
                 d.id AS discount_id, lower(validity)::text AS low_val, upper(validity)::text AS upper_val
                 FROM products p
                     LEFT JOIN product_translations pt 
@@ -374,7 +386,7 @@ const GetProducts = async (req, res) =>{
                     LEFT JOIN discounts d
                         ON d.product_id = p.id AND d.discount_type_id = 1 AND upper(validity) > localtimestamp AND is_active = true
                 WHERE p.id > 0 ${wherePart}
-                ORDER BY p.id ASC
+                ORDER BY ${col} ${direct}, p.name ASC
                 ${offSet}
             )pro) AS products
     `
@@ -696,6 +708,36 @@ const ImportFromExcel = async (req, res) =>{
     }
 }
 
+const UpdateRecomended = async (req, res) =>{
+    const {id} = req.params;
+    const {value} = req.body
+    const query_text = `
+        UPDATE products SET recomended = ${value} WHERE id = ${id}
+    `
+    try {
+        await database.query(query_text, [])
+        return res.status(status.success).send(true)
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(False)
+    }
+}
+
+const UpdateNewInCome = async (req, res) =>{
+    const {id} = req.params;
+    const {value} = req.body
+    const query_text = `
+        UPDATE products SET new_in_come = ${value} WHERE id = ${id}
+    `
+    try {
+        await database.query(query_text, [])
+        return res.status(status.success).send(true)
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(False)
+    }
+}
+
 module.exports = {
     Login,
     LoadAdmin,
@@ -727,5 +769,7 @@ module.exports = {
     GetOrderByID,
     GeneratePdf,
     DeactivateSales,
-    ImportFromExcel
+    ImportFromExcel,
+    UpdateRecomended,
+    UpdateNewInCome
 }

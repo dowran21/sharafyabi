@@ -64,6 +64,8 @@ CREATE TABLE products(
     "name" VARCHAR (150) NOT NULL,
     destination VARCHAR (350),
     articul VARCHAR(30),
+    recomended BOOLEAN NOT NULL DEFAULT FALSE,
+    new_in_come BOOLEAN NOT NULL DEFAULT FALSE,
     UNIQUE("name", "articul"),
    
     CONSTRAINT producer_id_fk FOREIGN KEY (producer_id) REFERENCES producers(id) ON UPDATE CASCADE,
