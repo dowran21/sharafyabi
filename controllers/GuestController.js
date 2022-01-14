@@ -111,7 +111,7 @@ const GetProducts = async (req, res) =>{
 
                 (SELECT json_agg(pro) FROM (
                     SELECT p.id::int, p.price::text, p.stock, p.destination, d.discount_value, d.min_value, 
-                        pt.name, SUBSTRING(pt.description, 1, 30) AS description, p.recomended, p.new_in_come 
+                        pt.name, SUBSTRING(pt.description, 1, 30) AS description, p.recomended, p.new_in_come, ct.name, prod.name
 
                     FROM products p
                         LEFT JOIN languages l
@@ -259,7 +259,11 @@ const CreateOrder = async (req, res) =>{
         console.log(totalPrice)
         let discount = {}
         if(coupon){
-            discount = await database.query(`SELECT * FROM discounts WHERE discount_type_id = 4 AND validity:: tsrange @> localtimestamp AND coupon = '${coupon}' AND is_active = true`, [])
+            try{
+                discount = await database.query(`SELECT * FROM discounts WHERE discount_type_id = 4 AND validity:: tsrange @> localtimestamp AND coupon = '${coupon}' AND is_active = true`, [])
+            }catch(e){
+            
+            }
         }else{
             discount = await database.query(`SELECT * FROM discounts WHERE discount_type_id = 3 AND validity:: tsrange @> localtimestamp AND is_active = true AND min_value < ${totalPrice}`, [])
         }
