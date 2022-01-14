@@ -210,7 +210,8 @@ const GetCartProducts = async (req, res) => {
 const CreateOrder = async (req, res) =>{
     const {lang} = req.params;
     const {products, coupon, phone, address, user_id, name} = req.body;
-    if(!products.length){
+    console.log(req.body)
+    if(!products?.length){
         return res.status(status.success).send("free cart")
     }
     const query_text = `
@@ -238,21 +239,21 @@ const CreateOrder = async (req, res) =>{
         for(let i = 0; i<cart.length; i++){
             for(let j= 0; j<cart.length; j++){
                 if(cart[i]?.id == products[j]?.id){
-                    console.log("I am in if")
-                    cart[i].quantity = products[j].quantity
+                    // console.log("I am in if")
+                    cart[i].quantity = products[j].count
                 }
             }
         }
-        console.log(cart)
+        // console.log(cart)
         for(let i = 0; i<cart.length; i++){
             
-            // console.log(cart)
             if(cart[i].discunt_value){
+                // console.log(" i am in first if")
                 // console.log(parseFloat(cart[i].price)*parseFloat(cart[i].discount_value)*0.01*parseFloat(cart[i].quantity))
-                totalPrice = totalPrice +  parseFloat(cart[i].price)*(cart[i].discount_value)*0.01*(cart[i].quantity)
+                totalPrice = totalPrice +  parseFloat(cart[i].price)*(+cart[i].discount_value)*0.01*(+cart[i].quantity)
             }else{
                 // console.log(parseFloat(cart[i].price)*parseFloat(cart[i].quantity))
-                totalPrice = totalPrice +  parseFloat(cart[i].price)*(cart[i].quantity)
+                totalPrice = totalPrice +  parseFloat(cart[i].price)*(+cart[i].quantity)
             }
         }
         console.log(totalPrice)
@@ -273,7 +274,7 @@ const CreateOrder = async (req, res) =>{
 
         //     `
         // }
-        console.log(cart)
+        // console.log(cart)
         const order_query = `
             WITH inserted AS (
                 INSERT INTO orders(coupon, phone, address, user_id, total_price, discount_id, name)
