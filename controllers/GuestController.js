@@ -36,7 +36,7 @@ const GetProducers = async (req, res) =>{
 }
 
 const GetProducts = async (req, res) =>{
-    const {page, limit,  search, category_id, producer_id,min_price, max_price, sort_column, sort_direction } = req.query;
+    const {page, limit,  search, category_id, producer_id,min_price, max_price, sort_column, sort_direction, recomended, new_in_come } = req.query;
     const {lang} = req.params
     let offSet = ``
     if(page && limit){
@@ -88,6 +88,12 @@ const GetProducts = async (req, res) =>{
     }else{
         direction = `ASC`
     }
+    if(recomended){
+        wherePart += ` AND p.recomended = true`
+    }
+    if(new_in_come){
+        wherePart += ` AND p.new_in_come = true`
+    }
     const query_text = `
         SELECT 
             (SELECT COUNT(*) 
@@ -104,7 +110,9 @@ const GetProducts = async (req, res) =>{
             ),
 
                 (SELECT json_agg(pro) FROM (
-                    SELECT p.id::int, p.price::text, p.stock, p.destination, d.discount_value, d.min_value, pt.name, SUBSTRING(pt.description, 1, 30) AS description
+                    SELECT p.id::int, p.price::text, p.stock, p.destination, d.discount_value, d.min_value, 
+                        pt.name, SUBSTRING(pt.description, 1, 30) AS description, p.recomended, p.new_in_come 
+
                     FROM products p
                         LEFT JOIN languages l
                             ON l.language_code = '${lang}'
