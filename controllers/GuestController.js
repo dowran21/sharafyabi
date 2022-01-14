@@ -95,7 +95,7 @@ const GetProducts = async (req, res) =>{
         wherePart += ` AND p.new_in_come = true`
     }
     if(discounts){
-        wherePart += ` AND `
+        wherePart += ` AND d.id IS NOT NULL`
     }
     const query_text = `
         SELECT 
