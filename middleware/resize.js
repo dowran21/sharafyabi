@@ -55,7 +55,7 @@ const resize_news  = async (req, res, next) =>{
             .toFile(`./uploads/news/${date}-${name}-mini.webp`)
 
         await sharp(`./uploads/${req.file.filename}`)
-            .resize(192, 550, {
+            .resize(1920, 550, {
                 fit: 'fill',
             })
             .toFormat("webp")
