@@ -213,7 +213,7 @@ const GetCartProducts = async (req, res) => {
 const CreateOrder = async (req, res) =>{
     const {lang} = req.params;
     const {products, coupon, phone, address, user_id, name} = req.body;
-    console.log(req.body)
+    // console.log(req.body)
     if(!products?.length){
         return res.status(status.success).send("free cart")
     }
@@ -259,7 +259,7 @@ const CreateOrder = async (req, res) =>{
                 totalPrice = totalPrice +  parseFloat(cart[i].price)*(+cart[i].quantity)
             }
         }
-        console.log(totalPrice)
+        // console.log(totalPrice)
         let discount = {}
         if(coupon){
             try{
@@ -270,7 +270,7 @@ const CreateOrder = async (req, res) =>{
         }else{
             discount = await database.query(`SELECT * FROM discounts WHERE discount_type_id = 3 AND validity:: tsrange @> localtimestamp AND is_active = true AND min_value < ${totalPrice}`, [])
         }
-        console.log("After second query")
+        // console.log("After second query")
 
         if(discount?.rows[0]){
             totalPrice = totalPrice * discount.rows[0].discount_value*0.01
@@ -293,7 +293,7 @@ const CreateOrder = async (req, res) =>{
                 VALUES ${cart.map(item => `(${item.id}, ${item.quantity}, ${item.price}, (SELECT id FROM inserted))`).join(', ')}
             ) SELECT id FROM inserted
         `
-        console.log(order_query)
+        // console.log(order_query)
         await database.query(order_query, [])
         console.log("After third query")
 
@@ -306,6 +306,11 @@ const CreateOrder = async (req, res) =>{
 
 const GetNews = async (req, res) =>{
     const {lang} = req.params;
+    const {page, limit} = req.query;
+    let offSet = ``
+    if(page && limit){
+        offSet = ` OFFSET ${page*limit} LIMIT ${limit}`
+    }
     const query_text = `
         SELECT (
             SELECT COUNT (*) FROM news n
@@ -316,6 +321,7 @@ const GetNews = async (req, res) =>{
                     l.language_code = '${lang}'
                 INNER JOIN news_translations nt
                     ON nt.news_id = n.id
+                ${offSet}
             )ne) AS news
     `
     try {
