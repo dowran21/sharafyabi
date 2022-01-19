@@ -5,6 +5,7 @@ const UserHelper = require('../utils/index.js')
 const UserRegistration = async (req, res) =>{
     const {full_name, password, email, phone} = req.body;
     const hashedPassword = await UserHelper.HashPassword(password)
+    const {lang} = req.params;
     const query_text = `
         INSERT INTO users (full_name, password, email, phone, role_id) VALUES
         ('${full_name}', '${hashedPassword}', ${email ? `${email}`:'null'}, '${phone}', 2) RETURNING *
@@ -16,6 +17,11 @@ const UserRegistration = async (req, res) =>{
         const refresh_token = await UserHelper.GenerateUserRefreshToken(data)
         return res.status(status.success).json({token, refresh_token, data})
     } catch (e) {
+        if(e.message.includes("duplicate key value violates unique constraint")){
+            let message = {}
+            message["phone"] = `${lang==='ru' ? `Номер уже зарегестрирован` : lang === 'en' ? `Phone already exists` : `Belgi eýýäm bar`}`
+            return res.status(status.conflict).send({error:message})
+        }
         console.log(e)
         return res.status(status.error).send(false)
     }
@@ -32,13 +38,13 @@ const UserLogin = async (req, res) =>{
         if(!user){
             let message = {}
             message["phone"] = "Телефон или пароль неправильный"
-            return res.status(status.error).send({error:message})
+            return res.status(status.notfound).send({error:message})
         }
         const compare = await UserHelper.ComparePassword(password, user?.password)
         if(!compare){
             let message = {}
             message["phone"] = "Телефон или пароль неправильный"
-            return res.status(status.error).send({error:message})
+            return res.status(status.notfound).send({error:message})
         }
         const data = {id:user.id, full_name:user.full_name, email:user.email, phone:user.phone}
         const token = await UserHelper.GenerateUserAccessToken(data)
