@@ -213,7 +213,7 @@ const GetCartProducts = async (req, res) => {
 const CreateOrder = async (req, res) =>{
     const {lang} = req.params;
     const {products, coupon, phone, address, user_id, name} = req.body;
-    // console.log(req.body)
+    console.log(req.body)
     if(!products?.length){
         return res.status(status.success).send("free cart")
     }
@@ -231,7 +231,7 @@ const CreateOrder = async (req, res) =>{
                 ON ct.category_id = p.category_id AND ct.language_id = l.id
             LEFT JOIN discounts d 
                 ON d.product_id = p.id AND d.discount_type_id = 1 AND d.validity::tsrange @> localtimestamp AND is_active = true
-            WHERE p.id IN (${products.map(item => `${item.id}`).join(', ')})
+            WHERE p.id IN (${products?.map(item => `${item.id}`).join(', ')})
         `
     try {
         const {rows} = await database.query(query_text, [])
@@ -259,7 +259,7 @@ const CreateOrder = async (req, res) =>{
                 totalPrice = totalPrice +  parseFloat(cart[i].price)*(+cart[i].quantity)
             }
         }
-        // console.log(totalPrice)
+        console.log(totalPrice)
         let discount = {}
         if(coupon){
             try{

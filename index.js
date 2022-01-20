@@ -36,7 +36,7 @@ app.use(function (req, res, next) {
 
 app.use(express.json());
 app.use(express.urlencoded({limit: '50mb', extended : true}));
-app.use(express.static(path.join(__dirname, 'build')))
+app.use(express.static(path.join(__dirname, 'out')))
 
 app.use('/api', Routers)
 
@@ -44,7 +44,7 @@ app.use('/uploads', express.static(dir))
 
 
 app.get('*', function (req, res) {
-    res.sendFile(path.join(__dirname, 'build', 'index.html'));
+    res.sendFile(path.join(__dirname, 'out', 'index.html'));
 });
 
 app.use(cookieParser())
