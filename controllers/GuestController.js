@@ -268,7 +268,11 @@ const CreateOrder = async (req, res) =>{
             
             }
         }else{
-            discount = await database.query(`SELECT * FROM discounts WHERE discount_type_id = 3 AND validity:: tsrange @> localtimestamp AND is_active = true AND min_value < ${totalPrice}`, [])
+            try {
+                discount = await database.query(`SELECT * FROM discounts WHERE discount_type_id = 3 AND validity:: tsrange @> localtimestamp AND is_active = true AND min_value < ${totalPrice}`, [])                
+            } catch (e) {
+                
+            }
         }
         // console.log("After second query")
 
@@ -285,7 +289,7 @@ const CreateOrder = async (req, res) =>{
         const order_query = `
             WITH inserted AS (
                 INSERT INTO orders(coupon, phone, address, user_id, total_price, discount_id, name)
-                VALUES (${coupon ? `${coupon}` : `null`}, '${phone}', '${address}', ${user_id ? `${user_id}` : null}, 
+                VALUES (${coupon ? `'${coupon}'` : `null`}, '${phone}', '${address}', ${user_id ? `${user_id}` : null}, 
                     ${totalPrice}, ${discount?.rows[0] ? discount?.rows[0].id : `null`}, '${name}')
                 RETURNING *
             ), inserted_items AS (
