@@ -109,25 +109,29 @@ const GetOrderByID = async (req, res) =>{
     const user_id = req.user?.id
     const {lang, id} = req.params
     const query_text = `
-    SELECT p.id, oi.price, oi.quantity, d.discount_value, pt.name 
+    SELECT p.id, oi.price, oi.quantity, d.discount_value, pt.name, p.destination, ct.name AS category_name, prod.name AS producer_name
         FROM order_items oi
             INNER JOIN languages l
                 ON l.language_code = '${lang}'
             INNER JOIN products p 
                 ON p.id = oi.product_id
             INNER JOIN product_translations pt
-                ON pt.product_id = p.id AND pt.language_id = 2
+                ON pt.product_id = p.id AND pt.language_id = l.id
+            INNER JOIN category_translations ct 
+                ON ct.category_id = p.category_id AND ct.language_id = l.id
+            INNER JOIN producers prod 
+                ON prod.id = p.producer_id
             INNER JOIN orders o
                 ON o.id = oi.order_id
             LEFT JOIN discounts d
                 ON d.product_id = oi.product_id AND validity ::tsrange @> o.created_at
-            WHERE o.id = ${id}
+            WHERE o.id = ${id} AND o.user_id = ${user_id}
     `
     try {
         const {rows} = await database.query(query_text, [])
         return res.status(status.success).json({rows})
     } catch (e) {
-        console.log(e)
+        console.log(e) 
         return res.status(status.error).send(false)
     }
 }
