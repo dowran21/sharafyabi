@@ -133,6 +133,7 @@ const GetProducts = async (req, res) =>{
                     )pro) AS products
     `
     try {
+        console.log(query_text)
         const {rows} = await database.query(query_text, [])
         console.log(rows)
         return res.status(status.success).json({"rows":rows[0]})
