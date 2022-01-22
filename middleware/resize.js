@@ -57,7 +57,9 @@ const resize_news  = async (req, res, next) =>{
 
         await sharp(`./uploads/${req.file.filename}`)
             .toFormat("webp")
-            .resize(1920, 550)
+            .resize(1920, 350, {
+                fit: 'fill',
+            })
             .toFile(`./uploads/news/${date}-${name}-slide-big.webp`)
         
         fs.unlinkSync(`./uploads/${req.file.filename}`)
