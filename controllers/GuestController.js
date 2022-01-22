@@ -94,8 +94,8 @@ const GetProducts = async (req, res) =>{
     if(new_in_come){
         wherePart += ` AND p.new_in_come = ${new_in_come}`
     }
-    if(discounts){
-        wherePart += ` AND d.id IS NOT NULL`
+    if(discounts == 'true'){
+        wherePart += ` AND d.discount_value IS NOT NULL `
     }
     const query_text = `
         SELECT 
@@ -109,6 +109,8 @@ const GetProducts = async (req, res) =>{
                         ON prod.id = p.producer_id
                     INNER JOIN category_translations ct
                         ON ct.category_id = p.category_id AND ct.language_id = l.id
+                    LEFT JOIN discounts d 
+                        ON d.product_id = p.id AND d.discount_type_id = 1 AND d.validity::tsrange @> localtimestamp AND is_active = true
                     WHERE p.id > 0 ${wherePart}
             ),
 
