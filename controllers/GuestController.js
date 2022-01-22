@@ -44,7 +44,7 @@ const GetProducts = async (req, res) =>{
     }
     let wherePart = ``
     if(search){
-        wherePart = ` AND (pt.name *~ '${search}' OR pr.description *~ '${search}')`
+        wherePart = ` AND (pt.name ~* '${search}' OR pt.description ~* '${search}')`
     }
     let categories = []
     try {
@@ -89,10 +89,10 @@ const GetProducts = async (req, res) =>{
         direction = `ASC`
     }
     if(recomended){
-        wherePart += ` AND p.recomended = true`
+        wherePart += ` AND p.recomended = ${recomended}`
     }
     if(new_in_come){
-        wherePart += ` AND p.new_in_come = true`
+        wherePart += ` AND p.new_in_come = ${new_in_come}`
     }
     if(discounts){
         wherePart += ` AND d.id IS NOT NULL`
@@ -236,31 +236,24 @@ const CreateOrder = async (req, res) =>{
         `
     try {
         const {rows} = await database.query(query_text, [])
-        // console.log("After first query")
         const cart = rows;
-        // console.log(rows)
         let totalPrice = 0
         for(let i = 0; i<cart.length; i++){
             for(let j= 0; j<cart.length; j++){
                 if(cart[i]?.id == products[j]?.id){
-                    // console.log("I am in if")
                     cart[i].quantity = products[j].count
                 }
             }
         }
-        // console.log(cart)
         for(let i = 0; i<cart.length; i++){
             
             if(cart[i].discunt_value){
-                // console.log(" i am in first if")
-                // console.log(parseFloat(cart[i].price)*parseFloat(cart[i].discount_value)*0.01*parseFloat(cart[i].quantity))
                 totalPrice = totalPrice +  parseFloat(cart[i].price)*(+cart[i].discount_value)*0.01*(+cart[i].quantity)
             }else{
-                // console.log(parseFloat(cart[i].price)*parseFloat(cart[i].quantity))
                 totalPrice = totalPrice +  parseFloat(cart[i].price)*(+cart[i].quantity)
             }
         }
-        console.log(totalPrice)
+        // console.log(totalPrice)
         let discount = {}
         if(coupon){
             try{
@@ -275,18 +268,11 @@ const CreateOrder = async (req, res) =>{
                 
             }
         }
-        // console.log("After second query")
 
         if(discount?.rows[0]){
             totalPrice = totalPrice * discount.rows[0].discount_value*0.01
         }
-        // let orderItemQuery = ``
-        // for (let i=0; i<cart.length; i++){
-        //     orderItemQuery += `
-
-        //     `
-        // }
-        // console.log(cart)
+       
         const order_query = `
             WITH inserted AS (
                 INSERT INTO orders(coupon, phone, address, user_id, total_price, discount_id, name)
@@ -298,7 +284,6 @@ const CreateOrder = async (req, res) =>{
                 VALUES ${cart.map(item => `(${item.id}, ${item.quantity}, ${item.price}, (SELECT id FROM inserted))`).join(', ')}
             ) SELECT id FROM inserted
         `
-        // console.log(order_query)
         await database.query(order_query, [])
         console.log("After third query")
 
