@@ -135,7 +135,7 @@ const GetProducts = async (req, res) =>{
                     )pro) AS products
     `
     try {
-        console.log(query_text)
+        // console.log(query_text)
         const {rows} = await database.query(query_text, [])
         console.log(rows)
         return res.status(status.success).json({"rows":rows[0]})
@@ -187,7 +187,7 @@ const GetCartProducts = async (req, res) => {
         return res.status(status.success).json({"rows":null})
     }
     const query_text = `
-        SELECT p.id::int, p.price, p.stock, p.destination, p.category_id, p.producer_id, pt.name, pt.description, 
+        SELECT p.id::int, p.price::text, p.stock, p.destination, p.category_id, p.producer_id, pt.name, pt.description, 
         prod.name AS producer_name, ct.name AS category_name, d.discount_value, d.min_value
         FROM products p
             INNER JOIN languages l
@@ -339,14 +339,22 @@ const GetBanners = async (req, res) =>{
 }
 
 const GetWishList = async (req, res) =>{
-    const {lang} = req.params;
-    const {products} = req.query;
-    if(!products.length){
+    const { lang} = req.params;
+    const {products} = req.query
+    let obj = []
+    try {
+        obj =  await JSON.parse(products);
+    } catch (e) {
+        console.log(e)
+    }
+    console.log(obj)
+    if(!obj.length){
+        console.log("if")
         return res.status(status.success).json({rows:null})
     }
     const query_text = `
-        SELECT p.id::int, p.price, p.stock, p.destination, p.category_id, p.producer_id, pt.name, 
-            pt.description, prod.name AS producer_name, ct.name AS category_name, d.discount_value, d.min_value
+    SELECT p.id::int, p.price::text, p.stock, p.destination, p.category_id, p.producer_id, pt.name, pt.description, 
+        prod.name AS producer_name, ct.name AS category_name, d.discount_value, d.min_value
         FROM products p
             INNER JOIN languages l
                 ON l.language_code = '${lang}'
@@ -358,7 +366,7 @@ const GetWishList = async (req, res) =>{
                 ON ct.category_id = p.category_id AND ct.language_id = l.id
             LEFT JOIN discounts d 
                 ON d.product_id = p.id AND d.discount_type_id = 1 AND d.validity::tsrange @> localtimestamp AND is_active = true
-            WHERE p.id IN (${products.map(item => `${item}`).join(', ')})
+            WHERE p.id IN (${obj.map(item => `${item.id}`).join(', ')})
         ORDER BY p.id ASC
     `
     try {

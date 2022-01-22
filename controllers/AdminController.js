@@ -1,7 +1,7 @@
 const database = require('../db/index')
 const {status} = require('../utils/status')
 const {ComparePassword, GenerateAdminAccessToken, GenerateAdminRefreshToken} = require('../utils/index')
-
+const fs = require('fs')
 
 const Login = async (req, res) =>{
     const {phone, password} = req.body
@@ -698,9 +698,9 @@ const ImportFromExcel = async (req, res) =>{
     }
     query_text += `ON CONFLICT (name, articul) DO UPDATE SET price = EXCLUDED.price, stock = EXCLUDED.stock`
     try {
-        // console.log(query_text)
         await database.query(query_text, [])
-        console.log("Hey you hace added")
+        // console.log("Hey you hace added")
+        fs.unlinkSync(file.path);
         return res.status(status.success).json(true)
     } catch (e) {
         console.log(e)
