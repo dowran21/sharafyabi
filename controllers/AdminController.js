@@ -549,7 +549,7 @@ const AddBanner = async (req, res) =>{
     console.log(path_id, item_id)
     try {
         const {rows} = await database.query(`INSERT INTO banner (destination, path_id, item_id) 
-            VALUES ('${req.file.path}', ${path_id}, ${item_id}) RETURNING *`, [])
+            VALUES ('${req.file.path}', ${path_id ? path_id : `null`}, ${item_id ? item_id : `null`}) RETURNING *`, [])
         return res.status(status.success).json({"rows":rows[0]})
     } catch (e) {
         console.log(e)
