@@ -169,6 +169,8 @@ CREATE TABLE order_items(
 
 CREATE TABLE banner(
     id SMALLSERIAL PRIMARY KEY NOT NULL,
+    path_id SMALLINT ,
+    item_id SMALLINT NOT NULL,
     destination VARCHAR(150) NOT NULL
 );
 

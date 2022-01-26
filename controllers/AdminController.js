@@ -544,10 +544,12 @@ const DeleteNews = async (req, res) =>{
 }
 
 const AddBanner = async (req, res) =>{
-    const {id} = req.params;
+    const {path_id, item_id} = req.body;
     const file = req.file
+    console.log(path_id, item_id)
     try {
-        const {rows} = await database.query(`INSERT INTO banner (destination) VALUES ('${req.file.path}') RETURNING *`, [])
+        const {rows} = await database.query(`INSERT INTO banner (destination, path_id, item_id) 
+            VALUES ('${req.file.path}', ${path_id}, ${item_id}) RETURNING *`, [])
         return res.status(status.success).json({"rows":rows[0]})
     } catch (e) {
         console.log(e)
@@ -738,6 +740,32 @@ const UpdateNewInCome = async (req, res) =>{
     }
 }
 
+const GetProductsForSelect = async (req, res)=>{
+    const {search} = req.query;
+    const query_text = `
+        SELECT id AS value, name AS label FROM products WHERE name ~* '${search}'
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).json({rows})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
+const GetSelectCategories = async (req, res) =>{
+    const query_text = `
+        SELECT id AS value, name AS label FROM categories
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).json({rows})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
 module.exports = {
     Login,
     LoadAdmin,
@@ -771,5 +799,7 @@ module.exports = {
     DeactivateSales,
     ImportFromExcel,
     UpdateRecomended,
-    UpdateNewInCome
+    UpdateNewInCome,
+    GetProductsForSelect,
+    GetSelectCategories
 }

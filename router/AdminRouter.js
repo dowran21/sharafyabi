@@ -42,5 +42,7 @@ router.post('/import-from-excel', VerifyAdminAccessToken, upload.single('excel')
 router.post('/update-recomended/:id', VerifyAdminAccessToken, AdminController.UpdateRecomended)
 router.post('/update-new-in-come/:id', VerifyAdminAccessToken, AdminController.UpdateNewInCome)
 
+router.get('/select-products', VerifyAdminAccessToken, AdminController.GetProductsForSelect);
+router.get('/select-categories', VerifyAdminAccessToken, AdminController.GetSelectCategories)
 
 module.exports = router;
