@@ -307,14 +307,34 @@ const GetNews = async (req, res) =>{
         SELECT (
             SELECT COUNT (*) FROM news n
             ), (SELECT json_agg(ne) FROM (
-                SELECT n.created_at, n.destination, nt.title, nt.description
+                SELECT n.id, to_char(n.created_at, 'DD-MM-YYYY') AS created_at, n.destination, nt.title, SUBSTRING(nt.article, 1, 50) AS article
                 FROM news n
                 INNER JOIN languages l
-                    l.language_code = '${lang}'
-                INNER JOIN news_translations nt
+                    ON l.language_code = '${lang}'
+                INNER JOIN news_descriptions nt
                     ON nt.news_id = n.id
                 ${offSet}
             )ne) AS news
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).json({rows:rows[0]})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
+const GetNewsByID = async (req, res) =>{
+    const {id, lang} = req.params;
+    const query_text = `
+        SELECT to_char(n.created_at, 'DD-MM-YYYY') AS created_at, n.destination, nt.title, SUBSTRING(nt.article, 1, 50) AS article
+        FROM news n
+        INNER JOIN languages l
+            ON l.language_code = '${lang}'
+        INNER JOIN news_descriptions nt
+            ON nt.news_id = n.id
+        WHERE n.id = ${id} 
     `
     try {
         const {rows} = await database.query(query_text, [])
@@ -388,5 +408,6 @@ module.exports = {
     CreateOrder,
     GetNews,
     GetBanners,
-    GetWishList
+    GetWishList,
+    GetNewsByID
 }

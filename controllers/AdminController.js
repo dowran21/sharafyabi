@@ -235,7 +235,24 @@ const AddProductImage = async (req, res) =>{
     try {
         await database.query(`UPDATE products SET destination = '${file.path}' WHERE id = ${id}`, [])
         try {
-            const {rows} = await database.query(`SELECT * FROM products WHERE id = ${id}`)
+            const s_query = `
+            SELECT p.id, p.price, p.stock, p.destination, p.category_id, p.producer_id, pt.name AS name_tm, pt.description AS description_tm,
+            ptt.name AS name_ru, ptt.description AS description_ru, pttt.name AS name_en, pttt.description AS description_en,
+            prod.name AS producer_name, ct.name AS category_name
+            FROM products p
+                LEFT JOIN product_translations pt 
+                    ON pt.product_id = p.id AND pt.language_id = 1
+                LEFT JOIN product_translations ptt 
+                    ON ptt.product_id = p.id AND ptt.language_id = 2
+                LEFT JOIN product_translations pttt 
+                    ON pttt.product_id = p.id AND pttt.language_id = 3
+                LEFT JOIN producers prod
+                    ON prod.id = p.producer_id
+                LEFT JOIN category_translations ct
+                    ON ct.category_id = p.category_id AND ct.language_id = 2
+            WHERE p.id = ${id}
+            `
+            const {rows} = await database.query(s_query, [])
             return res.status(status.success).json({"rows":rows[0]})
         } catch (e) {
             console.log(e)
@@ -312,10 +329,11 @@ const AddNewsImage = async (req, res) =>{
     const {id} = req.params;
     const file = req.file
     const query_text = `
-        UPDATE news SET destination = '${file.destination}' WHERE id = ${id} RETURNING *
+        UPDATE news SET destination = '${file.path}' WHERE id = ${id} RETURNING *
     `
     try {
         const {rows} = await database.query(query_text, [])
+        console.log(query_text)
         return res.status(status.success).json({rows:rows[0]})
     } catch (e) {
         console.log(e)
@@ -766,6 +784,45 @@ const GetSelectCategories = async (req, res) =>{
         return res.status(status.error).send(false)
     }
 }
+
+const GetmainStatistics = async (req, res) =>{
+    const query_text = `
+        SELECT (
+            SELECT COUNT (*) FROM users
+        ) AS user_count, (
+            SELECT COUNT (*) FROM products
+        ) AS product_count, (
+            SELECT COUNT (*) FROM orders 
+        ) AS order_count, (
+            SELECT COUNT(*) FROM discounts 
+            WHERE validity::tsrange @> localtimestamp
+        ) AS discount_count
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).json({rows:rows[0]})       
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+
+}
+
+const GetOrderStatistics = async (req, res) =>{
+    const query_text = `
+        SELECT to_char(date_trunc('day', o.created_at), 'MM-DD') AS created_at, COUNT(o.id) AS "Заказы"
+        FROM orders o
+        WHERE  o.created_at < localtimestamp - INTERVAL '7 DAYS'
+        GROUP BY date_trunc('DAY', u.created_at)
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).json()
+    } catch (e) {
+        
+    }
+}
+
 module.exports = {
     Login,
     LoadAdmin,
@@ -801,5 +858,7 @@ module.exports = {
     UpdateRecomended,
     UpdateNewInCome,
     GetProductsForSelect,
-    GetSelectCategories
+    GetSelectCategories,
+    GetmainStatistics,
+    GetOrderStatistics
 }

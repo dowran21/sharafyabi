@@ -49,6 +49,45 @@ const resize_news  = async (req, res, next) =>{
         req.file.path = `uploads/news/${date}-${name}`
 
         await sharp(`./uploads/${req.file.filename}`)
+            .resize(360, 240, {
+                fit: 'fill',
+            })
+            .toFormat("webp")
+            .toFile(`./uploads/news/${date}-${name}-mini.webp`)
+
+        await sharp(`./uploads/${req.file.filename}`)
+            .toFormat("webp")
+            .resize(1000, 700, {
+                fit: 'fill',
+            })
+            .toFile(`./uploads/news/${date}-${name}-big.webp`)
+
+        await sharp(`./uploads/${req.file.filename}`)
+            .toFormat("webp")
+            .resize(360, 240, {
+                fit: 'fill',
+            })
+            .toFile(`./uploads/news/${date}-${name}-big.webp`)
+        
+        fs.unlinkSync(`./uploads/${req.file.filename}`)
+    }else{
+        next()
+    }
+    next()
+}
+
+const resize_banners  = async (req, res, next) =>{
+    // console.log(req.files)
+    if (req.file){
+        let dir = `./uploads/news`
+        if (!fs.existsSync(dir)){
+            fs.mkdirSync(dir);
+        } 
+        const date = moment().format('DDMMYYYY-HHmmss_SSS');
+        const name = req.file.originalname.replace(' ', '').split('.')[0];
+        req.file.path = `uploads/news/${date}-${name}`
+
+        await sharp(`./uploads/${req.file.filename}`)
             .resize(1920, 550, {
                 fit: 'fill',
             })
@@ -112,5 +151,6 @@ const resize_product_images  = async (req, res, next) =>{
 module.exports = {
     resize_producers_categories,
     resize_product_images,
-    resize_news
+    resize_news,
+    resize_banners
 }
