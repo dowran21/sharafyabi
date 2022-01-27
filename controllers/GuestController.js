@@ -312,7 +312,7 @@ const GetNews = async (req, res) =>{
                 INNER JOIN languages l
                     ON l.language_code = '${lang}'
                 INNER JOIN news_descriptions nt
-                    ON nt.news_id = n.id
+                    ON nt.news_id = n.id AND nt.language_id = l.id
                 ${offSet}
             )ne) AS news
     `
@@ -333,7 +333,7 @@ const GetNewsByID = async (req, res) =>{
         INNER JOIN languages l
             ON l.language_code = '${lang}'
         INNER JOIN news_descriptions nt
-            ON nt.news_id = n.id
+            ON nt.news_id = n.id AND language_id = l.id
         WHERE n.id = ${id} 
     `
     try {
