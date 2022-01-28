@@ -18,7 +18,7 @@ const GetCategories = async (req, res) =>{
             INNER JOIN languages l
                 ON l.language_code = '${lang}'    
             INNER JOIN category_translations ctt
-                ON ct.category_id = c.id AND ctt.language_id = l.id 
+                ON ctt.category_id = cc.id AND ctt.language_id = l.id 
         WHERE cc.main_category_id = c.id
           )ca) AS sub
         FROM categories c

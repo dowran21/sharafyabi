@@ -45,8 +45,8 @@ CREATE TABLE category_translations(
     category_id SMALLINT NOT NULL,
     "name" VARCHAR(150) NOT NULL,
 
-    CONSTRAINT language_id_fk FOREIGN KEY (language_id) REFERENCES languages(id) ON UPDATE CASCADE,
-    CONSTRAINT category_id_fk FOREIGN KEY (category_id) REFERENCES categories(id) ON UPDATE CASCADE
+    CONSTRAINT language_id_fk FOREIGN KEY (language_id) REFERENCES languages(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT category_id_fk FOREIGN KEY (category_id) REFERENCES categories(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE producers(
