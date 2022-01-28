@@ -41,7 +41,15 @@ const GetCategories = async (req, res) =>{
 const GetProducers = async (req, res) =>{
     const {lang} = req.params;
     const query_text = `
-        SELECT * FROM producers
+        SELECT prod.id, prod.name, prod.destination, (SELECT COUNT(*) FROM products p WHERE p.producer_id = prod.id)::integer AS count,
+        (SELECT COUNT(p.id) FROM products p WHERE p.recomended = true AND p.producer_id = prod.id)::integer AS recomended, 
+        (SELECT COUNT(p.id) FROM products p WHERE p.new_in_come = true AND p.producer_id = prod.id)::integer AS new_in_come,
+        (SELECT COUNT(p.id) FROM products p 
+            INNER JOIN discounts d
+                ON d.product_id = p.id AND d.discount_type_id = 3 AND validity::tsrange @> localtimestamp
+            WHERE p.producer_id = prod.id
+        )::integer AS discount
+         FROM producers prod
     `
     try {
         const {rows} = await database.query(query_text, [])
