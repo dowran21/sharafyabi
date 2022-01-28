@@ -109,7 +109,7 @@ const GetOrderByID = async (req, res) =>{
     const user_id = req.user?.id
     const {lang, id} = req.params
     const query_text = `
-    SELECT p.id, oi.price, oi.quantity, d.discount_value, pt.name, p.destination, ct.name AS category_name, prod.name AS producer_name
+    SELECT p.id::integer, oi.price, oi.quantity, d.discount_value::integer, pt.name, p.destination, ct.name AS category_name, prod.name AS producer_name
         FROM order_items oi
             INNER JOIN languages l
                 ON l.language_code = '${lang}'
@@ -118,7 +118,7 @@ const GetOrderByID = async (req, res) =>{
             INNER JOIN product_translations pt
                 ON pt.product_id = p.id AND pt.language_id = l.id
             INNER JOIN category_translations ct 
-                ON ct.category_id = p.category_id AND ct.language_id = l.id
+                ON ct.category_id = p.main_category_id AND ct.language_id = l.id
             INNER JOIN producers prod 
                 ON prod.id = p.producer_id
             INNER JOIN orders o

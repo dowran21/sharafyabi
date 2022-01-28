@@ -33,10 +33,10 @@ CREATE TABLE users(
 CREATE TABLE categories(
     id SMALLSERIAL PRIMARY KEY NOT NULL,
     "name" VARCHAR (150) NOT NULL,
-    destination VARCHAR(200)
-    ---, main_category_id SMALLINT, ----nawerno nado budet ubrat yego tak kak on ne nuzhen
+    destination VARCHAR(200),
+    main_category_id SMALLINT,
 
-    -- CONSTRAINT main_category_id_fk FOREIGN KEY (main_category_id) REFERENCES categories(id) ON UPDATE CASCADE
+    CONSTRAINT main_category_id_fk FOREIGN KEY (main_category_id) REFERENCES categories(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE category_translations(
@@ -57,7 +57,8 @@ CREATE TABLE producers(
 
 CREATE TABLE products(
     id BIGSERIAL PRIMARY KEY NOT NULL,
-    category_id SMALLINT ,
+    main_category_id SMALLINT,
+    sub_category_id SMALLINT,
     producer_id SMALLINT ,
     stock BIGINT NOT NULL,
     price NUMERIC(8,2) NOT NULL,
@@ -68,8 +69,9 @@ CREATE TABLE products(
     new_in_come BOOLEAN NOT NULL DEFAULT FALSE,
     UNIQUE("name", "articul"),
    
-    CONSTRAINT producer_id_fk FOREIGN KEY (producer_id) REFERENCES producers(id) ON UPDATE CASCADE,
-    CONSTRAINT category_id_fk FOREIGN KEY (category_id) REFERENCES categories(id) ON UPDATE CASCADE
+    CONSTRAINT producer_id_fk FOREIGN KEY (producer_id) REFERENCES producers(id) ON UPDATE CASCADE ON DELETE SET null,
+    CONSTRAINT main_category_id_fk FOREIGN KEY (main_category_id) REFERENCES categories(id) ON UPDATE CASCADE ON DELETE SET null,
+    CONSTRAINT sub_category_id_fk FOREIGN KEY (sub_category_id) REFERENCES categories(id) ON UPDATE CASCADE ON DELETE SET null
 );
 
 CREATE TABLE product_translations(

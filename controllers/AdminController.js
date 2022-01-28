@@ -114,9 +114,72 @@ const UpdateCategory = async (req, res) =>{
     }
 }
 
+const DeleteCategory = async (req, res) =>{
+    const {id} = req.params;
+    const query_text = `
+        DELETE FROM categories WHERE id = ${id}
+    `
+    try {
+        await database.query(query_text, [])
+        return res.status(status.success).send(true)
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
+const AddSubCategory = async (req, res) =>{
+    const {id} = req.params;
+    const {name_tm, name_ru, name_en} = req.body;
+
+    const query_text = ` WITH inserted AS (
+            INSERT INTO categories(name, main_category_id) VALUES('${name_ru}', ${id}) RETURNING *
+        ), inserted_trans1 AS (
+            INSERT INTO category_translations(language_id, category_id, name) VALUES 
+            (1, (SELECT id FROM inserted), '${name_tm}'), 
+            (2, (SELECT id FROM inserted), '${name_ru}'),
+            (3, (SELECT id FROM inserted), '${name_en}')
+        ) SELECT id FROM inserted `
+    try {
+        const {rows} = await database.query(query_text, [])
+        try {
+            const s_query = `
+                SELECT c.id, ct.name AS name_tm, ctt.name AS name_ru, cttt.name AS name_en
+                FROM categories c
+                    INNER JOIN category_translations ct 
+                        ON ct.category_id = c.id AND ct.language_id = 1
+                    INNER JOIN category_translations ctt 
+                        ON ctt.category_id = c.id AND ctt.language_id = 2
+                    INNER JOIN category_translations cttt 
+                        ON cttt.category_id = c.id AND cttt.language_id = 3
+                WHERE c.id = ${rows[0].id}
+            `
+            const k = await database.query(s_query, [])
+            return res.status(status.success).json({"rows":k.rows[0]})
+        } catch (e) {
+            console.log(e)
+            return res.status(status.error).send(false)
+        }
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
 const GetCategories = async (req, res) =>{
     const query_text = `
-        SELECT c.id, ct.name AS name_tm, ctt.name AS name_ru, cttt.name AS name_en, c.destination
+        SELECT c.id, ct.name AS name_tm, ctt.name AS name_ru, cttt.name AS name_en, c.destination,
+        (SELECT json_agg(cat) FROM (
+            SELECT cc.id, ct.name AS name_tm, ctt.name AS name_ru, cttt.name AS name_en, cc.main_category_id
+            FROM categories cc
+                INNER JOIN category_translations ct 
+                    ON ct.category_id = cc.id AND ct.language_id = 1
+                INNER JOIN category_translations ctt 
+                    ON ctt.category_id = cc.id AND ctt.language_id = 2
+                INNER JOIN category_translations cttt 
+                    ON cttt.category_id = cc.id AND cttt.language_id = 3
+            WHERE cc.main_category_id = c.id 
+        )cat) AS sub
         FROM categories c
             INNER JOIN category_translations ct 
                 ON ct.category_id = c.id AND ct.language_id = 1
@@ -124,6 +187,7 @@ const GetCategories = async (req, res) =>{
                 ON ctt.category_id = c.id AND ctt.language_id = 2
             INNER JOIN category_translations cttt 
                 ON cttt.category_id = c.id AND cttt.language_id = 3
+        WHERE c.main_category_id IS NULL
             `
     try {
         const {rows} = await database.query(query_text, [])
@@ -143,6 +207,35 @@ const AddProducer = async (req, res) =>{
     try {
         const {rows} = await database.query(query_text, [])
         res.status(status.success).json({"rows":rows[0]})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
+const UpdateProducer = async (req, res) =>{
+    const {id} = req.params;
+    const {name} = req.body;
+    const query_text = `
+        UPDATE producers SET name = '${name}' WHERE id = ${id}
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).send(true)
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
+const DeleteProducer = async (req, res) =>{
+    const {id} = req.params;
+    const query_text = `
+        DELETE FROM producers WHERE id = ${id}
+    `
+    try {
+        await database.query(query_text, [])
+        return res.status(status.success).send(true)
     } catch (e) {
         console.log(e)
         return res.status(status.error).send(false)
@@ -182,13 +275,13 @@ const AddProducerImage = async (req, res) =>{
 }
 
 const AddProduct = async (req, res) =>{
-    const {category_id, producer_id, stock  , price, name_tm, name_ru, name_en, 
+    const {main_category_id, sub_category_id, producer_id, stock  , price, name_tm, name_ru, name_en, 
         description_tm, description_ru, description_en} = req.body;
 
     const query_text = `
         WITH inserted AS (
-            INSERT INTO products(category_id, producer_id, price, stock, name )
-            VALUES (${category_id}, ${producer_id}, ${price}, ${stock}, '${name_ru}')
+            INSERT INTO products(main_category_id, producer_id, price, stock, name, sub_category_id )
+            VALUES (${main_category_id}, ${producer_id}, ${price}, ${stock}, '${name_ru}', ${sub_category_id})
             RETURNING *
         ), inserted_trans AS (
             INSERT INTO product_translations(product_id, language_id, name, description)
@@ -201,8 +294,8 @@ const AddProduct = async (req, res) =>{
         const {rows} = await database.query(query_text, []);
         try {
             const s_query = `
-                SELECT p.id, p.price, p.stock, p.destination, p.category_id, p.producer_id, pt.name AS name_tm, pt.description AS description_tm,
-                    ptt.name AS name_ru, ptt.description AS description_ru, pttt.name AS name_en, pttt.description AS description_en,
+                SELECT p.id, p.price, p.stock, p.destination, p.main_category_id, p.producer_id, pt.name AS name_tm, pt.description AS description_tm,
+                    ptt.name AS name_ru, ptt.description AS description_ru, pttt.name AS name_en, pttt.description AS description_en, p.sub_category_id,
                     prod.name AS producer_name, ct.name AS category_name
                     FROM products p
                         LEFT JOIN product_translations pt 
@@ -214,7 +307,7 @@ const AddProduct = async (req, res) =>{
                         LEFT JOIN producers prod
                             ON prod.id = p.producer_id
                         LEFT JOIN category_translations ct
-                            ON ct.category_id = p.category_id AND ct.language_id = 2
+                            ON ct.category_id = p.main_category_id AND ct.language_id = 2
                     WHERE p.id = ${rows[0].id}`
             const s = await database.query(s_query, [])
             // console.log(s.rows)
@@ -236,7 +329,7 @@ const AddProductImage = async (req, res) =>{
         await database.query(`UPDATE products SET destination = '${file.path}' WHERE id = ${id}`, [])
         try {
             const s_query = `
-            SELECT p.id, p.price, p.stock, p.destination, p.category_id, p.producer_id, pt.name AS name_tm, pt.description AS description_tm,
+            SELECT p.id, p.price, p.stock, p.destination, p.main_category_id, p.producer_id, pt.name AS name_tm, pt.description AS description_tm,
             ptt.name AS name_ru, ptt.description AS description_ru, pttt.name AS name_en, pttt.description AS description_en,
             prod.name AS producer_name, ct.name AS category_name
             FROM products p
@@ -249,7 +342,7 @@ const AddProductImage = async (req, res) =>{
                 LEFT JOIN producers prod
                     ON prod.id = p.producer_id
                 LEFT JOIN category_translations ct
-                    ON ct.category_id = p.category_id AND ct.language_id = 2
+                    ON ct.category_id = p.main_category_id AND ct.language_id = 2
             WHERE p.id = ${id}
             `
             const {rows} = await database.query(s_query, [])
@@ -352,7 +445,7 @@ const GetProducts = async (req, res) =>{
         wherePart += ` AND p.name ~* '${search}'`
     }
     if(category_id){
-        wherePart += ` AND p.category_id = ${category_id}`
+        wherePart += ` AND p.main_category_id = ${category_id}`
     }
     if(producer_id){
         wherePart += ` AND p.producer_id = ${producer_id}`
@@ -382,12 +475,12 @@ const GetProducts = async (req, res) =>{
                 LEFT JOIN producers prod
                     ON prod.id = p.producer_id
                 LEFT JOIN category_translations ct
-                    ON ct.category_id = p.category_id AND ct.language_id = 2
+                    ON ct.category_id = p.main_category_id AND ct.language_id = 2
             WHERE p.id > 0 ${wherePart}
             ), 
             (SELECT json_agg(pro) FROM (
-                SELECT p.id, p.price, p.stock, p.name, p.destination, p.category_id, p.producer_id, pt.name AS name_tm, pt.description AS description_tm,
-                ptt.name AS name_ru, ptt.description AS description_ru, pttt.name AS name_en, pttt.description AS description_en,
+                SELECT p.id, p.price, p.stock, p.name, p.destination, p.main_category_id, p.producer_id, pt.name AS name_tm, pt.description AS description_tm,
+                ptt.name AS name_ru, ptt.description AS description_ru, pttt.name AS name_en, pttt.description AS description_en, p.sub_category_id,
                 prod.name AS producer_name, ct.name AS category_name, d.discount_value, p.recomended, p.new_in_come,
                 d.id AS discount_id, lower(validity)::text AS low_val, upper(validity)::text AS upper_val
                 FROM products p
@@ -400,7 +493,7 @@ const GetProducts = async (req, res) =>{
                     LEFT JOIN producers prod
                         ON prod.id = p.producer_id
                     LEFT JOIN category_translations ct
-                        ON ct.category_id = p.category_id AND ct.language_id = 2
+                        ON ct.category_id = p.main_category_id AND ct.language_id = 2
                     LEFT JOIN discounts d
                         ON d.product_id = p.id AND d.discount_type_id = 1 AND upper(validity) > localtimestamp AND is_active = true
                 WHERE p.id > 0 ${wherePart}
@@ -437,11 +530,11 @@ const AddCategoryImage = async (req, res) =>{
 
 const UpdateProduct = async (req, res) =>{
     const {id} = req.params
-    const {category_id, producer_id, stock, price, name_tm, name_ru, name_en, 
+    const {main_category_id, producer_id, stock, price, name_tm, name_ru, name_en, sub_category_id,
         description_tm, description_ru, description_en} = req.body;
     const query_text = `
         WITH update_product AS (
-            UPDATE products SET category_id = ${category_id}, producer_id = ${producer_id}, 
+            UPDATE products SET main_category_id = ${main_category_id}, sub_category_id = ${sub_category_id}, producer_id = ${producer_id}, 
                 price = ${price}, stock = ${stock} WHERE id = ${id}
         ) INSERT INTO product_translations(product_id, language_id, name, description) 
         VALUES (${id}, 1, '${name_tm}', '${description_tm}'), 
@@ -453,8 +546,8 @@ const UpdateProduct = async (req, res) =>{
         console.log(query_text)
         await database.query(query_text, [])
         try {
-            const s_query = `SELECT p.id, p.price, p.name, p.stock, p.destination, p.category_id, p.producer_id, pt.name AS name_tm, pt.description AS description_tm,
-            ptt.name AS name_ru, ptt.description AS description_ru, pttt.name AS name_en, pttt.description AS description_en,
+            const s_query = `SELECT p.id, p.price, p.name, p.stock, p.destination, p.main_category_id, p.producer_id, pt.name AS name_tm, pt.description AS description_tm,
+            ptt.name AS name_ru, ptt.description AS description_ru, pttt.name AS name_en, pttt.description AS description_en, p.sub_category_id,
             prod.name AS producer_name, ct.name AS category_name
             FROM products p
                 LEFT JOIN product_translations pt 
@@ -466,7 +559,7 @@ const UpdateProduct = async (req, res) =>{
                 LEFT JOIN producers prod
                     ON prod.id = p.producer_id
                 LEFT JOIN category_translations ct
-                    ON ct.category_id = p.category_id AND ct.language_id = 2
+                    ON ct.category_id = p.main_category_id AND ct.language_id = 2
             WHERE p.id = ${id}`
             const {rows} = await database.query(s_query, [])
             return res.status(status.success).json({rows:rows[0]})
@@ -830,11 +923,16 @@ module.exports = {
     AddCategory,
     UpdateCategory,
     GetCategories,
+    AddSubCategory,
     
     AddProducer,
     AddProducerImage,
+    UpdateProducer,
+    DeleteProducer,
+
     GetProducers,
     AddCategoryImage, 
+    DeleteCategory,
 
     AddProduct,
     AddProductImage,

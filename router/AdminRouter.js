@@ -14,13 +14,17 @@ router.post('/add-category',VerifyAdminAccessToken, AdminController.AddCategory)
 router.post('/update-category/:id', VerifyAdminAccessToken,  AdminController.UpdateCategory);
 router.post('/add-category-image/:id', VerifyAdminAccessToken, upload.single("picture"),resize_producers_categories, AdminController.AddCategoryImage)
 router.post('/add-producer', VerifyAdminAccessToken, AdminController.AddProducer);
+router.post('/update-producer/:id', VerifyAdminAccessToken, AdminController.UpdateProducer)
 router.post('/add-producer-image/:id', VerifyAdminAccessToken, upload.single("picture"), resize_producers_categories, AdminController.AddProducerImage)
+router.post('/delete-producer/:id', VerifyAdminAccessToken, AdminController.DeleteProducer)
+router.post('/delete-category/:id', VerifyAdminAccessToken, AdminController.DeleteCategory)
 
 router.get('/categories',VerifyAdminAccessToken, AdminController.GetCategories)
 router.get('/producers',VerifyAdminAccessToken, AdminController.GetProducers)
 router.post('/add-product', VerifyAdminAccessToken, AdminController.AddProduct);
 router.post('/add-product-image/:id', VerifyAdminAccessToken, upload.single("picture"), resize_product_images, AdminController.AddProductImage)
 router.post('/update-product/:id', VerifyAdminAccessToken, AdminController.UpdateProduct)
+router.post('/add-sub-category/:id', VerifyAdminAccessToken, AdminController.AddSubCategory)
 
 router.post('/add-news', VerifyAdminAccessToken, AdminController.AddNews)
 router.post('/add-news-image/:id', VerifyAdminAccessToken, upload.single("picture"), resize_news, AdminController.AddNewsImage)
