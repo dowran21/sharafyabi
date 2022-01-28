@@ -180,7 +180,7 @@ const GetProductByID = async (req, res) =>{
                 ON prod.id = p.producer_id
             INNER JOIN category_translations ct
                 ON ct.category_id = p.main_category_id AND ct.language_id = l.id
-            INNER JOIN category_translations ctt
+            LEFT JOIN category_translations ctt
                 ON ctt.category_id = p.sub_category_id AND ctt.language_id = l.id
             LEFT JOIN discounts d 
                 ON d.product_id = p.id AND d.discount_type_id = 1 AND d.validity::tsrange @> localtimestamp 
