@@ -18,6 +18,9 @@ const Schema = {
         discounts:Joi.boolean().allow(""), 
         product_id:Joi.number().allow("")
     }),
+    Subscription:Joi.object({
+        phone:Joi.number().required().min(61000000).max(65999999)
+    }),
     Real_estate:Joi.object({
         type_id:Joi.number().required().label('тип').messages({
             'number.base':'{#label} не правильный',

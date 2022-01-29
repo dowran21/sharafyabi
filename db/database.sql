@@ -185,3 +185,9 @@ CREATE TABLE wish_lists(
     CONSTRAINT user_id_fk FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE,
     CONSTRAINT product_id_fk FOREIGN KEY (product_id) REFERENCES products(id) ON UPDATE CASCADE
 );
+
+CREATE TABLE subscriptions(
+    -- id BIGSERIAL PRIMARY KEY NOT NULL,
+    phone VARCHAR(8),
+    UNIQUE(phone)
+);

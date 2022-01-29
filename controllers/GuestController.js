@@ -126,8 +126,12 @@ const GetProducts = async (req, res) =>{
     if(new_in_come){
         wherePart += ` AND p.new_in_come = ${new_in_come}`
     }
-    if(discounts == 'true'){
-        wherePart += ` AND d.discount_value IS NOT NULL `
+    if(discounts){
+        if(discounts == "true" || discounts == true){
+            wherePart += ` AND d.discount_value IS NOT NULL `;
+        }else if(discounts == false){
+            wherePart += ` AND d.discount_value IS NULL`
+        }
     }
     if(product_id){
         wherePart += ` AND p.id NOT IN (${product_id})`
@@ -389,6 +393,7 @@ const GetBanners = async (req, res) =>{
     `
     try {
         const {rows} = await database.query(query_text, [])
+        console.log(rows)
         return res.status(status.success).json({rows})
     } catch (e) {
         console.log(e)
@@ -436,6 +441,25 @@ const GetWishList = async (req, res) =>{
     }
 }
 
+const AddtoSubscription = async (req, res) =>{
+    const {phone} = req.body;
+    const {lang} = req.params
+    const query_text = `
+        INSERT INTO subscriptions(phone) VALUES ('${phone}')
+    `
+    try {
+        await database.query(query_text, [])
+        return res.status(status.success).send(true)
+    } catch (e) {
+        if(e.message.includes("duplicate key value violates unique constraint")){
+            let message = {}
+            message["phone"] = `${lang==='ru' ? `Номер уже подписан` : lang === 'en' ? `Phone already subscribed` : `Belgi eýýäm ývazgyda`}`
+            return res.status(status.conflict).send({error:message})
+        }
+        return res.status(status.error).send(false)
+    }
+}
+
 module.exports = {
     GetCategories,
     GetProducers,
@@ -447,5 +471,6 @@ module.exports = {
     GetNews,
     GetBanners,
     GetWishList,
-    GetNewsByID
+    GetNewsByID,
+    AddtoSubscription
 }
