@@ -30,6 +30,7 @@ router.post('/add-news', VerifyAdminAccessToken, AdminController.AddNews)
 router.post('/add-news-image/:id', VerifyAdminAccessToken, upload.single("picture"), resize_news, AdminController.AddNewsImage)
 router.get('/get-news', VerifyAdminAccessToken, AdminController.GetNews)
 router.post('/delete-news/:id', VerifyAdminAccessToken, AdminController.DeleteNews)
+router.post('/update-news/:id', VerifyAdminAccessToken, AdminController.UpdateNews)
 
 router.post("/add-sale", VerifyAdminAccessToken, AdminController.AddSale)
 router.get("/get-sales", VerifyAdminAccessToken, AdminController.GetSales)

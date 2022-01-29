@@ -398,7 +398,7 @@ const GetNews = async (req, res) =>{
             SELECT COUNT (*) FROM news n
         ), (SELECT json_agg(ne) FROM (
             SELECT n.id, nd.title AS title_tm, n.destination, nd.article AS article_tm, ndd.title AS title_ru, ndd.article AS article_ru, 
-                nddd.title AS title_en, nddd.title AS title_en, to_char(n.created_at, 'YYYY/MM/DD' ) AS created_at
+                nddd.title AS title_en, nddd.article AS article_en, to_char(n.created_at, 'YYYY/MM/DD' ) AS created_at
             FROM news n
                 INNER JOIN news_descriptions nd
                     ON nd.news_id = n.id AND nd.language_id = 1
@@ -428,6 +428,24 @@ const AddNewsImage = async (req, res) =>{
         const {rows} = await database.query(query_text, [])
         console.log(query_text)
         return res.status(status.success).json({rows:rows[0]})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
+const UpdateNews = async (req, res) =>{
+    const {title_tm, title_ru, title_en, article_tm, article_ru, article_en} = req.body
+    const {id} = req.params;
+    const query_text = `
+        WITH updated AS (UPDATE news_descriptions SET title = '${title_tm}', article = '${article_tm}' WHERE news_id = ${id} AND language_id = 1),
+            update_ru AS (UPDATE news_descriptions SET title = '${title_ru}', article = '${article_ru}' WHERE news_id = ${id} AND language_id = 2)
+            UPDATE news_descriptions SET title = '${title_en}', article = '${article_en}' WHERE news_id = ${id} AND language_id = 3    
+        `
+    try {
+        console.log(query_text)
+        await database.query(query_text, [])
+        return res.status(status.success).send(true)
     } catch (e) {
         console.log(e)
         return res.status(status.error).send(false)
@@ -941,6 +959,8 @@ module.exports = {
     AddNews,
     AddNewsImage,
     DeleteNews,
+    UpdateNews,
+
     GetProducts,
     AddSale,
     GetSales,
