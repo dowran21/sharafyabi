@@ -144,7 +144,7 @@ const AddSubCategory = async (req, res) =>{
         const {rows} = await database.query(query_text, [])
         try {
             const s_query = `
-                SELECT c.id, ct.name AS name_tm, ctt.name AS name_ru, cttt.name AS name_en
+                SELECT c.id, ct.name AS name_tm, ctt.name AS name_ru, cttt.name AS name_en, c.main_category_id
                 FROM categories c
                     INNER JOIN category_translations ct 
                         ON ct.category_id = c.id AND ct.language_id = 1
@@ -188,6 +188,8 @@ const GetCategories = async (req, res) =>{
             INNER JOIN category_translations cttt 
                 ON cttt.category_id = c.id AND cttt.language_id = 3
         WHERE c.main_category_id IS NULL
+        ORDER BY c.id ASC
+
             `
     try {
         const {rows} = await database.query(query_text, [])
@@ -244,7 +246,20 @@ const DeleteProducer = async (req, res) =>{
 
 const GetProducers = async (req, res) =>{
     const query_text = `
-        SELECT * FROM producers
+        SELECT * FROM producers ORDER BY id ASC
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).json({rows})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
+const GetSelectProducers = async (req, res) =>{
+    const query_text = `
+        SELECT id AS value, name AS label FROM producers
     `
     try {
         const {rows} = await database.query(query_text, [])
@@ -398,7 +413,7 @@ const GetNews = async (req, res) =>{
             SELECT COUNT (*) FROM news n
         ), (SELECT json_agg(ne) FROM (
             SELECT n.id, nd.title AS title_tm, n.destination, nd.article AS article_tm, ndd.title AS title_ru, ndd.article AS article_ru, 
-                nddd.title AS title_en, nddd.article AS article_en, to_char(n.created_at, 'YYYY/MM/DD' ) AS created_at
+                nddd.title AS title_en, nddd.article AS article_en, to_char(n.created_at, 'DD.MM.YYYY' ) AS created_at
             FROM news n
                 INNER JOIN news_descriptions nd
                     ON nd.news_id = n.id AND nd.language_id = 1
@@ -406,7 +421,7 @@ const GetNews = async (req, res) =>{
                     ON ndd.news_id = n.id AND ndd.language_id = 2
                 INNER JOIN news_descriptions nddd
                     ON nddd.news_id = n.id AND nddd.language_id = 3
-                ORDER BY n.id DESC
+                ORDER BY n.id ASC
         )ne) AS news
     `
     try {
@@ -500,7 +515,7 @@ const GetProducts = async (req, res) =>{
                 SELECT p.id, p.price, p.stock, p.name, p.destination, p.main_category_id, p.producer_id, pt.name AS name_tm, pt.description AS description_tm,
                 ptt.name AS name_ru, ptt.description AS description_ru, pttt.name AS name_en, pttt.description AS description_en, p.sub_category_id,
                 prod.name AS producer_name, ct.name AS category_name, d.discount_value, p.recomended, p.new_in_come,
-                d.id AS discount_id, lower(validity)::text AS low_val, upper(validity)::text AS upper_val
+                d.id AS discount_id, to_char(lower(validity)::date, 'DD.MM.YYYY') AS low_val, to_char(upper(validity), 'DD.MM.YYYY') AS upper_val
                 FROM products p
                     LEFT JOIN product_translations pt 
                         ON pt.product_id = p.id AND pt.language_id = 1
@@ -923,14 +938,14 @@ const GetOrderStatistics = async (req, res) =>{
     const query_text = `
         SELECT to_char(date_trunc('day', o.created_at), 'MM-DD') AS created_at, COUNT(o.id) AS "Заказы"
         FROM orders o
-        WHERE  o.created_at < localtimestamp - INTERVAL '7 DAYS'
-        GROUP BY date_trunc('DAY', u.created_at)
+        GROUP BY date_trunc('DAY', o.created_at)
     `
     try {
         const {rows} = await database.query(query_text, [])
         return res.status(status.success).json()
     } catch (e) {
-        
+        console.log(e)
+        return res.status(status.error).send(false)
     }
 }
 
@@ -978,5 +993,6 @@ module.exports = {
     GetProductsForSelect,
     GetSelectCategories,
     GetmainStatistics,
-    GetOrderStatistics
+    GetOrderStatistics,
+    GetSelectProducers
 }

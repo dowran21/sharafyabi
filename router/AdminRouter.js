@@ -49,6 +49,7 @@ router.post('/update-new-in-come/:id', VerifyAdminAccessToken, AdminController.U
 
 router.get('/select-products', VerifyAdminAccessToken, AdminController.GetProductsForSelect);
 router.get('/select-categories', VerifyAdminAccessToken, AdminController.GetSelectCategories)
+router.get('/select-producers', VerifyAdminAccessToken, AdminController.GetSelectProducers)
 
 router.get('/main-statistics', VerifyAdminAccessToken, AdminController.GetmainStatistics);
 router.get('/order-statistics', VerifyAdminAccessToken, AdminController.GetOrderStatistics)

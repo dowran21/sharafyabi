@@ -62,7 +62,7 @@ const GetProducers = async (req, res) =>{
 
 const GetProducts = async (req, res) =>{
     const {page, limit,  search, category_id, producer_id,min_price, max_price, 
-            sort_column, sort_direction, recomended, new_in_come, discounts, product_id } = req.query;
+            sort_column, sort_direction, main_category_id, recomended, new_in_come, discounts, product_id } = req.query;
     const {lang} = req.params
     let offSet = ``
     if(page && limit){
@@ -72,6 +72,7 @@ const GetProducts = async (req, res) =>{
     if(search){
         wherePart = ` AND (pt.name ~* '${search}' OR pt.description ~* '${search}')`
     }
+
     let categories = []
     try {
         categories = JSON.parse(category_id)
@@ -80,8 +81,13 @@ const GetProducts = async (req, res) =>{
     }
     console.log(categories)
     if(categories.length > 0){
-        wherePart = ` AND (p.main_category_id IN ( ${categories?.map(item => `${item}`).join(',')} ) OR p.sub_category_id IN ( ${categories?.map(item => `${item}`).join(',')} ) )`
+        wherePart = ` AND  p.sub_category_id IN ( ${categories?.map(item => `${item}`).join(',')} )`
     }
+
+    if(main_category_id){
+        wherePart = ` AND p.main_category_id = ${main_category_id}`
+    }
+    
     let producers = []
     try {
         producers = JSON.parse(producer_id)
@@ -130,16 +136,16 @@ const GetProducts = async (req, res) =>{
         SELECT 
             (SELECT COUNT(*) 
                 FROM products p
-                    INNER JOIN languages l
-                        ON l.language_code = '${lang}'
-                    INNER JOIN product_translations pt 
-                        ON pt.product_id = p.id AND pt.language_id = l.id
-                    INNER JOIN producers prod
-                        ON prod.id = p.producer_id
-                    INNER JOIN category_translations ct
-                        ON ct.category_id = p.main_category_id AND ct.language_id = l.id
-                    LEFT JOIN discounts d 
-                        ON d.product_id = p.id AND d.discount_type_id = 1 AND d.validity::tsrange @> localtimestamp AND is_active = true
+                        LEFT JOIN languages l
+                            ON l.language_code = '${lang}'
+                        INNER JOIN product_translations pt 
+                            ON pt.product_id = p.id AND pt.language_id = l.id
+                        INNER JOIN producers prod
+                            ON prod.id = p.producer_id
+                        LEFT JOIN category_translations ct
+                            ON ct.category_id = p.main_category_id AND ct.language_id = l.id
+                        LEFT JOIN discounts d 
+                            ON d.product_id = p.id AND d.discount_type_id = 1 AND d.validity::tsrange @> localtimestamp AND is_active = true
                     WHERE p.id > 0 ${wherePart}
             ),
 
@@ -152,7 +158,7 @@ const GetProducts = async (req, res) =>{
                             ON l.language_code = '${lang}'
                         INNER JOIN product_translations pt 
                             ON pt.product_id = p.id AND pt.language_id = l.id
-                        LEFT JOIN producers prod
+                        INNER JOIN producers prod
                             ON prod.id = p.producer_id
                         LEFT JOIN category_translations ct
                             ON ct.category_id = p.main_category_id AND ct.language_id = l.id
@@ -344,9 +350,10 @@ const GetNews = async (req, res) =>{
                     ON l.language_code = '${lang}'
                 INNER JOIN news_descriptions nt
                     ON nt.news_id = n.id AND nt.language_id = l.id
+                ORDER BY n.id DESC
                 ${offSet}
             )ne) AS news
-    `
+        `
     try {
         const {rows} = await database.query(query_text, [])
         return res.status(status.success).json({rows:rows[0]})

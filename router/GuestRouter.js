@@ -1,10 +1,12 @@
 const express = require('express');
 const router = new express.Router();
 const GuestController = require('../controllers/GuestController')
+const {QuerySchemaMiddleware} = require("../middleware/SchemaMiddleware")
+const Schema = require("../schemas/UserSchema")
 
 router.get('/:lang/get-categories', GuestController.GetCategories);
 router.get('/:lang/get-producers', GuestController.GetProducers);
-router.get('/:lang/get-products', GuestController.GetProducts);
+router.get('/:lang/get-products', QuerySchemaMiddleware(Schema.Products_filter), GuestController.GetProducts);
 router.get('/:lang/get-product/:id', GuestController.GetProductByID)
 
 
