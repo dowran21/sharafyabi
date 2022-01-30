@@ -2,6 +2,14 @@ const database = require('../db/index')
 const {status} = require('../utils/status')
 const {ComparePassword, GenerateAdminAccessToken, GenerateAdminRefreshToken} = require('../utils/index')
 const fs = require('fs')
+const admin = require("firebase-admin")
+const serviceAccount = require('/home/dowran/Desktop/sharafyabi/backend/sharafyabi-4293c-firebase-adminsdk-4eri8-7419f65cac.json')
+const FIREBASE_DATABASE_URL = "https://sharafyabi-4293c-default-rtdb.firebaseio.com"
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseUrl: FIREBASE_DATABASE_URL
+})
+
 
 const Login = async (req, res) =>{
     const {phone, password} = req.body
@@ -946,6 +954,18 @@ const GetOrderStatistics = async (req, res) =>{
     } catch (e) {
         console.log(e)
         return res.status(status.error).send(false)
+    }
+}
+
+const AdminFirebase = async (req, res) =>{
+    let payload = {
+        notification:{title:"Something fro dadebay what you can see", body:"Some body for dadebay"},
+        data:{click_action:"Some click action after we will try something more"}
+    }
+    try {
+        await admin.messaging().sendToTopic("Push", payload)        
+    } catch (e) {
+        console.log(e)
     }
 }
 

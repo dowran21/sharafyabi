@@ -9,7 +9,7 @@ const GetCategories = async (req, res) =>{
         (SELECT COUNT(p.id) FROM products p WHERE p.new_in_come = true AND p.main_category_id = c.id)::integer AS new_in_come,
         (SELECT COUNT(p.id) FROM products p 
             INNER JOIN discounts d
-                ON d.product_id = p.id AND d.discount_type_id = 3 AND validity::tsrange @> localtimestamp
+                ON d.product_id = p.id AND d.discount_type_id = 1 AND validity::tsrange @> localtimestamp AND d.is_active = true
             WHERE p.main_category_id = c.id
         )::integer AS discount,
         c.destination,
@@ -149,7 +149,7 @@ const GetProducts = async (req, res) =>{
                         LEFT JOIN category_translations ct
                             ON ct.category_id = p.main_category_id AND ct.language_id = l.id
                         LEFT JOIN discounts d 
-                            ON d.product_id = p.id AND d.discount_type_id = 1 AND d.validity::tsrange @> localtimestamp AND is_active = true
+                            ON d.product_id = p.id AND d.discount_type_id = 1 AND d.validity::tsrange @> localtimestamp AND d.is_active = true
                     WHERE p.id > 0 ${wherePart}
             ),
 
@@ -167,7 +167,7 @@ const GetProducts = async (req, res) =>{
                         LEFT JOIN category_translations ct
                             ON ct.category_id = p.main_category_id AND ct.language_id = l.id
                         LEFT JOIN discounts d 
-                            ON d.product_id = p.id AND d.discount_type_id = 1 AND d.validity::tsrange @> localtimestamp AND is_active = true
+                            ON d.product_id = p.id AND d.discount_type_id = 1 AND d.validity::tsrange @> localtimestamp AND d.is_active = true
                     WHERE p.id > 0 ${wherePart}
                     ORDER BY ${column} ${direction}
                     ${offSet}
@@ -393,7 +393,6 @@ const GetBanners = async (req, res) =>{
     `
     try {
         const {rows} = await database.query(query_text, [])
-        console.log(rows)
         return res.status(status.success).json({rows})
     } catch (e) {
         console.log(e)
