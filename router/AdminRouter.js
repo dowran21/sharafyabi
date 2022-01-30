@@ -53,6 +53,6 @@ router.get('/select-producers', VerifyAdminAccessToken, AdminController.GetSelec
 
 router.get('/main-statistics', VerifyAdminAccessToken, AdminController.GetmainStatistics);
 router.get('/order-statistics', VerifyAdminAccessToken, AdminController.GetOrderStatistics)
-router.post("/push", VerifyAdminAccessToken, AdminController.AdminFirebase)
+// router.post("/push", VerifyAdminAccessToken, AdminController.AdminFirebase)
 
 module.exports = router;
