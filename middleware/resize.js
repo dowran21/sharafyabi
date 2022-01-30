@@ -21,7 +21,7 @@ const resize_producers_categories  = async (req, res, next) =>{
             .toFile(`./uploads/producers_categories/${date}-${name}-mini.webp`)
 
         await sharp(`./uploads/${req.file.filename}`)
-            .resize(640, 640)
+            .resize(500, 400)
             .toFormat("webp")
             .toFile(`./uploads/producers_categories/${date}-${name}-big.webp`)
 
