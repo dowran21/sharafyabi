@@ -88,7 +88,7 @@ const resize_banners  = async (req, res, next) =>{
         req.file.path = `uploads/news/${date}-${name}`
 
         await sharp(`./uploads/${req.file.filename}`)
-            .resize(1600, 550, {
+            .resize(1000, 550, {
                 fit: 'fill',
             })
             .toFormat("webp")
