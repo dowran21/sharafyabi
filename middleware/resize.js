@@ -120,16 +120,10 @@ const resize_product_images  = async (req, res, next) =>{
         const name = req.file.originalname.replace(' ', '').split('.')[0];
         req.file.path = `uploads/${id}/${date}-${name}`
         await sharp(`./uploads/${req.file.filename}`)
-            .resize(300, 300, {
-                fit: 'fill',
-            })
             .toFormat("webp")
             .toFile(`./uploads/${id}/${date}-${name}-mini.webp`)
 
         await sharp(`./uploads/${req.file.filename}`)
-            .resize(600, 600, {
-                fit: 'fill',
-            })
             .toFormat("webp")
             .toFile(`./uploads/${id}/${date}-${name}-big.webp`)
 
