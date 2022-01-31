@@ -2,6 +2,7 @@ const database = require('../db/index')
 const {status} = require('../utils/status')
 const {ComparePassword, GenerateAdminAccessToken, GenerateAdminRefreshToken} = require('../utils/index')
 const fs = require('fs')
+const { triggerAsyncId } = require('async_hooks')
 // const admin = require("firebase-admin")
 // const serviceAccount = require('/home/dowran/Desktop/sharafyabi/backend/sharafyabi-4293c-firebase-adminsdk-4eri8-7419f65cac.json')
 // const FIREBASE_DATABASE_URL = "https://sharafyabi-4293c-default-rtdb.firebaseio.com"
@@ -747,10 +748,11 @@ const GetOrders = async (req, res) =>{
                 SELECT COUNT(*) FROM orders
             ), (SELECT json_agg(ord) FROM (
                 SELECT o.id, o.phone, o.address, o.name, to_char(o.created_at, 'DD.MM.YYYY HH24:MI') AS created_at,
-                    o.total_price, o.coupon, o.discount_id, d.discount_value
+                    o.total_price, o.coupon, o.discount_id, d.discount_value, o.accepted, o.comment
                     FROM orders o
                     LEFT JOIN discounts d
                         ON d.id = o.discount_id
+                    ORDER BY o.id DESC
                     ${offSet}
             )ord) AS orders 
     `
@@ -760,6 +762,21 @@ const GetOrders = async (req, res) =>{
     } catch (e) {
         console.log(e)
         return res.status(status.error).send(false)
+    }
+}
+
+const UpdateAccept = async (req, res)=>{
+    const {id} = req.params;
+    const {accept} = req.body;
+    const query_text = `
+        UPDATE orders SET accepted = ${accept} WHERE id = ${id}
+    `
+    try {
+        await database.query(query_text,[])
+        return res.status(status.success).send(true)
+    } catch (e) {
+        console.log(e)
+        return re.status(status.error).send(false)
     }
 }
 
@@ -781,6 +798,20 @@ const GetOrderByID = async (req, res) =>{
     try {
         const {rows} = await database.query(query_text, [])
         return res.status(status.success).json({rows})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
+const DeleteOrder = async (req, res) =>{
+    const {id} = req.params;
+    const query_text = `
+        DELETE FROM orders WHERE id = ${id}
+    `
+    try {
+        await database.query(query_text, [])
+        return res.status(status.success).send(true)
     } catch (e) {
         console.log(e)
         return res.status(status.error).send(false)
@@ -1021,5 +1052,7 @@ module.exports = {
     GetmainStatistics,
     GetOrderStatistics,
     GetSelectProducers,
+    UpdateAccept,
+    DeleteOrder
     // AdminFirebase
 }

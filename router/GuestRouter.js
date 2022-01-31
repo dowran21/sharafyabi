@@ -11,7 +11,7 @@ router.get('/:lang/get-product/:id', GuestController.GetProductByID)
 
 
 router.get('/:lang/get-cart-products', GuestController.GetCartProducts)
-router.post('/:lang/create-order', GuestController.CreateOrder)
+router.post('/:lang/create-order', SchemaMiddleware(Schema.Create_Order), GuestController.CreateOrder)
 
 router.get('/:lang/get-news', GuestController.GetNews);
 router.get('/:lang/get-news-by-id/:id', GuestController.GetNewsByID)
@@ -21,5 +21,6 @@ router.get('/:lang/get-banners', GuestController.GetBanners)
 router.get('/:lang/get-wish-list', GuestController.GetWishList)
 
 router.post('/:lang/add-to-subscription', SchemaMiddleware(Schema.Subscription), GuestController.AddtoSubscription)
+router.get('/:lang/get-coupon', GuestController.GetCoupon)
 
 module.exports = router;

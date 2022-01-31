@@ -14,14 +14,10 @@ const resize_producers_categories  = async (req, res, next) =>{
         const name = req.file.originalname.replace(' ', '').split('.')[0];
         req.file.path = `uploads/producers_categories/${date}-${name}`
         await sharp(`./uploads/${req.file.filename}`)
-            .resize(200, 150, {
-                fit: 'fill',
-            })
             .toFormat("webp")
             .toFile(`./uploads/producers_categories/${date}-${name}-mini.webp`)
 
         await sharp(`./uploads/${req.file.filename}`)
-            .resize(500, 400)
             .toFormat("webp")
             .toFile(`./uploads/producers_categories/${date}-${name}-big.webp`)
 
@@ -49,9 +45,6 @@ const resize_news  = async (req, res, next) =>{
         req.file.path = `uploads/news/${date}-${name}`
 
         await sharp(`./uploads/${req.file.filename}`)
-            .resize(360, 240, {
-                fit: 'fill',
-            })
             .toFormat("webp")
             .toFile(`./uploads/news/${date}-${name}-mini.webp`)
 

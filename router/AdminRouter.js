@@ -52,7 +52,9 @@ router.get('/select-categories', VerifyAdminAccessToken, AdminController.GetSele
 router.get('/select-producers', VerifyAdminAccessToken, AdminController.GetSelectProducers)
 
 router.get('/main-statistics', VerifyAdminAccessToken, AdminController.GetmainStatistics);
-router.get('/order-statistics', VerifyAdminAccessToken, AdminController.GetOrderStatistics)
+router.get('/order-statistics', VerifyAdminAccessToken, AdminController.GetOrderStatistics);
+router.post('/delete-order/:id', VerifyAdminAccessToken, AdminController.DeleteOrder)
+router.post('/update-accept/:id', VerifyAdminAccessToken, AdminController.UpdateAccept)
 // router.post("/push", VerifyAdminAccessToken, AdminController.AdminFirebase)
 
 module.exports = router;

@@ -18,6 +18,18 @@ const Schema = {
         discounts:Joi.boolean().allow(""), 
         product_id:Joi.number().allow("")
     }),
+    Create_Order:Joi.object({
+        products:Joi.array().required().items(Joi.object({
+            id:Joi.number().required().min(1),
+            count:Joi.number().required().min(1)
+        })),
+        coupon:Joi.string().min(1).max(100),
+        phone:Joi.number().required().min(61000000).max(65999999),
+        address:Joi.string().required().min(3).max(150),
+        user_id:Joi.number().min(1),
+        name:Joi.string().min(2).max(150).required(),
+        comment:Joi.string().allow("")
+    }),
     Subscription:Joi.object({
         phone:Joi.number().required().min(61000000).max(65999999)
     }),

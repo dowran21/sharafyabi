@@ -153,7 +153,9 @@ CREATE TABLE orders(
     accepted BOOLEAN DEFAULT true,
     discount_id INTEGER,
     coupon VARCHAR(150),
+    comment VARCHAR(150),
     total_price NUMERIC (10, 2) NOT NULL,
+    
 
     CONSTRAINT user_id_fk FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE
 );
@@ -166,7 +168,7 @@ CREATE TABLE order_items(
     order_id BIGINT NOT NULL,
 
     CONSTRAINT product_id_fk FOREIGN KEY (product_id) REFERENCES products(id) ON UPDATE CASCADE,
-    CONSTRAINT order_id_fk FOREIGN KEY (order_id) REFERENCES orders(id) ON UPDATE CASCADE
+    CONSTRAINT order_id_fk FOREIGN KEY (order_id) REFERENCES orders(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE banner(
