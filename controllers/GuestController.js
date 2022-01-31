@@ -262,7 +262,7 @@ const CreateOrder = async (req, res) =>{
         return res.status(status.success).send("free cart")
     }
     const query_text = `
-        SELECT p.id, p.price, p.stock, p.destination, p.category_id, p.producer_id, pt.name, pt.description, 
+        SELECT p.id, p.price, p.stock, p.destination, p.main_category_id, p.producer_id, pt.name, pt.description, 
             prod.name AS producer_name, ct.name AS category_name, d.discount_value, d.min_value
         FROM products p
             INNER JOIN languages l
@@ -272,7 +272,7 @@ const CreateOrder = async (req, res) =>{
             LEFT JOIN producers prod
                 ON prod.id = p.producer_id
             LEFT JOIN category_translations ct
-                ON ct.category_id = p.category_id AND ct.language_id = l.id
+                ON ct.category_id = p.main_category_id AND ct.language_id = l.id
             LEFT JOIN discounts d 
                 ON d.product_id = p.id AND d.discount_type_id = 1 AND d.validity::tsrange @> localtimestamp AND is_active = true
             WHERE p.id IN (${products?.map(item => `${item.id}`).join(', ')})
