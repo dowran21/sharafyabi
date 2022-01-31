@@ -746,7 +746,7 @@ const GetOrders = async (req, res) =>{
             (
                 SELECT COUNT(*) FROM orders
             ), (SELECT json_agg(ord) FROM (
-                SELECT o.id, o.phone, o.address, o.name, to_char(o.created_at, 'YYYY-MM-DD HH24:MI') AS created_at,
+                SELECT o.id, o.phone, o.address, o.name, to_char(o.created_at, 'DD.MM.YYYY HH24:MI') AS created_at,
                     o.total_price, o.coupon, o.discount_id, d.discount_value
                     FROM orders o
                     LEFT JOIN discounts d
