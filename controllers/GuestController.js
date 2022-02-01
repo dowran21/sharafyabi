@@ -466,7 +466,7 @@ const GetCoupon = async (req, res) =>{
     `
     try {
         const {rows} = await database.query(query_text, [])
-        return res.status(status.success).json({rows:rows[0]})
+        return res.status(status.success).json({"rows":rows[0] ? rows[0] : null })
     } catch (e) {
         console.log(e)
         return res.status(status.error).send(false)
