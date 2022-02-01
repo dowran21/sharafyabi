@@ -188,7 +188,7 @@ const GetProductByID = async (req, res) =>{
     const {id, lang} = req.params;
     const query_text = `
         SELECT p.id::int, p.price::text, p.stock, p.destination, p.main_category_id AS category_id, p.producer_id, pt.name, pt.description, 
-        prod.name AS producer_name, concat (ct.name, '/', ctt.name) AS category_name, d.discount_value, d.min_value
+        prod.name AS producer_name, concat (ct.name, '/', ctt.name) AS category_name, d.discount_value, d.min_value, p.recomended, p.new_in_come
         FROM products p
             INNER JOIN languages l
                 ON l.language_code = '${lang}'

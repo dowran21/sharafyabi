@@ -23,10 +23,10 @@ const Schema = {
             id:Joi.number().required().min(1),
             count:Joi.number().required().min(1)
         })),
-        coupon:Joi.string().min(1).max(100),
+        coupon:Joi.string().min(1).max(100).allow(""),
         phone:Joi.number().required().min(61000000).max(65999999),
         address:Joi.string().required().min(3).max(150),
-        user_id:Joi.number().min(1),
+        user_id:Joi.number().min(1).allow(""),
         name:Joi.string().min(2).max(150).required(),
         comment:Joi.string().allow("")
     }),
