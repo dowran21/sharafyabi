@@ -154,6 +154,7 @@ CREATE TABLE orders(
     discount_id INTEGER,
     coupon VARCHAR(150),
     comment VARCHAR(150),
+    paymant_id SMALLINT NOT NULL,
     total_price NUMERIC (10, 2) NOT NULL,
     
 

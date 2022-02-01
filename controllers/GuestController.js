@@ -256,7 +256,7 @@ const GetCartProducts = async (req, res) => {
 
 const CreateOrder = async (req, res) =>{
     const {lang} = req.params;
-    const {products, coupon, phone, address, user_id, name, comment} = req.body;
+    const {products, coupon, phone, address, user_id, name, comment, paymant_id} = req.body;
     console.log(req.body)
     if(!products?.length){
         return res.status(status.success).send("free cart")
@@ -318,9 +318,9 @@ const CreateOrder = async (req, res) =>{
        
         const order_query = `
             WITH inserted AS (
-                INSERT INTO orders(coupon, phone, address, user_id, total_price, discount_id, name, comment)
+                INSERT INTO orders(coupon, phone, address, user_id, total_price, discount_id, name, comment, paymant_id)
                 VALUES (${coupon ? `'${coupon}'` : `null`}, '${phone}', '${address}', ${user_id ? `${user_id}` : null}, 
-                    ${totalPrice}, ${discount?.rows[0] ? discount?.rows[0].id : `null`}, '${name}', '${comment}')
+                    ${totalPrice}, ${discount?.rows[0] ? discount?.rows[0].id : `null`}, '${name}', '${comment}', ${paymant_id})
                 RETURNING *
             ), inserted_items AS (
                 INSERT INTO order_items(product_id, quantity, price, order_id)

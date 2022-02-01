@@ -28,7 +28,8 @@ const Schema = {
         address:Joi.string().required().min(3).max(150),
         user_id:Joi.number().min(1).allow(""),
         name:Joi.string().min(2).max(150).required(),
-        comment:Joi.string().allow("")
+        comment:Joi.string().allow(""),
+        paymant_id:Joi.number().min(1).max(2).required()
     }),
     Subscription:Joi.object({
         phone:Joi.number().required().min(61000000).max(65999999)

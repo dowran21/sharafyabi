@@ -748,7 +748,7 @@ const GetOrders = async (req, res) =>{
                 SELECT COUNT(*) FROM orders
             ), (SELECT json_agg(ord) FROM (
                 SELECT o.id, o.phone, o.address, o.name, to_char(o.created_at, 'DD.MM.YYYY HH24:MI') AS created_at,
-                    o.total_price, o.coupon, o.discount_id, d.discount_value, o.accepted, o.comment
+                    o.total_price, o.coupon, o.discount_id, d.discount_value, o.accepted, o.comment, o.paymant_id
                     FROM orders o
                     LEFT JOIN discounts d
                         ON d.id = o.discount_id
@@ -783,7 +783,7 @@ const UpdateAccept = async (req, res)=>{
 const GetOrderByID = async (req, res) =>{
     const {id} = req.params;
     const query_text = `
-        SELECT p.name, oi.price, oi.quantity, d.discount_value, pt.name AS name_ru
+        SELECT p.name, oi.price, oi.quantity, d.discount_value, pt.name AS name_ru, o.paymant_id
         FROM order_items oi
             INNER JOIN products p 
                 ON p.id = oi.product_id
@@ -822,8 +822,8 @@ const GeneratePdf = async (req, res) =>{
     const {OrderGenerator} = require("../pdfmaker/pdf.js")
     const {id} = req.params;
     const query_text = `
-        SELECT o.id, o.phone, o.address, o.name, to_char(o.created_at, 'YYYY-MM-DD HH24:MI') AS created_at,
-            o.total_price, o.coupon, o.discount_id, d.discount_value,
+        SELECT o.id, o.phone, o.address, o.name, to_char(o.created_at, 'DD.MM.YYYY HH24:MI') AS created_at,
+            o.total_price, o.coupon, o.discount_id, d.discount_value, o.paymant_id,
             (SELECT json_agg(orde) FROM (
                 SELECT p.id, p.name, oi.price, oi.quantity, d.discount_value, pt.name AS name_ru
                 FROM order_items oi
