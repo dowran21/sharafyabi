@@ -70,7 +70,7 @@ const GetProducts = async (req, res) =>{
     }
     let wherePart = ``
     if(search){
-        wherePart = ` AND (pt.name ~* '${search}' OR pt.description ~* '${search}')`
+        wherePart += ` AND (pt.name ~* '${search}' OR pt.description ~* '${search}')`
     }
 
     let categories = []
@@ -81,11 +81,11 @@ const GetProducts = async (req, res) =>{
     }
     console.log(categories)
     if(categories.length > 0){
-        wherePart = ` AND  p.sub_category_id IN ( ${categories?.map(item => `${item}`).join(',')} )`
+        wherePart += ` AND  p.sub_category_id IN ( ${categories?.map(item => `${item}`).join(',')} )`
     }
 
     if(main_category_id){
-        wherePart = ` AND p.main_category_id = ${main_category_id}`
+        wherePart += ` AND p.main_category_id = ${main_category_id}`
     }
     
     let producers = []
@@ -95,7 +95,7 @@ const GetProducts = async (req, res) =>{
         console.log(e, "---producers")
     }
     if(producers.length > 0){
-        wherePart = ` AND p.producer_id IN ( ${producers?.map(item => `${item}`).join(',')} )`
+        wherePart += ` AND p.producer_id IN ( ${producers?.map(item => `${item}`).join(',')} )`
     }
 
     if (min_price && max_price){
