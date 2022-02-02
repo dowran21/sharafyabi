@@ -154,11 +154,11 @@ const CreateComment = async (req, res) =>{
 }
 
 const CreateSubComment = async (req, res) =>{
-    const {sub_comment} = req.body;
+    const {comment_sub} = req.body;
     const {product_id, main_comment_id} = req.params;
     const user_id = 10
     const query_text = `
-        INSERT INTO product_comments (user_id, product_id, comment, main_comment_id) VALUES (${user_id}, ${product_id}, '${sub_comment}', ${main_comment_id})
+        INSERT INTO product_comments (user_id, product_id, comment, main_comment_id) VALUES (${user_id}, ${product_id}, '${comment_sub}', ${main_comment_id})
     `
     try {
         await database.query(query_text, [])

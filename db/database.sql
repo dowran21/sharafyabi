@@ -201,7 +201,7 @@ CREATE TABLE product_comments(
     user_id BIGINT NOT NULL,
     product_id INTEGER NOT NULL,
     comment VARCHAR (350) NOT NULL,
-    is_active BOOLEAN NOT NULL DEFAULT FALSE,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
     created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT now(),
     activation_time TIMESTAMP WITHOUT TIME ZONE,
     main_comment_id BIGINT,
