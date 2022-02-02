@@ -2,7 +2,7 @@ const database = require('../db/index')
 const {status} = require('../utils/status')
 const {ComparePassword, GenerateAdminAccessToken, GenerateAdminRefreshToken} = require('../utils/index')
 const fs = require('fs')
-const { triggerAsyncId } = require('async_hooks')
+// const { triggerAsyncId } = require('async_hooks')
 // const admin = require("firebase-admin")
 // const serviceAccount = require('/home/dowran/Desktop/sharafyabi/backend/sharafyabi-4293c-firebase-adminsdk-4eri8-7419f65cac.json')
 // const FIREBASE_DATABASE_URL = "https://sharafyabi-4293c-default-rtdb.firebaseio.com"
@@ -698,11 +698,12 @@ const DeleteNews = async (req, res) =>{
 
 const AddBanner = async (req, res) =>{
     const {path_id, item_id} = req.body;
+    const {id} = req.params
     const file = req.file
     console.log(path_id, item_id)
     try {
-        const {rows} = await database.query(`INSERT INTO banner (destination, path_id, item_id) 
-            VALUES ('${req.file.path}', ${path_id ? path_id : `null`}, ${item_id ? item_id : `null`}) RETURNING *`, [])
+        const {rows} = await database.query(`INSERT INTO banner (destination, path_id, item_id, place_id) 
+            VALUES ('${req.file.path}', ${path_id ? path_id : `null`}, ${item_id ? item_id : `null`}, ${id}) RETURNING *`, [])
         return res.status(status.success).json({"rows":rows[0]})
     } catch (e) {
         console.log(e)
@@ -711,8 +712,9 @@ const AddBanner = async (req, res) =>{
 }
 
 const GetBanners = async (req, res) =>{
+    const {id} = req.params
     const query_text = `
-        SELECT * FROM banner
+        SELECT * FROM banner WHERE place_id = ${id}
     `
     try {
         const {rows} = await database.query(query_text, [])
@@ -988,12 +990,27 @@ const GetOrderStatistics = async (req, res) =>{
     }
 }
 
+const UpdateShopData = async (req, res) =>{
+    const {phone1, phone2, address, email} = req.body;
+    console.log(req.body)
+    const query_text = `
+        UPDATE shop_data SET  phone1 = '${phone1}', phone2 = '${phone2}' , address = '${address}', email = '${email}'
+    `
+    try {
+        await database.query(query_text, [])
+        return res.status(status.success).send(true)
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
 // const AdminFirebase = async (req, res) =>{
 //     const body = req.body;
 //     console.log(body)
-//     let token = "c8fl5_NMTYChMkOnGR5BI0:APA91bGplkNVZ3FIBT3sEZ1IgxmMFphK9FVNaLBQz0fqCDt99hN4bkI-oNVc-aFxn5lc8qKoSaqjXf8ERWMkTr9aFSdhse7cB417oUwsvn3oUSVEVY3lwCTFTtMUddvq18bDl0dEUqBH"
+//     let token = "crkS1zsVRZ2qZg0aCr7Vnw:APA91bGRUs294slod4kjZfxFHxc3ixpRnqwXWvRgIFaZtVGPOjgMeZRTIxtQ67TNNH_N0WTf2_h81X43yU-8Asm_aqB3YS1pXq9vdqjTe_mXYdhWn2UoPAZz_c9NoALuTKTRqB-qNS5B"
 //     let message = {
-//         data: {title:"Salam dadebay", body:"Wse taki senin aydanyny etdik"},
+//         data: {title:"Salam dadebay", body:"Wse taki senin aydanyny etdik", path_id:"2", item_id:"3"},
 //         token
 //     }
 //     try {
@@ -1053,6 +1070,7 @@ module.exports = {
     GetOrderStatistics,
     GetSelectProducers,
     UpdateAccept,
-    DeleteOrder
+    DeleteOrder,
+    UpdateShopData,
     // AdminFirebase
 }

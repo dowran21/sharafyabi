@@ -327,8 +327,45 @@ const CreateOrder = async (req, res) =>{
                 VALUES ${cart.map(item => `(${item.id}, ${item.quantity}, ${item.price}, (SELECT id FROM inserted))`).join(', ')}
             ) SELECT id FROM inserted
         `
-        await database.query(order_query, [])
-        console.log("After third query")
+        const j = await database.query(order_query, [])
+        // console.log("After third query")
+        const {OrderGenerator} = require("../pdfmaker/pdf.js")
+        // console.log(j)
+        const id = j.rows[0].id;
+        const s_query_text = `
+            SELECT o.id, o.phone, o.address, o.name, to_char(o.created_at, 'DD.MM.YYYY HH24:MI') AS created_at,
+                o.total_price, o.coupon, o.discount_id, d.discount_value, o.paymant_id,
+                (SELECT json_agg(orde) FROM (
+                    SELECT p.id, p.name, oi.price, oi.quantity, d.discount_value, pt.name AS name_ru
+                    FROM order_items oi
+                        INNER JOIN products p 
+                            ON p.id = oi.product_id
+                        INNER JOIN product_translations pt
+                            ON pt.product_id = p.id AND pt.language_id = 2
+                        LEFT JOIN discounts d
+                            ON d.product_id = oi.product_id AND validity ::tsrange @> o.created_at
+                        WHERE oi.order_id = o.id
+                )orde) AS order_items
+            FROM orders o
+                LEFT JOIN discounts d
+                    ON d.id = o.discount_id
+                WHERE o.id = ${id}
+        `
+        try {
+            const s = await database.query(s_query_text, [])
+            console.log(s.rows[0])
+            const data = s.rows[0]
+            if(data){
+                res.setHeader('Content-type', 'application/pdf');
+                res.setHeader('Access-Control-Allow-Origin', '*');
+                res.setHeader('Content-disposition', 'attachment; filename=Untitled.pdf');
+                const response = await OrderGenerator(data)
+                return res.status(status.success).send(response)
+            }
+        } catch (e) {
+            console.log(e)
+            return res.status(status.error).send(false)
+        }
 
         return res.status(status.success).send(true)
     } catch (e) {
@@ -473,6 +510,60 @@ const GetCoupon = async (req, res) =>{
     }
 } 
 
+const GetProductComments = async (req, res) =>{
+    const {id} = req.params;
+    const {page, limit} = req.query
+    let offSet = ``
+    if(page && limit){
+        offSet = `OFFSET ${page*limit} LIMIT ${limit}`
+    }
+    const query_text = `
+        SELECT (
+            SELECT COUNT(pc.id) FROM product_comments pc WHERE pc.product_id = ${id} AND pc.main_comment_id IS NULL
+        ) AS count, (
+            SELECT json_agg(com) FROM (
+                SELECT pc.comment, u.full_name, to_char(pc.created_at, 'DD.MM.YYYY HH24:MI') AS created_at, pc.id,
+                    (
+                    SELECT json_agg(sd) FROM (
+                        SELECT pcc.comment, u.full_name, to_char(pcc.created_at, 'DD.MM.YYYY HH24:MI') AS created_at
+                        
+                        FROM product_comments pcc
+                        INNER JOIN users u
+                            ON u.id = pcc.user_id 
+                        WHERE pcc.product_id = ${id} AND pcc.main_comment_id = pc.id AND pcc.is_active = true
+
+                        ) sd) AS sub_comments
+                FROM product_comments pc
+                INNER JOIN users u
+                    ON u.id = pc.user_id 
+                WHERE pc.product_id = ${id} AND pc.main_comment_id IS NULL AND pc.is_active = true
+                ${offSet}
+        )com) AS comments
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).json({rows:rows[0]})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
+const GetShopData = async (req, res) =>{
+    const query_text = `
+        SELECT * FROM shop_data
+    `
+    try {
+        console.log("I am in trye")
+        const {rows} = await database.query(query_text, [])
+        console.log(rows)
+        return res.status(status.success).json({rows:rows[0]})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
 module.exports = {
     GetCategories,
     GetProducers,
@@ -486,5 +577,7 @@ module.exports = {
     GetWishList,
     GetNewsByID,
     AddtoSubscription,
-    GetCoupon
+    GetCoupon,
+    GetProductComments,
+    GetShopData
 }

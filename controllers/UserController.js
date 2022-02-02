@@ -136,7 +136,38 @@ const GetOrderByID = async (req, res) =>{
     }
 }
 
+const CreateComment = async (req, res) =>{
+    const {comment} = req.body;
+    console.log(comment)
+    const {product_id} = req.params;
+    const user_id = 10
+    const query_text = `
+        INSERT INTO product_comments (user_id, product_id, comment) VALUES (${user_id}, ${product_id}, '${comment}')
+    `
+    try {
+        await database.query(query_text, [])
+        return res.status(status.success).send(true)
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
 
+const CreateSubComment = async (req, res) =>{
+    const {sub_comment} = req.body;
+    const {product_id, main_comment_id} = req.params;
+    const user_id = 10
+    const query_text = `
+        INSERT INTO product_comments (user_id, product_id, comment, main_comment_id) VALUES (${user_id}, ${product_id}, '${sub_comment}', ${main_comment_id})
+    `
+    try {
+        await database.query(query_text, [])
+        return res.status(status.success).send(true)
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
 
 module.exports = {
     UserRegistration,
@@ -144,5 +175,7 @@ module.exports = {
     AddToWishList,
     RemoveFromWishList,
     GetOrders,
-    GetOrderByID
+    GetOrderByID,
+    CreateComment,
+    CreateSubComment
 }

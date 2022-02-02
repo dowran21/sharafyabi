@@ -35,11 +35,13 @@ router.post('/update-news/:id', VerifyAdminAccessToken, AdminController.UpdateNe
 router.post("/add-sale", VerifyAdminAccessToken, AdminController.AddSale)
 router.get("/get-sales", VerifyAdminAccessToken, AdminController.GetSales)
 router.post('/deactivate-sale/:id', VerifyAdminAccessToken, AdminController.DeactivateSales)
-router.post('/add-banner', VerifyAdminAccessToken, upload.single("picture"), resize_banners, AdminController.AddBanner)
 
 router.get('/products', VerifyAdminAccessToken, AdminController.GetProducts);
-router.get('/get-banners', VerifyAdminAccessToken, AdminController.GetBanners)
+
+router.post('/add-banner/:id', VerifyAdminAccessToken, upload.single("picture"), resize_banners, AdminController.AddBanner)
+router.get('/get-banners/:id', VerifyAdminAccessToken, AdminController.GetBanners)
 router.post('/delete-banner/:id', VerifyAdminAccessToken, AdminController.DeleteBanner)
+
 router.get('/get-orders', VerifyAdminAccessToken, AdminController.GetOrders)
 router.get('/get-order/:id', VerifyAdminAccessToken, AdminController.GetOrderByID)
 router.get('/generate-pdf/:id', VerifyAdminAccessToken, AdminController.GeneratePdf)
@@ -56,5 +58,6 @@ router.get('/order-statistics', VerifyAdminAccessToken, AdminController.GetOrder
 router.post('/delete-order/:id', VerifyAdminAccessToken, AdminController.DeleteOrder)
 router.post('/update-accept/:id', VerifyAdminAccessToken, AdminController.UpdateAccept)
 // router.post("/push", VerifyAdminAccessToken, AdminController.AdminFirebase)
+router.post('/update-shop-data', VerifyAdminAccessToken, AdminController.UpdateShopData)
 
 module.exports = router;

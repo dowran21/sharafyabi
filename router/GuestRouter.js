@@ -22,5 +22,7 @@ router.get('/:lang/get-wish-list', GuestController.GetWishList)
 
 router.post('/:lang/add-to-subscription', SchemaMiddleware(Schema.Subscription), GuestController.AddtoSubscription)
 router.get('/:lang/get-coupon', GuestController.GetCoupon)
+router.get('/:lang/get-comments/:id', GuestController.GetProductComments)
+router.get('/:lang/get-shop-data', GuestController.GetShopData)
 
 module.exports = router;

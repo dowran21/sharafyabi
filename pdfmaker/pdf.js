@@ -32,7 +32,7 @@ async function OrderGenerator (data){
         .fillColor('#4C844C').font(montes).text(`Покупатель`, 0, 130, {width:160, align: 'right'})
         .fillColor("#515351").font(montes_light).text(name, 165, 130, {align:"left"} )
         .fillColor('#4C844C').font(montes).text(`Номер телефона`, 0, 143, {width:160, align: "right"})
-        .fillColor("#515351").font(montes_light).text(phone, 165, 143, {align:"left"})
+        .fillColor("#515351").font(montes_light).text(`+993 ${phone}`, 165, 143, {align:"left"})
         .fillColor('#4C844C').font(montes).text(`Аддресс`, 0, 156, {width:160, align: "right"})
         .fillColor("#515351").font(montes_light).text(address, 165, 156, {align:"left"})
         // .fillColor('#4C844C').text(`Адресс`, 0, 156, {width:160, align: "right"})
@@ -97,7 +97,7 @@ async function OrderGenerator (data){
     let h = 0
     let j = 0;
     let y = 0;
-    for (i = 0; i < order_items.length; i++) {
+    for (i = 0; i < order_items?.length; i++) {
         const item = order_items[i]
         y = tableTop + 20 + ((i-j) * 20)
         if(y > 750){
@@ -116,7 +116,7 @@ async function OrderGenerator (data){
         y = tableTop + 20 + ((i-j) * 20)
         h=y;
         doc
-            .fontSize(8).font(arial)
+            .fontSize(8).font(arial).fillColor("#000000")
             .text(item.id, itemCodeX+2, y, {height:15}).highlight(itemCodeX, y-4, descriptionX-itemCodeX-2, 16, {color:`${i%2 ?`#799E79` : `#FFFFFF`}`})
             .text(`${item.name ? item.name : item.name_ru}`, descriptionX+2, y, {height:15}).highlight(descriptionX, y-4, quantityX-descriptionX-2, 16, {color:`${i%2 ?`#799E79` : `#FFFFFF`}`})
             .text(item.quantity, quantityX+2, y, {height:15}).highlight(quantityX, y-4, discountX-quantityX-2, 16, {color:`${i%2 ?`#799E79` : `#FFFFFF`}`})

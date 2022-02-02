@@ -174,6 +174,7 @@ CREATE TABLE order_items(
 
 CREATE TABLE banner(
     id SMALLSERIAL PRIMARY KEY NOT NULL,
+    place_id SMALLINT NOT NULL,
     path_id SMALLINT ,
     item_id SMALLINT ,
     destination VARCHAR(150) NOT NULL
@@ -199,12 +200,20 @@ CREATE TABLE product_comments(
     id BIGSERIAL PRIMARY KEY NOT NULL,
     user_id BIGINT NOT NULL,
     product_id INTEGER NOT NULL,
-    comment VARCHAR (150) NOT NULL,
-    is_active BOOLEAN NOT NULL,
+    comment VARCHAR (350) NOT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT now(),
     activation_time TIMESTAMP WITHOUT TIME ZONE,
-    main_category_id BIGINT,
+    main_comment_id BIGINT,
 
     CONSTRAINT user_id_fk FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT product_id_fk FOREIGN KEY (product_id) REFERENCES products(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE shop_data(
+    id SMALLINT NOT NULL,
+    phone1 VARCHAR(8),
+    phone2 VARCHAR(8),
+    "address" VARCHAR (150),
+    email VARCHAR(50)
 );
