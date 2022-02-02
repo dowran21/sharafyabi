@@ -154,6 +154,7 @@ const CreateComment = async (req, res) =>{
 }
 
 const CreateSubComment = async (req, res) =>{
+    console.log(req.body)
     const {comment_sub} = req.body;
     console.log(req.params, "hello params");
 
