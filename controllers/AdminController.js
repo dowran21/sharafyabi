@@ -2,14 +2,15 @@ const database = require('../db/index')
 const {status} = require('../utils/status')
 const {ComparePassword, GenerateAdminAccessToken, GenerateAdminRefreshToken} = require('../utils/index')
 const fs = require('fs')
-// const { triggerAsyncId } = require('async_hooks')
-// const admin = require("firebase-admin")
-// const serviceAccount = require('/home/dowran/Desktop/sharafyabi/backend/sharafyabi-4293c-firebase-adminsdk-4eri8-7419f65cac.json')
-// const FIREBASE_DATABASE_URL = "https://sharafyabi-4293c-default-rtdb.firebaseio.com"
-// admin.initializeApp({
-//     credential: admin.credential.cert(serviceAccount),
-//     databaseUrl: FIREBASE_DATABASE_URL
-// })
+require('dotenv').config();
+
+const admin = require("firebase-admin")
+const serviceAccount = require(process.env.PATH_TO_PUSH_JSON)
+const FIREBASE_DATABASE_URL = "https://sharafyabi-4293c-default-rtdb.firebaseio.com"
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseUrl: FIREBASE_DATABASE_URL
+})
 
 
 const Login = async (req, res) =>{
@@ -1005,23 +1006,23 @@ const UpdateShopData = async (req, res) =>{
     }
 }
 
-// const AdminFirebase = async (req, res) =>{
-//     const body = req.body;
-//     console.log(body)
-//     let token = "crkS1zsVRZ2qZg0aCr7Vnw:APA91bGRUs294slod4kjZfxFHxc3ixpRnqwXWvRgIFaZtVGPOjgMeZRTIxtQ67TNNH_N0WTf2_h81X43yU-8Asm_aqB3YS1pXq9vdqjTe_mXYdhWn2UoPAZz_c9NoALuTKTRqB-qNS5B"
-//     let message = {
-//         data: {title:"Salam dadebay", body:"Wse taki senin aydanyny etdik", path_id:"2", item_id:"3"},
-//         token
-//     }
-//     try {
-//         await admin.messaging().send(message)
-//         console.log("hello world")     
-//         return res.status(status.success).send(true)   
-//     } catch (e) {
-//         console.log(e)
-//         return res.status(status.error).send(false)
-//     }
-// }
+const AdminFirebase = async (req, res) =>{
+    const body = req.body;
+    console.log(body)
+    let token = "crkS1zsVRZ2qZg0aCr7Vnw:APA91bGRUs294slod4kjZfxFHxc3ixpRnqwXWvRgIFaZtVGPOjgMeZRTIxtQ67TNNH_N0WTf2_h81X43yU-8Asm_aqB3YS1pXq9vdqjTe_mXYdhWn2UoPAZz_c9NoALuTKTRqB-qNS5B"
+    let message = {
+        data: {title:"Salam dadebay", body:"Wse taki senin aydanyny etdik", path_id:"2", item_id:"3"},
+        token
+    }
+    try {
+        await admin.messaging().send(message)
+        console.log("hello world")     
+        return res.status(status.success).send(true)   
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
 
 module.exports = {
     Login,
@@ -1072,5 +1073,5 @@ module.exports = {
     UpdateAccept,
     DeleteOrder,
     UpdateShopData,
-    // AdminFirebase
+    AdminFirebase
 }
