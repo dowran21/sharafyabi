@@ -62,5 +62,7 @@ router.post('/update-shop-data', VerifyAdminAccessToken, AdminController.UpdateS
 router.get('/get-comments', VerifyAdminAccessToken, AdminController.GetComments)
 router.post(`/activate-comment/:id`, VerifyAdminAccessToken, AdminController.AcceptComment)
 router.post('/delete-comment/:id', VerifyAdminAccessToken, AdminController.DeleteComment)
+router.get('/get-user-statistics', VerifyAdminAccessToken, AdminController.GetUserStatistics)
+
 
 module.exports = router;

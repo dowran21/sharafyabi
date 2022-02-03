@@ -978,13 +978,30 @@ const GetmainStatistics = async (req, res) =>{
 
 const GetOrderStatistics = async (req, res) =>{
     const query_text = `
-        SELECT to_char(date_trunc('day', o.created_at), 'MM-DD') AS created_at, COUNT(o.id) AS "Заказы"
+        SELECT to_char(date_trunc('DAY', o.created_at), 'MM-DD') AS created_at, COUNT(o.id) AS "Заказы"
         FROM orders o
         GROUP BY date_trunc('DAY', o.created_at)
+        ORDER BY date_trunc('DAY', o.created_at)::date ASC
     `
     try {
         const {rows} = await database.query(query_text, [])
-        return res.status(status.success).json()
+        return res.status(status.success).json({rows:rows})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
+const GetUserStatistics = async (req, res) =>{
+    const query_text = `
+        SELECT to_char(date_trunc('DAY', u.created_at), 'MM-DD') AS created_at, COUNT(u.id) AS "Пользователи"
+        FROM users u
+        GROUP BY date_trunc('DAY', u.created_at)
+        ORDER BY date_trunc('DAY', u.created_at)::date ASC
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).json({rows:rows})
     } catch (e) {
         console.log(e)
         return res.status(status.error).send(false)
@@ -1166,6 +1183,7 @@ module.exports = {
     GetProductsForSelect,
     GetSelectCategories,
     GetmainStatistics,
+    GetUserStatistics,
     GetOrderStatistics,
     GetSelectProducers,
     UpdateAccept,
