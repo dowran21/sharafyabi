@@ -140,7 +140,7 @@ const CreateComment = async (req, res) =>{
     console.log("hello world")
     const {comment} = req.body;
     const {product_id} = req.params;
-    const user_id = 1
+    const user_id = req.user?.id
     const query_text = `
         INSERT INTO product_comments (user_id, product_id, comment) VALUES (${user_id}, ${product_id}, '${comment}')
     `
@@ -178,7 +178,7 @@ const CreateSubComment = async (req, res) =>{
 
     const {product_id, main_comment_id} = req.params;
     
-    const user_id = 1
+    const user_id = req.user?.id
     const query_text = `
         INSERT INTO product_comments (user_id, product_id, comment, main_comment_id) VALUES (${user_id}, ${product_id}, '${comment_sub}', ${main_comment_id})
     `
