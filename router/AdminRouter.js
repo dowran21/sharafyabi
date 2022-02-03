@@ -59,5 +59,8 @@ router.post('/delete-order/:id', VerifyAdminAccessToken, AdminController.DeleteO
 router.post('/update-accept/:id', VerifyAdminAccessToken, AdminController.UpdateAccept)
 router.post("/push", VerifyAdminAccessToken, AdminController.AdminFirebase)
 router.post('/update-shop-data', VerifyAdminAccessToken, AdminController.UpdateShopData)
+router.get('/get-comments', VerifyAdminAccessToken, AdminController.GetComments)
+router.post(`/activate-comment/:id`, VerifyAdminAccessToken, AdminController.AcceptComment)
+router.post('/delete-comment/:id', VerifyAdminAccessToken, AdminController.DeleteComment)
 
 module.exports = router;

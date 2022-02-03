@@ -425,8 +425,9 @@ const GetNewsByID = async (req, res) =>{
 }
 
 const GetBanners = async (req, res) =>{
+    const {id} = req.params;
     const query_text = `
-        SELECT * FROM banner 
+        SELECT * FROM banner WHERE place_id = ${id} 
     `
     try {
         const {rows} = await database.query(query_text, [])

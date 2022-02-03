@@ -12,8 +12,9 @@ router.post('/:lang/remove-from-wish-list/:id', VerifyUserAccessToken, UserContr
 router.get('/:lang/get-orders', VerifyUserAccessToken, UserController.GetOrders);
 router.get('/:lang/get-order/:id', VerifyUserAccessToken, UserController.GetOrderByID);
 
+router.post('/:lang/create-sub-comment/:product_id/:main_comment_id', UserController.CreateSubComment)
+// router.post('/:lang/sub/:product_id/:main_comment_id', (req, res) => {console.log("hello world"); return res.status(200).send(true)})
 router.post('/:lang/create-comment/:product_id',  UserController.CreateComment)
-router.post('/:lang/create-sub-comment/:product_id/:main_comment_id',  UserController.CreateSubComment)
 
 
 

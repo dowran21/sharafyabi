@@ -16,7 +16,7 @@ router.post('/:lang/create-order', SchemaMiddleware(Schema.Create_Order), GuestC
 router.get('/:lang/get-news', GuestController.GetNews);
 router.get('/:lang/get-news-by-id/:id', GuestController.GetNewsByID)
 
-router.get('/:lang/get-banners', GuestController.GetBanners)
+router.get('/:lang/get-banners/:id', GuestController.GetBanners)
 
 router.get('/:lang/get-wish-list', GuestController.GetWishList)
 

@@ -1047,6 +1047,81 @@ const AdminFirebase = async (req, res) =>{
     }
 }
 
+const GetComments = async (req, res) =>{
+    // const {id} = req.params;
+    const {page, limit, is_active, search} = req.query
+    let offSet = ``
+    if(page && limit){
+        offSet = `OFFSET ${page*limit} LIMIT ${limit}`
+    }
+    let wherePart = ``
+    if(is_active){
+        wherePart += ` AND pc.is_active = ${is_active}`
+    }
+    if(search){
+        wherePart += ` AND (pt.name ~* '${search}' OR u.full_name ~* '${search}' OR pc.comment ~* '${search}' OR u.phone ~* '${search}')`
+    }
+    const query_text = `
+        SELECT (
+            SELECT COUNT(pc.id) 
+                FROM product_comments pc 
+                INNER JOIN users u
+                    ON u.id = pc.user_id 
+                INNER JOIN product_translations pt
+                    ON pt.product_id = pc.product_id AND pt.language_id = 2
+                WHERE pc.id > 0 ${wherePart}
+        ) AS count, (
+            SELECT json_agg(com) FROM (
+                SELECT pc.comment, u.full_name, to_char(pc.created_at, 'DD.MM.YYYY HH24:MI') AS created_at, pc.id, u.phone,
+                    pt.name, pc.is_active
+                FROM product_comments pc
+                INNER JOIN users u
+                    ON u.id = pc.user_id 
+                INNER JOIN product_translations pt
+                    ON pt.product_id = pc.product_id AND pt.language_id = 2
+                WHERE pc.id > 0 ${wherePart}
+                ORDER BY pc.id DESC
+                ${offSet}
+        )com) AS comments
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).json({rows:rows[0]})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
+const AcceptComment = async (req, res) =>{
+    const {id} = req.params;
+    const {is_active} = req.body;
+    const query_text = `
+        UPDATE product_comments SET is_active = ${is_active} WHERE id = ${id}
+    `
+    try {
+        await database.query(query_text, [])
+        return res.status(status.success).send(false)
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
+const DeleteComment = async (req, res) =>{
+    const {id} = req.params;
+    const query_text = `
+        DELETE FROM product_comments WHERE id = ${id}
+    `
+    try {
+        await database.query(query_text ,[])
+        return res.status(status.success).send(true)
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
 module.exports = {
     Login,
     LoadAdmin,
@@ -1096,5 +1171,8 @@ module.exports = {
     UpdateAccept,
     DeleteOrder,
     UpdateShopData,
-    AdminFirebase
+    AdminFirebase,
+    GetComments,
+    AcceptComment,
+    DeleteComment
 }
