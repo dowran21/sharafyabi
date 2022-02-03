@@ -57,7 +57,7 @@ router.get('/main-statistics', VerifyAdminAccessToken, AdminController.GetmainSt
 router.get('/order-statistics', VerifyAdminAccessToken, AdminController.GetOrderStatistics);
 router.post('/delete-order/:id', VerifyAdminAccessToken, AdminController.DeleteOrder)
 router.post('/update-accept/:id', VerifyAdminAccessToken, AdminController.UpdateAccept)
-// router.post("/push", VerifyAdminAccessToken, AdminController.AdminFirebase)
+router.post("/push", VerifyAdminAccessToken, AdminController.AdminFirebase)
 router.post('/update-shop-data', VerifyAdminAccessToken, AdminController.UpdateShopData)
 
 module.exports = router;

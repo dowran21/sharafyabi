@@ -4,7 +4,7 @@ const {ComparePassword, GenerateAdminAccessToken, GenerateAdminRefreshToken} = r
 const fs = require('fs')
 require('dotenv').config();
 
-const admin = require("firebase-admin")
+const admin = require("firebase-admin");
 const serviceAccount = require(process.env.PATH_TO_PUSH_JSON)
 const FIREBASE_DATABASE_URL = "https://sharafyabi-4293c-default-rtdb.firebaseio.com"
 admin.initializeApp({
@@ -1010,10 +1010,33 @@ const AdminFirebase = async (req, res) =>{
     const body = req.body;
     console.log(body)
     let token = "crkS1zsVRZ2qZg0aCr7Vnw:APA91bGRUs294slod4kjZfxFHxc3ixpRnqwXWvRgIFaZtVGPOjgMeZRTIxtQ67TNNH_N0WTf2_h81X43yU-8Asm_aqB3YS1pXq9vdqjTe_mXYdhWn2UoPAZz_c9NoALuTKTRqB-qNS5B"
+    const {text, path_id, item_id} = req.body;
+    let query_text =``
+    if(path_id == 2){
+        query_text = `SELECT pt.name, p.destination FROM products p
+            LEFT JOIN product_translations pt ON
+                pt.product_id = p.id AND pt.language_id = 2
+            WHERE p.id = ${item_id}
+            `
+    }else if(path_id == 3){
+        query_text = `
+            SELECT ct.name, c.destination FROM categories c
+                LEFT JOIN category_translations ct
+                    ON ct.category_id = c.id AND ct.language_id = 2
+        `
+    }
+    let item = {}
+    try {
+        const {rows} = await database.query(query_text, [])
+        item = rows[0]
+    } catch (e) {
+        console.log(e)
+    }
     let message = {
-        data: {title:"Salam dadebay", body:"Wse taki senin aydanyny etdik", path_id:"2", item_id:"3"},
+        data: {title:`${text}`, body:`${item?.name}`, destination: `${item?.destination}`, path_id:`${path_id}`, item_id:`${item_id}`},
         token
     }
+    console.log(message)
     try {
         await admin.messaging().send(message)
         console.log("hello world")     

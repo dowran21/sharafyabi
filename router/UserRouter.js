@@ -1,7 +1,7 @@
 const express = require('express');
 const router = new express.Router();
 const UserController = require("../controllers/UserController")
-const {VerifyUserAccessToken, VerifyAdminAccessToken} = require('../middleware/AuthMiddleware')
+const {VerifyUserAccessToken} = require('../middleware/AuthMiddleware')
 
 router.post('/:lang/registration', UserController.UserRegistration);
 router.post('/:lang/login', UserController.UserLogin)
