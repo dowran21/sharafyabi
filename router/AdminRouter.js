@@ -63,6 +63,6 @@ router.get('/get-comments', VerifyAdminAccessToken, AdminController.GetComments)
 router.post(`/activate-comment/:id`, VerifyAdminAccessToken, AdminController.AcceptComment)
 router.post('/delete-comment/:id', VerifyAdminAccessToken, AdminController.DeleteComment)
 router.get('/get-user-statistics', VerifyAdminAccessToken, AdminController.GetUserStatistics)
-
+router.post('/send-subscribe-messsage', VerifyAdminAccessToken, AdminController.SendSubscribeMessage)
 
 module.exports = router;

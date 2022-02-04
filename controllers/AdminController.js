@@ -978,7 +978,7 @@ const GetmainStatistics = async (req, res) =>{
 
 const GetOrderStatistics = async (req, res) =>{
     const query_text = `
-        SELECT to_char(date_trunc('DAY', o.created_at), 'MM-DD') AS created_at, COUNT(o.id) AS "Заказы"
+        SELECT to_char(date_trunc('DAY', o.created_at), 'DD.MM') AS created_at, COUNT(o.id) AS "Заказы"
         FROM orders o
         GROUP BY date_trunc('DAY', o.created_at)
         ORDER BY date_trunc('DAY', o.created_at)::date ASC
@@ -994,7 +994,7 @@ const GetOrderStatistics = async (req, res) =>{
 
 const GetUserStatistics = async (req, res) =>{
     const query_text = `
-        SELECT to_char(date_trunc('DAY', u.created_at), 'MM-DD') AS created_at, COUNT(u.id) AS "Пользователи"
+        SELECT to_char(date_trunc('DAY', u.created_at), 'DD.MM') AS created_at, COUNT(u.id) AS "Пользователи"
         FROM users u
         GROUP BY date_trunc('DAY', u.created_at)
         ORDER BY date_trunc('DAY', u.created_at)::date ASC
@@ -1026,7 +1026,8 @@ const UpdateShopData = async (req, res) =>{
 const AdminFirebase = async (req, res) =>{
     const body = req.body;
     console.log(body)
-    let token = "crkS1zsVRZ2qZg0aCr7Vnw:APA91bGRUs294slod4kjZfxFHxc3ixpRnqwXWvRgIFaZtVGPOjgMeZRTIxtQ67TNNH_N0WTf2_h81X43yU-8Asm_aqB3YS1pXq9vdqjTe_mXYdhWn2UoPAZz_c9NoALuTKTRqB-qNS5B"
+    // let token = `fDFBn6ZpTbyJjq8i9s4bzF:APA91bEKhqzG78dZRZ-3WGibGr2Oag6SGZ6AqfcU8ABy07Zdus6IDJ1HfsoZSaFvWb0GRGaiJ9Pl4-i0654WSN6MMjAZZg-A9J27YruDa_HOuEm951jE805NNHVSOQzBlsTssg2_qdu9`
+    let token = `dJ9XIYr7Sn6nZpoIT_t5mi:APA91bHf1OePLlk-ojqo1rCMtwLPW8mwddwRtJ2a0meZu6rFQ_NoHnCT7jMiczz-d19KCNzepmPc0UTZx-3Fp7GR9ZZTIenF029FY-Pc9GeP7Bm9Ono4yXXpvJEoRaktzct7ue2tQfro`
     const {text, path_id, item_id} = req.body;
     let query_text =``
     if(path_id == 2){
@@ -1139,6 +1140,22 @@ const DeleteComment = async (req, res) =>{
     }
 }
 
+const SendSubscribeMessage = async (req, res) =>{
+    const {message} = req.body;
+    const {MessageSendler} = require('../utils/SubscribeSendler')
+    MessageSendler({message})
+    try {
+        const query_text = `
+            INSERT INTO sended_messages(message) VALUES ('${message}') RETURNING *
+        `
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).json({rows:rows[0]})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
 module.exports = {
     Login,
     LoadAdmin,
@@ -1192,5 +1209,6 @@ module.exports = {
     AdminFirebase,
     GetComments,
     AcceptComment,
-    DeleteComment
+    DeleteComment,
+    SendSubscribeMessage
 }

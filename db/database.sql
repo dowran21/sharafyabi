@@ -196,6 +196,12 @@ CREATE TABLE subscriptions(
     UNIQUE(phone)
 );
 
+CREATE TABLE sended_messages(
+    id SERIAL NOT NULL,
+    "message" TEXT NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT now()
+);
+
 CREATE TABLE product_comments(
     id BIGSERIAL PRIMARY KEY NOT NULL,
     user_id BIGINT NOT NULL,
