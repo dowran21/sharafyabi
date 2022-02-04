@@ -63,6 +63,11 @@ router.get('/get-comments', VerifyAdminAccessToken, AdminController.GetComments)
 router.post(`/activate-comment/:id`, VerifyAdminAccessToken, AdminController.AcceptComment)
 router.post('/delete-comment/:id', VerifyAdminAccessToken, AdminController.DeleteComment)
 router.get('/get-user-statistics', VerifyAdminAccessToken, AdminController.GetUserStatistics)
+
 router.post('/send-subscribe-messsage', VerifyAdminAccessToken, AdminController.SendSubscribeMessage)
+router.get('/get-messages', VerifyAdminAccessToken, AdminController.GetMessages)
+router.post('/delete-sms/:id', VerifyAdminAccessToken, AdminController.DeleteSMS)
+router.post('/delete-subsciption/:id', VerifyAdminAccessToken, AdminController.DeleteSubsciption)
+router.get('/get-phones', VerifyAdminAccessToken, AdminController.GetSubsciptionPhones)
 
 module.exports = router;

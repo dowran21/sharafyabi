@@ -5,6 +5,7 @@ const fs = require('fs')
 require('dotenv').config();
 
 const admin = require("firebase-admin");
+// const { query } = require('../db/index');
 const serviceAccount = require(process.env.PATH_TO_PUSH_JSON)
 const FIREBASE_DATABASE_URL = "https://sharafyabi-4293c-default-rtdb.firebaseio.com"
 admin.initializeApp({
@@ -1142,12 +1143,92 @@ const DeleteComment = async (req, res) =>{
 
 const SendSubscribeMessage = async (req, res) =>{
     const {message} = req.body;
+    console.log("hello world")
     const {MessageSendler} = require('../utils/SubscribeSendler')
     MessageSendler({message})
     try {
         const query_text = `
-            INSERT INTO sended_messages(message) VALUES ('${message}') RETURNING *
+            INSERT INTO sended_messages(message) VALUES ('${message}') 
+                RETURNING id, message, to_char(created_at, 'DD.MM.YYYY') AS created_at
         `
+        const {rows} = await database.query(query_text, [])
+        console.log(rows[0])
+        return res.status(status.success).json({rows:rows[0]})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
+const GetMessages = async (req, res) =>{
+    const {page, limit} = req.query;
+    let offSet = ``
+    if(page && limit){
+        offSet = `OFFSET ${page*limit} LIMIT ${limit}`
+    }
+    const query_text = `
+        SELECT (SELECT COUNT(*) FROM sended_messages),
+            (SELECT json_agg(da) FROM (
+                SELECT id, message, to_char(created_at, 'DD.MM.YYYY') AS created_at
+                FROM sended_messages
+                ORDER BY id DESC
+                ${offSet}
+            )da) AS data
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).json({rows:rows[0]})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
+const DeleteSMS = async (req, res) =>{
+    const {id} = req.params;
+    const query_text = `
+        DELETE FROM sended_messages WHERE id = ${id}
+    `
+    try {
+        await database.query(query_text, [])
+        return res.status(status.success).send(true)
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
+
+const DeleteSubsciption = async (req, res) =>{
+    const {id} = req.params;
+    const query_text = `
+        DELETE FROM subscriptions WHERE id = ${id}
+    `
+    try {
+        await database.query(query_text, [])
+        return res.status(status.success).send(true)
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
+const GetSubsciptionPhones = async(req, res) =>{
+    const {page, limit} = req.query;
+    let offSet = ``
+    if(page && limit){
+        offSet = `OFFSET ${page*limit} LIMIT ${limit}`
+    }
+    const query_text = `
+        SELECT (SELECT COUNT(*) FROM subscriptions),
+            (SELECT json_agg(da) FROM (
+                SELECT id, phone, to_char(created_at, 'DD.MM.YYYY') AS created_at
+                FROM subscriptions
+                ORDER BY id DESC
+                ${offSet}
+            )da) AS data
+    `
+    try {
         const {rows} = await database.query(query_text, [])
         return res.status(status.success).json({rows:rows[0]})
     } catch (e) {
@@ -1210,5 +1291,9 @@ module.exports = {
     GetComments,
     AcceptComment,
     DeleteComment,
-    SendSubscribeMessage
+    SendSubscribeMessage,
+    GetMessages,
+    DeleteSMS,
+    DeleteSubsciption,
+    GetSubsciptionPhones
 }

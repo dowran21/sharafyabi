@@ -191,8 +191,9 @@ CREATE TABLE wish_lists(
 );
 
 CREATE TABLE subscriptions(
-    -- id BIGSERIAL PRIMARY KEY NOT NULL,
+    id BIGSERIAL PRIMARY KEY NOT NULL,
     phone VARCHAR(8),
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT now(),
     UNIQUE(phone)
 );
 
