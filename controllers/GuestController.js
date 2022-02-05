@@ -463,7 +463,7 @@ const GetWishList = async (req, res) =>{
             INNER JOIN producers prod
                 ON prod.id = p.producer_id
             INNER JOIN category_translations ct
-                ON ct.category_id = p.category_id AND ct.language_id = l.id
+                ON ct.category_id = p.main_category_id AND ct.language_id = l.id
             LEFT JOIN discounts d 
                 ON d.product_id = p.id AND d.discount_type_id = 1 AND d.validity::tsrange @> localtimestamp AND is_active = true
             WHERE p.id IN (${obj.map(item => `${item.id}`).join(', ')})
