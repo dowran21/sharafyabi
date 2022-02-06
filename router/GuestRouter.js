@@ -3,6 +3,7 @@ const router = new express.Router();
 const GuestController = require('../controllers/GuestController')
 const {QuerySchemaMiddleware, SchemaMiddleware} = require("../middleware/SchemaMiddleware")
 const Schema = require("../schemas/UserSchema")
+const {VerifyUserAccessTokenNext} = require("../middleware/AuthMiddleware")
 
 router.get('/:lang/get-categories', GuestController.GetCategories);
 router.get('/:lang/get-producers', GuestController.GetProducers);
