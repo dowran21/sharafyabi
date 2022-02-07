@@ -25,5 +25,6 @@ router.post('/:lang/add-to-subscription', SchemaMiddleware(Schema.Subscription),
 router.get('/:lang/get-coupon', GuestController.GetCoupon)
 router.get('/:lang/get-comments/:id', GuestController.GetProductComments)
 router.get('/:lang/get-shop-data', GuestController.GetShopData)
+router.get('/:lang/generate-pdf/:id', GuestController.GeneratePdf)
 
 module.exports = router;

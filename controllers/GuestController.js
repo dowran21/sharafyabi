@@ -369,7 +369,7 @@ const CreateOrder = async (req, res) =>{
             //     console.log(e)
             //     return res.status(status.success).send(true)
             // }
-            return res.status(status.success).send(true)
+            return res.status(status.success).json({rows:id})
         } catch (e) {
             console.log(e)
             return res.status(status.error).send(false)
@@ -573,6 +573,45 @@ const GetShopData = async (req, res) =>{
     }
 }
 
+const GeneratePdf = async (req, res) =>{
+    const {id} = req.params;
+    const query_text = `
+        SELECT o.id, o.phone, o.address, o.name, to_char(o.created_at, 'DD.MM.YYYY HH24:MI') AS created_at,
+            o.total_price, o.coupon, o.discount_id, d.discount_value, o.paymant_id,
+            (SELECT json_agg(orde) FROM (
+                SELECT p.id, p.name, oi.price, oi.quantity, d.discount_value, pt.name AS name_ru
+                FROM order_items oi
+                    INNER JOIN products p 
+                        ON p.id = oi.product_id
+                    INNER JOIN product_translations pt
+                        ON pt.product_id = p.id AND pt.language_id = 2
+                    LEFT JOIN discounts d
+                        ON d.product_id = oi.product_id AND validity ::tsrange @> o.created_at
+                    WHERE oi.order_id = o.id
+            )orde) AS order_items
+        FROM orders o
+            LEFT JOIN discounts d
+                ON d.id = o.discount_id
+            WHERE o.id = ${id}
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        const data = rows[0]
+        if(data){
+            res.setHeader('Content-type', 'application/pdf');
+            res.setHeader('Access-Control-Allow-Origin', '*');
+            res.setHeader('Content-disposition', 'attachment; filename=Untitled.pdf');
+            const response = await OrderGenerator(data)
+            return res.status(status.success).send(response)
+        }else{
+            return res.status(404).send(false)
+        }
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
 module.exports = {
     GetCategories,
     GetProducers,
@@ -588,5 +627,6 @@ module.exports = {
     AddtoSubscription,
     GetCoupon,
     GetProductComments,
-    GetShopData
+    GetShopData,
+    GeneratePdf
 }
