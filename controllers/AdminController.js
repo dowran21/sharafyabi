@@ -1027,9 +1027,8 @@ const UpdateShopData = async (req, res) =>{
 const AdminFirebase = async (req, res) =>{
     const body = req.body;
     console.log(body)
-    // let token = `fDFBn6ZpTbyJjq8i9s4bzF:APA91bEKhqzG78dZRZ-3WGibGr2Oag6SGZ6AqfcU8ABy07Zdus6IDJ1HfsoZSaFvWb0GRGaiJ9Pl4-i0654WSN6MMjAZZg-A9J27YruDa_HOuEm951jE805NNHVSOQzBlsTssg2_qdu9`
-    let token = `dJ9XIYr7Sn6nZpoIT_t5mi:APA91bHf1OePLlk-ojqo1rCMtwLPW8mwddwRtJ2a0meZu6rFQ_NoHnCT7jMiczz-d19KCNzepmPc0UTZx-3Fp7GR9ZZTIenF029FY-Pc9GeP7Bm9Ono4yXXpvJEoRaktzct7ue2tQfro`
     const {text, path_id, item_id} = req.body;
+    console.log(path_id, item_id, text);
     let query_text =``
     if(path_id == 2){
         query_text = `SELECT pt.name, p.destination FROM products p
@@ -1052,14 +1051,25 @@ const AdminFirebase = async (req, res) =>{
         console.log(e)
     }
     let message = {
-        data: {title:`${text}`, body:`${item?.name}`, destination: `${item?.destination}`, path_id:`${path_id}`, item_id:`${item_id}`},
-        token
+        data: {title:`${text}`, body:`${item?.name}`, destination: `${item?.destination}`, path_id:`${path_id}`, item_id:`${item_id}`}
+        // token
     }
-    console.log(message)
+    // console.log(message)
     try {
-        await admin.messaging().send(message)
-        console.log("hello world")     
-        return res.status(status.success).send(true)   
+        try {
+            query_text = `
+                INSERT INTO push(path_id, item_id, text) 
+                    VALUES (${path_id}, ${item_id}, '${text}')
+                RETURNING id, path_id, item_id, text, to_char(created_at, 'DD.MM.YYYY HH24-MI')
+            `
+            const k = await database.query(query_text, [])
+        } catch (e) {
+            
+        }
+        await admin.messaging().sendToTopic('Events',message)
+        // console.log("hello world")   
+          
+        return res.status(status.success).json({rows:k?.rows[0]})   
     } catch (e) {
         console.log(e)
         return res.status(status.error).send(false)

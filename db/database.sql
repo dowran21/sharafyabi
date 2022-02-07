@@ -217,6 +217,14 @@ CREATE TABLE product_comments(
     CONSTRAINT product_id_fk FOREIGN KEY (product_id) REFERENCES products(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
+CREATE TABLE push(
+    id SERIAL NOT NULL,
+    path_id SMALLINT NOT NULL,
+    item_id SMALLINT NOT NULL,
+    "text" VARCHAR (250) NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT now()
+);
+
 CREATE TABLE shop_data(
     id SMALLINT NOT NULL,
     phone1 VARCHAR(8),
