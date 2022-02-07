@@ -529,7 +529,7 @@ const GetProductComments = async (req, res) =>{
     const query_text = `
         SELECT (
             SELECT COUNT(pc.id) FROM product_comments pc WHERE pc.product_id = ${id} AND pc.main_comment_id IS NULL
-        ) AS count, (
+        )::integer AS count, (
             SELECT json_agg(com) FROM (
                 SELECT pc.comment, u.full_name, to_char(pc.created_at, 'DD.MM.YYYY HH24:MI') AS created_at, pc.id::integer,
                     (
