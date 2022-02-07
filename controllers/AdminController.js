@@ -1056,13 +1056,14 @@ const AdminFirebase = async (req, res) =>{
     }
     // console.log(message)
     try {
+        let k = {}
         try {
             query_text = `
                 INSERT INTO push(path_id, item_id, text) 
                     VALUES (${path_id}, ${item_id}, '${text}')
-                RETURNING id, path_id, item_id, text, to_char(created_at, 'DD.MM.YYYY HH24-MI')
+                RETURNING id, path_id, item_id, text, to_char(created_at, 'DD.MM.YYYY HH24:MI') AS created_at
             `
-            const k = await database.query(query_text, [])
+             k = await database.query(query_text, [])
         } catch (e) {
             
         }
@@ -1070,6 +1071,20 @@ const AdminFirebase = async (req, res) =>{
         // console.log("hello world")   
           
         return res.status(status.success).json({rows:k?.rows[0]})   
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
+const GetPushes = async(req, res) =>{
+    const query_text = `
+        SELECT id, path_id, item_id, text, to_char(created_at, 'DD.MM.YYYY HH24:MI') AS created_at
+        FROM push
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).json({rows})
     } catch (e) {
         console.log(e)
         return res.status(status.error).send(false)
@@ -1305,5 +1320,6 @@ module.exports = {
     GetMessages,
     DeleteSMS,
     DeleteSubsciption,
-    GetSubsciptionPhones
+    GetSubsciptionPhones,
+    GetPushes
 }

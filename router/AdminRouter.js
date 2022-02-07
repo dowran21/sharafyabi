@@ -63,6 +63,7 @@ router.get('/get-comments', VerifyAdminAccessToken, AdminController.GetComments)
 router.post(`/activate-comment/:id`, VerifyAdminAccessToken, AdminController.AcceptComment)
 router.post('/delete-comment/:id', VerifyAdminAccessToken, AdminController.DeleteComment)
 router.get('/get-user-statistics', VerifyAdminAccessToken, AdminController.GetUserStatistics)
+router.get('/get-pushes', VerifyAdminAccessToken, AdminController.GetPushes)
 
 router.post('/send-subscribe-messsage', VerifyAdminAccessToken, AdminController.SendSubscribeMessage)
 router.get('/get-messages', VerifyAdminAccessToken, AdminController.GetMessages)
