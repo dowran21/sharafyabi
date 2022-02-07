@@ -259,7 +259,7 @@ const GetCartProducts = async (req, res) => {
 const CreateOrder = async (req, res) =>{
     const {lang} = req.params;
     const {products, coupon, phone, address, user_id, name, comment, paymant_id} = req.body;
-    console.log(req.body)
+    // console.log(req.body)
     if(!products?.length){
         return res.status(status.success).send("free cart")
     }
@@ -356,7 +356,7 @@ const CreateOrder = async (req, res) =>{
                     WHERE o.id = ${id}
                 `
                 const s = await database.query(s_query_text, [])
-                console.log(s.rows[0])
+                // console.log(s.rows[0])
                 const data = s.rows[0]
                 if(data){
                     res.setHeader('Content-type', 'application/pdf');
