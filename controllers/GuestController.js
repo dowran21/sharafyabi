@@ -304,13 +304,13 @@ const CreateOrder = async (req, res) =>{
             try{
                 discount = await database.query(`SELECT * FROM discounts WHERE discount_type_id = 4 AND validity:: tsrange @> localtimestamp AND coupon = '${coupon}' AND is_active = true`, [])
             }catch(e){
-            
+                throw(e)
             }
         }else{
             try {
                 discount = await database.query(`SELECT * FROM discounts WHERE discount_type_id = 3 AND validity:: tsrange @> localtimestamp AND is_active = true AND min_value < ${totalPrice}`, [])                
             } catch (e) {
-                
+                throw(e)
             }
         }
 
@@ -334,7 +334,7 @@ const CreateOrder = async (req, res) =>{
             const j = await database.query(order_query, [])
             // console.log("After third query")
             // console.log(j)
-            const id = j.rows[0].id;
+            const id = j?.rows[0]?.id;
             // try {
             //     const s_query_text = `
             //     SELECT o.id, o.phone, o.address, o.name, to_char(o.created_at, 'DD.MM.YYYY HH24:MI') AS created_at,
