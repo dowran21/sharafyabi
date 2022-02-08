@@ -1,6 +1,7 @@
 const database = require('../db/index')
 require('dotenv').config()
 const axios = require('axios');
+const {SendSMS} = require('./sms')
 
 const MessageSendler = async ({message}) => {
     const query_text = `
@@ -13,23 +14,6 @@ const MessageSendler = async ({message}) => {
         })
     } catch (e) {
         
-    }
-}
- 
-const SendSMS = async({phone, message}) => {
-    let tel_number = `${phone.replace('+', '')}`;
-    try{
-        await axios({
-        method: 'post',
-        url: process.env.API_PHONE_MESSAGE,
-        data: {
-            phone:tel_number,
-            sms_message:message,
-            service:"Sharafyabi"
-        }
-        })
-    }catch(err){
-        // console.log(err)
     }
 }
  

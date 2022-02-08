@@ -3,6 +3,7 @@ const {status} = require('../utils/status')
 const {ComparePassword, GenerateAdminAccessToken, GenerateAdminRefreshToken} = require('../utils/index')
 const fs = require('fs')
 require('dotenv').config();
+const {SendSMS} = require('../utils/sms')
 
 const admin = require("firebase-admin");
 // const { query } = require('../db/index');
@@ -772,6 +773,26 @@ const GetOrders = async (req, res) =>{
 const UpdateAccept = async (req, res)=>{
     const {id} = req.params;
     const {accept} = req.body;
+    const select_query = `
+        SELECT * FROM orders WHERE id = ${id}
+    `
+    try {
+        const k = await database.query(select_query, [])
+        if(!k?.rows[0]){
+            return res.status(status.notfound).send(false)
+        }
+        let phone = k?.rows[0].phone;
+        let message = ``
+        if(accept){
+            message = `Ваш заказ принят в Online магазине Sharafyabi`
+        }else{
+            message = `Ваш заказ отклонён в Online магазине Sharafyabi`
+        }
+        SendSMS({phone, message})
+    } catch (e) {
+        console.log(e)
+    }
+    
     const query_text = `
         UPDATE orders SET accepted = ${accept} WHERE id = ${id}
     `
