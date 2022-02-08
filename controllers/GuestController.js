@@ -687,5 +687,6 @@ module.exports = {
     GetProductComments,
     GetShopData,
     GeneratePdf,
-    GetOrdersMobile
+    GetOrdersMobile,
+    GetOrderById
 }
