@@ -1062,6 +1062,7 @@ const AdminFirebase = async (req, res) =>{
                 INSERT INTO push(path_id, item_id, text) 
                     VALUES (${path_id}, ${item_id}, '${text}')
                 RETURNING id, path_id, item_id, text, to_char(created_at, 'DD.MM.YYYY HH24:MI') AS created_at
+                
             `
              k = await database.query(query_text, [])
         } catch (e) {
@@ -1081,6 +1082,7 @@ const GetPushes = async(req, res) =>{
     const query_text = `
         SELECT id, path_id, item_id, text, to_char(created_at, 'DD.MM.YYYY HH24:MI') AS created_at
         FROM push
+        ORDER BY id DESC
     `
     try {
         const {rows} = await database.query(query_text, [])
