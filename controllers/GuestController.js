@@ -1,6 +1,6 @@
 const database = require("../db/index");
 const {status} = require("../utils/status");
-const {OrderGenerator} = require("../pdfmaker/pdf.js")
+const {OrderGenerator} = require("../pdfmaker/pdf.js");
 
 
 const GetCategories = async (req, res) =>{
@@ -612,6 +612,64 @@ const GeneratePdf = async (req, res) =>{
     }
 }
 
+const GetOrdersMobile = async (req, res) =>{
+    const {ord} = req.query;
+    let arr = []
+    try {
+        arr = JSON.parse(ord)
+    } catch (e) {
+        
+    }
+    if(!arr.length){
+        return res.status(status.success).json({rows:null})
+    }
+    const query_text = `
+        SELECT o.id, o.phone, o.address, o.name, to_char(o.created_at, 'YYYY-MM-DD HH24:MI') AS created_at,
+        o.total_price, o.coupon, o.discount_id, d.discount_value
+        FROM orders o
+        LEFT JOIN discounts d
+            ON d.id = o.discount_id
+        WHERE o.id IN (${ord.map(item => item.id).join(', ')})
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).json({rows})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
+const GetOrderById = async (req, res) =>{
+    const {lang, id} = req.params
+    const query_text = `
+    SELECT p.id::integer, oi.price, oi.quantity, d.discount_value::integer, pt.name, p.destination, ct.name AS category_name, prod.name AS producer_name
+        FROM order_items oi
+            INNER JOIN languages l
+                ON l.language_code = '${lang}'
+            INNER JOIN products p 
+                ON p.id = oi.product_id
+            INNER JOIN product_translations pt
+                ON pt.product_id = p.id AND pt.language_id = l.id
+            INNER JOIN category_translations ct 
+                ON ct.category_id = p.main_category_id AND ct.language_id = l.id
+            INNER JOIN producers prod 
+                ON prod.id = p.producer_id
+            INNER JOIN orders o
+                ON o.id = oi.order_id
+            LEFT JOIN discounts d
+                ON d.product_id = oi.product_id AND validity ::tsrange @> o.created_at
+            WHERE o.id = ${id} 
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).json({rows})
+    } catch (e) {
+        console.log(e) 
+        return res.status(status.error).send(false)
+    }
+}
+
 module.exports = {
     GetCategories,
     GetProducers,
@@ -628,5 +686,6 @@ module.exports = {
     GetCoupon,
     GetProductComments,
     GetShopData,
-    GeneratePdf
+    GeneratePdf,
+    GetOrdersMobile
 }
