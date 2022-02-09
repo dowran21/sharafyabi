@@ -229,6 +229,8 @@ CREATE TABLE shop_data(
     id SMALLINT NOT NULL,
     phone1 VARCHAR(8),
     phone2 VARCHAR(8),
-    "address" VARCHAR (150),
+    address_tm VARCHAR (150),
+    address_ru VARCHAR (150),
+    address_en VARCHAR (150),
     email VARCHAR(50)
 );

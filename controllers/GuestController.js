@@ -157,7 +157,8 @@ const GetProducts = async (req, res) =>{
 
                 (SELECT json_agg(pro) FROM (
                     SELECT p.id::int, p.price::text, p.stock, p.destination, d.discount_value, d.min_value, 
-                        pt.name, SUBSTRING(pt.description, 1, 30) AS description, p.recomended, p.new_in_come, ct.name AS category_name, prod.name AS producer_name
+                        pt.name, SUBSTRING(pt.description, 1, 30) AS description, p.recomended, p.new_in_come, ct.name AS category_name, prod.name AS producer_name,
+                        prod.id AS producer_id, ct.category_id AS category_id
 
                     FROM products p
                         LEFT JOIN languages l
