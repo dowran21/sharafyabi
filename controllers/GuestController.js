@@ -560,13 +560,14 @@ const GetProductComments = async (req, res) =>{
 }
 
 const GetShopData = async (req, res) =>{
+    const {lang} = req.params
     const query_text = `
-        SELECT * FROM shop_data
+        SELECT phone1, phone2, email, address_${lang} AS address FROM shop_data
     `
     try {
-        console.log("I am in trye")
+        // console.log("I am in trye")
         const {rows} = await database.query(query_text, [])
-        console.log(rows)
+        // console.log(rows)
         return res.status(status.success).json({rows:rows[0]})
     } catch (e) {
         console.log(e)

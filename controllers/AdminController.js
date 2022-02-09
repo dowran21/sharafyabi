@@ -1031,10 +1031,10 @@ const GetUserStatistics = async (req, res) =>{
 }
 
 const UpdateShopData = async (req, res) =>{
-    const {phone1, phone2, address, email} = req.body;
+    const {phone1, phone2, address_tm, address_ru, address_en, email} = req.body;
     console.log(req.body)
     const query_text = `
-        UPDATE shop_data SET  phone1 = '${phone1}', phone2 = '${phone2}' , address = '${address}', email = '${email}'
+        UPDATE shop_data SET  phone1 = '${phone1}', phone2 = '${phone2}' , address_tm = '${address_tm}', address_ru = '${address_ru}',address_en = '${address_en}', email = '${email}'
     `
     try {
         await database.query(query_text, [])
@@ -1246,7 +1246,6 @@ const DeleteSMS = async (req, res) =>{
     }
 }
 
-
 const DeleteSubsciption = async (req, res) =>{
     const {id} = req.params;
     const query_text = `
@@ -1275,6 +1274,19 @@ const GetSubsciptionPhones = async(req, res) =>{
                 ORDER BY id DESC
                 ${offSet}
             )da) AS data
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).json({rows:rows[0]})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
+const GetShopData = async (req, res) =>{
+    const query_text = `
+        SELECT * FROM shop_data
     `
     try {
         const {rows} = await database.query(query_text, [])
@@ -1344,5 +1356,6 @@ module.exports = {
     DeleteSMS,
     DeleteSubsciption,
     GetSubsciptionPhones,
-    GetPushes
+    GetPushes,
+    GetShopData
 }

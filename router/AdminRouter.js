@@ -70,5 +70,6 @@ router.get('/get-messages', VerifyAdminAccessToken, AdminController.GetMessages)
 router.post('/delete-sms/:id', VerifyAdminAccessToken, AdminController.DeleteSMS)
 router.post('/delete-subsciption/:id', VerifyAdminAccessToken, AdminController.DeleteSubsciption)
 router.get('/get-phones', VerifyAdminAccessToken, AdminController.GetSubsciptionPhones)
+router.get('/get-shop-data', VerifyAdminAccessToken, AdminController.GetShopData)
 
 module.exports = router;
