@@ -1337,8 +1337,47 @@ const GetUsers = async (req, res) =>{
     }
 }
 
+const AddTestimonial = async (req, res) =>{
+    const {name, text, city} = req.body;
+    const query_text = `
+        INSERT INTO testimonial(name, text, city) VALUES ('${name}', '${text}', '${city}') RETURNING *
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).json({rows:rows[0]})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
 
 
+const GetTestimonial = async (req, res) =>{
+    const query_text = `
+        SELECT * FROM testimonial
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).json({rows})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
+const DeleteTestimonial = async (req, res) =>{
+    const {id} = req.params;
+    const query_text = `
+        DELETE FROM testimonial WHERE id = ${id}
+    `
+    try {
+        await database.query(query_text, [])
+        return res.status(status.success).send(true)
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
 module.exports = {
     Login,
     LoadAdmin,
@@ -1400,5 +1439,9 @@ module.exports = {
     GetSubsciptionPhones,
     GetPushes,
     GetShopData,
-    GetUsers
+    GetUsers,
+
+    AddTestimonial,
+    GetTestimonial,
+    DeleteTestimonial
 }

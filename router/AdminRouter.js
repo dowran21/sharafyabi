@@ -73,4 +73,9 @@ router.get('/get-phones', VerifyAdminAccessToken, AdminController.GetSubsciption
 router.get('/get-shop-data', VerifyAdminAccessToken, AdminController.GetShopData)
 router.get('/get-users', VerifyAdminAccessToken, AdminController.GetUsers)
 
+router.post('/add-testimonial', VerifyAdminAccessToken, AdminController.AddTestimonial)
+router.get('/get-testimonial', VerifyAdminAccessToken, AdminController.GetTestimonial)
+router.post('/delete-testimonial/:id', VerifyAdminAccessToken, AdminController.DeleteTestimonial)
+
+
 module.exports = router;

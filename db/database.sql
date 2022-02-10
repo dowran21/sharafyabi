@@ -234,3 +234,10 @@ CREATE TABLE shop_data(
     address_en VARCHAR (150),
     email VARCHAR(50)
 );
+
+CREATE TABLE testimonial(
+    id SERIAL PRIMARY KEY NOT NULL,
+    "name" VARCHAR(150) NOT NULL,
+    "text" TEXT NOT NULL,
+    city VARCHAR(150) NOT NULL
+);
