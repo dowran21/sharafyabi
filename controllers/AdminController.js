@@ -1297,6 +1297,30 @@ const GetShopData = async (req, res) =>{
     }
 }
 
+const GetUsers = async (req, res) =>{
+    const {page, limit} = req.query;
+    let offSet = ``
+    if(page && limit){
+        offSet = ` OFFSET ${page*limit} LIMIT ${limit}`
+    }
+    try {
+        const query_text = `
+            SELECT (
+                SELECT COUNT (*) FROM users
+            ), (SELECT json_agg(u) FROM (
+                SELECT u.id, u.full_name, u.email, u.phone, to_char(u.created_at, 'DD.MM.YYYY HH24:MI')
+                FROM users u
+                ${offSet}
+            )u) AS users
+        `
+        const {rows} =  await database.query(query_text, [])
+        return res.status(status.success).send(true)
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
 module.exports = {
     Login,
     LoadAdmin,
@@ -1357,5 +1381,6 @@ module.exports = {
     DeleteSubsciption,
     GetSubsciptionPhones,
     GetPushes,
-    GetShopData
+    GetShopData,
+    GetUsers
 }
