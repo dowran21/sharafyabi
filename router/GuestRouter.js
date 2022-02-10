@@ -28,5 +28,6 @@ router.get('/:lang/get-orders-mobile', GuestController.GetOrdersMobile);
 router.get('/:lang/get-order/:id', GuestController.GetOrderById)
 router.get('/:lang/get-shop-data', GuestController.GetShopData)
 router.get('/:lang/generate-pdf/:id', GuestController.GeneratePdf)
+router.get('/:lang/get-testimonials', GuestController.GetTestimonials)
 
 module.exports = router;

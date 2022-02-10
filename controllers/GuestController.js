@@ -672,6 +672,18 @@ const GetOrderById = async (req, res) =>{
     }
 }
 
+const GetTestimonials = async (req, res) =>{
+    const query_text = `
+        SELECT * FROM testimonial
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).json({rows})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
 module.exports = {
     GetCategories,
     GetProducers,
@@ -690,5 +702,6 @@ module.exports = {
     GetShopData,
     GeneratePdf,
     GetOrdersMobile,
-    GetOrderById
+    GetOrderById,
+    GetTestimonials
 }
