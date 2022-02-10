@@ -1298,28 +1298,46 @@ const GetShopData = async (req, res) =>{
 }
 
 const GetUsers = async (req, res) =>{
-    const {page, limit} = req.query;
+    const {page, limit, sort_column, sort_direction, search} = req.query;
     let offSet = ``
     if(page && limit){
         offSet = ` OFFSET ${page*limit} LIMIT ${limit}`
+    }
+    let wherePart = ``
+    if(search){
+        wherePart += ` AND (u.phone ~* '${search}' OR u.full_name ~* '${search}' )`
+    }
+    let column = `u.id`
+    let direction = ` ASC`
+    if(sort_column){
+        column = sort_column
+    }
+    if(sort_direction){
+        direction = sort_direction
     }
     try {
         const query_text = `
             SELECT (
                 SELECT COUNT (*) FROM users
             ), (SELECT json_agg(u) FROM (
-                SELECT u.id, u.full_name, u.email, u.phone, to_char(u.created_at, 'DD.MM.YYYY HH24:MI')
+                SELECT u.id, u.full_name, u.email, u.phone, to_char(u.created_at, 'DD.MM.YYYY HH24:MI') AS created_at
                 FROM users u
+                WHERE u.id > 0 AND u.role_id = 2 ${wherePart}
+                ORDER BY ${column} ${direction}
                 ${offSet}
+
             )u) AS users
         `
         const {rows} =  await database.query(query_text, [])
-        return res.status(status.success).send(true)
+        // console.log(rows)
+        return res.status(status.success).json({rows:rows[0]})
     } catch (e) {
         console.log(e)
         return res.status(status.error).send(false)
     }
 }
+
+
 
 module.exports = {
     Login,
