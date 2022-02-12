@@ -142,7 +142,7 @@ CREATE TABLE discounts(
     CONSTRAINT discount_type_id_fk FOREIGN KEY (discount_type_id) REFERENCES discount_types(id) ON UPDATE CASCADE,
     CONSTRAINT product_id_fk FOREIGN KEY (product_id) REFERENCES products(id) ON UPDATE CASCADE
 );
-
+ 
 CREATE TABLE orders(
     id SERIAL PRIMARY KEY NOT NULL,
     phone VARCHAR (8) NOT NULL,
