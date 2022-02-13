@@ -249,3 +249,19 @@ CREATE TABLE testimonial(
     "text" TEXT NOT NULL,
     city VARCHAR(150) NOT NULL
 );
+
+CREATE TABLE videos(
+    id SMALLSERIAL PRIMARY KEY NOT NULL,
+    title VARCHAR(250) NOT NULL,
+    video VARCHAR(250) ,
+    poster VARCHAR(250) 
+);
+
+CREATE TABLE video_titles(
+    id SERIAL PRIMARY KEY NOT NULL,
+    title VARCHAR (250) NOT NULL,
+    language_id SMALLINT NOT NULL,
+    video_id SMALLINT NOT NULL,
+
+    CONSTRAINT video_id_fk FOREIGN KEY (video_id) REFERENCES videos(id) ON UPDATE CASCADE ON DELETE CASCADE
+);

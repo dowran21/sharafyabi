@@ -429,6 +429,56 @@ const DeleteProductImage = async (req, res) =>{
     }
 }
 
+const AddVideoInformation = async (req, res) =>{
+    const {title_ru, title_en, title_tm} = req.body;
+    const query_text = `
+        WITH inserted AS (
+            INSERT INTO videos(title) VALUES ('${title_ru}')
+            RETURNING *
+        ), inserted_trans AS (
+            INSERT INTO video_titles(title, language_id, video_id) 
+            VALUES ('${title_tm}', 1, (SELECT id FROM inserted)), ('${title_ru}', 2, (SELECT id FROM inserted)), ('${title_en}', 3, (SELECT id FROM inserted)))
+            SELECT id FROM inserted
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).json({rows:rows[0]})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
+const AddVideoFile = async (req, res) =>{
+    const {id} = req.params
+    const file = req.file
+    // console.log(file)
+    const query_text = `
+        UPDATE videos SET video = '${file.path}' WHERE id = ${id}
+        `
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).send(true)
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
+const AddVideoPoster = async (req, res) =>{
+    const {id} = req.params;
+    const file = req.file
+    const query_text = `
+        UPDATE videos SET poster = '${file.path}' where id = ${id}
+    `
+    try {
+        await database.query(query_text, [])
+        return res.status(status.success).send(true)
+    } catch (e) {
+        return res.status(status.error).send(false)
+    }
+}
+
 const AddNews = async (req, res) =>{
     const {title_tm, title_ru, title_en, article_tm, article_ru, article_en} = req.body
     const query_text = `
@@ -1451,6 +1501,10 @@ module.exports = {
     AddNewsImage,
     DeleteNews,
     UpdateNews,
+
+    AddVideoInformation,
+    AddVideoFile, 
+    AddVideoPoster,
 
     GetProducts,
     AddSale,

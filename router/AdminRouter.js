@@ -5,6 +5,7 @@ const {VerifyAdminAccessToken, VerifyAdminRefreshToken} = require('../middleware
 // const { resize_producer_image,  } = require('../middleware/resize');
 const upload = require('../middleware/upload');
 const {resize_producers_categories, resize_product_images, resize_news, resize_banners} = require('../middleware/resize.js');
+const upload_video = require('../middleware/upload_video')
 
 router.post('/login', AdminController.Login)
 router.get('/load-admin', VerifyAdminRefreshToken, AdminController.LoadAdmin )
@@ -27,6 +28,10 @@ router.post('/update-product/:id', VerifyAdminAccessToken, AdminController.Updat
 router.post('/add-sub-category/:id', VerifyAdminAccessToken, AdminController.AddSubCategory)
 router.get('/get-product-images/:id',VerifyAdminAccessToken, AdminController.GetProductImages)
 router.post('/delete-product-image/:id', VerifyAdminAccessToken, AdminController.DeleteProductImage)
+
+router.post('/add-video-information', VerifyAdminAccessToken, AdminController.AddVideoInformation);
+router.post('/add-video-poster/:id', VerifyAdminAccessToken, upload.single("poster"), AdminController.AddVideoPoster)
+router.post('/add-video-file/:id', VerifyAdminAccessToken, upload_video.single("video"), AdminController.AddVideoFile)
 
 router.post('/add-news', VerifyAdminAccessToken, AdminController.AddNews)
 router.post('/add-news-image/:id', VerifyAdminAccessToken, upload.single("picture"), resize_news, AdminController.AddNewsImage)
