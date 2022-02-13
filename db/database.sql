@@ -74,6 +74,14 @@ CREATE TABLE products(
     CONSTRAINT sub_category_id_fk FOREIGN KEY (sub_category_id) REFERENCES categories(id) ON UPDATE CASCADE ON DELETE SET null
 );
 
+CREATE TABLE product_images (
+    id BIGSERIAL PRIMARY KEY NOT NULL,
+    product_id BIGINT NOT NULL,
+    destination VARCHAR(150) NOT NULL,
+
+    CONSTRAINT product_id_fk FOREIGN KEY (product_id) REFERENCES products(id) ON UPDATE CASCADE ON DELETE CASCADE 
+);
+
 CREATE TABLE product_translations(
     id BIGSERIAL PRIMARY KEY NOT NULL,
     product_id BIGINT NOT NULL,

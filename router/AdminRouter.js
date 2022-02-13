@@ -22,7 +22,7 @@ router.post('/delete-category/:id', VerifyAdminAccessToken, AdminController.Dele
 router.get('/categories',VerifyAdminAccessToken, AdminController.GetCategories)
 router.get('/producers',VerifyAdminAccessToken, AdminController.GetProducers)
 router.post('/add-product', VerifyAdminAccessToken, AdminController.AddProduct);
-router.post('/add-product-image/:id', VerifyAdminAccessToken, upload.single("picture"), resize_product_images, AdminController.AddProductImage)
+router.post('/add-product-images/:id', VerifyAdminAccessToken, upload.array("picture", 5), resize_product_images, AdminController.AddProductImage)
 router.post('/update-product/:id', VerifyAdminAccessToken, AdminController.UpdateProduct)
 router.post('/add-sub-category/:id', VerifyAdminAccessToken, AdminController.AddSubCategory)
 

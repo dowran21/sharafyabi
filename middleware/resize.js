@@ -101,30 +101,31 @@ const resize_banners  = async (req, res, next) =>{
 const resize_product_images  = async (req, res, next) =>{
     // console.log(req.files)
     const {id} =req.params
-    if (req.file){
+    if (req.files.length){
         let dir = `./uploads/${id}`
         if (!fs.existsSync(dir)){
             fs.mkdirSync(dir);
         } 
-        const date = moment().format('DDMMYYYY-HHmmss_SSS');
-        const name = req.file.originalname.replace(' ', '').split('.')[0];
-        req.file.path = `uploads/${id}/${date}-${name}`
-        await sharp(`./uploads/${req.file.filename}`)
-            .toFormat("webp")
-            .toFile(`./uploads/${id}/${date}-${name}-mini.webp`)
+        for(let i=0; i<req.files?.length; i++){
+            const date = moment().format('DDMMYYYY-HHmmss_SSS');
+            const name = req.files[i].originalname.replace(' ', '').split('.')[0];
+            file = req.files[i]
+            file.path = `uploads/${id}/${date}-${name}`
+            await sharp(`./uploads/${file.filename}`)
+                .toFormat("webp", {quality:50})
+                .toFile(`./uploads/${id}/${date}-${name}-mini.webp`)
 
-        await sharp(`./uploads/${req.file.filename}`)
-            .toFormat("webp")
-            .toFile(`./uploads/${id}/${date}-${name}-big.webp`)
+            await sharp(`./uploads/${file.filename}`)
+                .toFormat("webp", {quality:80})
+                .toFile(`./uploads/${id}/${date}-${name}-big.webp`)
 
-        await sharp(`./uploads/${req.file.filename}`)
-            .toFormat("webp")
-            .resize(900, 900, {
-                fit: 'fill',
-            })
-            .toFile(`./uploads/${id}/${date}-${name}-large.webp`)
+            await sharp(`./uploads/${file.filename}`)
+                .toFormat("webp")
+                .toFile(`./uploads/${id}/${date}-${name}-large.webp`)
+            
+            fs.unlinkSync(`./uploads/${file.filename}`)
+        }
         
-        fs.unlinkSync(`./uploads/${req.file.filename}`)
     }else{
         next()
     }
