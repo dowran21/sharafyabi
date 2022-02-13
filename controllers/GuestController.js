@@ -692,8 +692,15 @@ const GetTestimonials = async (req, res) =>{
 }
 
 const GetVideos = async (req, res) =>{
+    const {lang} = req.params;
     const query_text = `
-        SELECT * FROM videos WHERE video IS NOT NULL AND poster IS NOT NULL
+        SELECT v.poster, v.video, vt.title 
+        FROM videos v 
+        INNER JOIN languages l
+            ON l.langauge_code = '${lang}'
+        INNER JOIN video_titles vt
+            ON vt.video_id = v.id AND vt.language_id = l.id
+        WHERE v.video IS NOT NULL AND v.poster IS NOT NULL
     `
     try {
         const {rows} = await database.query(query_text, [])
