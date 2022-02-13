@@ -25,6 +25,8 @@ router.post('/add-product', VerifyAdminAccessToken, AdminController.AddProduct);
 router.post('/add-product-images/:id', VerifyAdminAccessToken, upload.array("picture", 5), resize_product_images, AdminController.AddProductImage)
 router.post('/update-product/:id', VerifyAdminAccessToken, AdminController.UpdateProduct)
 router.post('/add-sub-category/:id', VerifyAdminAccessToken, AdminController.AddSubCategory)
+router.get('/get-product-images/:id',VerifyAdminAccessToken, AdminController.GetProductImages)
+router.post('/delete-product-image/:id', VerifyAdminAccessToken, AdminController.DeleteProductImage)
 
 router.post('/add-news', VerifyAdminAccessToken, AdminController.AddNews)
 router.post('/add-news-image/:id', VerifyAdminAccessToken, upload.single("picture"), resize_news, AdminController.AddNewsImage)

@@ -395,6 +395,40 @@ const AddProductImage = async (req, res) =>{
     }
 }
 
+const GetProductImages = async (req, res) =>{
+    const {id} = req.params;
+    const query_text = `
+        SELECT * FROM product_images WHERE product_id = ${id}
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).json({rows})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
+const DeleteProductImage = async (req, res) =>{
+    const {id} = req.params;
+    const {path} = req.query;
+    try {
+        fs.unlinkSync(`./${path}-mini.webp`)
+        fs.unlinkSync(`./${path}-big.webp`)
+        fs.unlinkSync(`./${path}-large.webp`)
+        try {
+            await database.query(`DELETE FROM product_images WHERE id = ${id}`)
+            return res.status(status.success).send(true)
+        } catch (e) {
+            console.log(e)
+            return res.status(status.error).send(false)
+        }
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
 const AddNews = async (req, res) =>{
     const {title_tm, title_ru, title_en, article_tm, article_ru, article_en} = req.body
     const query_text = `
@@ -1410,7 +1444,9 @@ module.exports = {
     AddProduct,
     AddProductImage,
     UpdateProduct,
-    
+    GetProductImages,
+    DeleteProductImage,
+
     AddNews,
     AddNewsImage,
     DeleteNews,

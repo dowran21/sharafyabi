@@ -99,7 +99,7 @@ const resize_banners  = async (req, res, next) =>{
 }
 
 const resize_product_images  = async (req, res, next) =>{
-    // console.log(req.files)
+    console.log(req.files)
     const {id} =req.params
     if (req.files.length){
         let dir = `./uploads/${id}`
@@ -110,20 +110,20 @@ const resize_product_images  = async (req, res, next) =>{
             const date = moment().format('DDMMYYYY-HHmmss_SSS');
             const name = req.files[i].originalname.replace(' ', '').split('.')[0];
             file = req.files[i]
-            file.path = `uploads/${id}/${date}-${name}`
-            await sharp(`./uploads/${file.filename}`)
+            req.files[i].path = `uploads/${id}/${date}-${name}`
+            await sharp(`./uploads/${req.files[i].filename}`)
                 .toFormat("webp", {quality:50})
                 .toFile(`./uploads/${id}/${date}-${name}-mini.webp`)
 
-            await sharp(`./uploads/${file.filename}`)
+            await sharp(`./uploads/${req.files[i].filename}`)
                 .toFormat("webp", {quality:80})
                 .toFile(`./uploads/${id}/${date}-${name}-big.webp`)
 
-            await sharp(`./uploads/${file.filename}`)
+            await sharp(`./uploads/${req.files[i].filename}`)
                 .toFormat("webp")
                 .toFile(`./uploads/${id}/${date}-${name}-large.webp`)
             
-            fs.unlinkSync(`./uploads/${file.filename}`)
+            fs.unlinkSync(`./uploads/${req.files[i].filename}`)
         }
         
     }else{
