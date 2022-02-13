@@ -479,6 +479,25 @@ const AddVideoPoster = async (req, res) =>{
     }
 }
 
+const DeleteVideo = async (req, res) =>{
+    const {id} = req.params;
+    const {video, poster} = req.query;
+    try {
+        fs.unlinkSync(`./${poster}-mini.webp`);
+        fs.unlinkSync(`./${poster}-big.webp`);
+        fs.unlinkSync(`./video`)
+    } catch (e) {
+        
+    } 
+    try {
+        await database.query(`DELETE FROM videos WHERE id = ${id}`, [])
+        return res.status(status.success).send(true)
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
 const AddNews = async (req, res) =>{
     const {title_tm, title_ru, title_en, article_tm, article_ru, article_en} = req.body
     const query_text = `
@@ -688,7 +707,7 @@ const UpdateProduct = async (req, res) =>{
         try {
             const s_query = `SELECT p.id, p.price, p.name, p.stock, p.destination, p.main_category_id, p.producer_id, pt.name AS name_tm, pt.description AS description_tm,
             ptt.name AS name_ru, ptt.description AS description_ru, pttt.name AS name_en, pttt.description AS description_en, p.sub_category_id,
-            prod.name AS producer_name, ct.name AS category_name
+            prod.name AS producer_name, ct.name AS category_name, p.recomended, p.new_in_come
             FROM products p
                 LEFT JOIN product_translations pt 
                     ON pt.product_id = p.id AND pt.language_id = 1
@@ -1505,7 +1524,8 @@ module.exports = {
     AddVideoInformation,
     AddVideoFile, 
     AddVideoPoster,
-
+    DeleteVideo,
+    
     GetProducts,
     AddSale,
     GetSales,

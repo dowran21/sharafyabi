@@ -694,7 +694,7 @@ const GetTestimonials = async (req, res) =>{
 const GetVideos = async (req, res) =>{
     const {lang} = req.params;
     const query_text = `
-        SELECT v.poster, v.video, vt.title 
+        SELECT v.poster, v.video, vt.title, v.id
         FROM videos v 
         INNER JOIN languages l
             ON l.language_code = '${lang}'
