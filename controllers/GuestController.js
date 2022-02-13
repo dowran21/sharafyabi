@@ -156,9 +156,10 @@ const GetProducts = async (req, res) =>{
             ),
 
                 (SELECT json_agg(pro) FROM (
-                    SELECT p.id::int, p.price::text, p.stock, p.destination, d.discount_value, d.min_value, 
+                    SELECT p.id::int, p.price::text, p.stock, d.discount_value, d.min_value, 
                         pt.name, SUBSTRING(pt.description, 1, 30) AS description, p.recomended, p.new_in_come, ct.name AS category_name, prod.name AS producer_name,
-                        prod.id AS producer_id, ct.category_id AS category_id
+                        prod.id AS producer_id, ct.category_id AS category_id, 
+                            (SELECT pi.destination FROM product_images pi WHERE pi.product_id = p.id LIMIT 1) AS destination
 
                     FROM products p
                         LEFT JOIN languages l
@@ -191,7 +192,12 @@ const GetProductByID = async (req, res) =>{
     const {id, lang} = req.params;
     const query_text = `
         SELECT p.id::int, p.price::text, p.stock, p.destination, p.main_category_id AS category_id, p.producer_id, pt.name, pt.description, 
-        prod.name AS producer_name, concat (ct.name, '/', ctt.name) AS category_name, d.discount_value, d.min_value, p.recomended, p.new_in_come
+        prod.name AS producer_name, concat (ct.name, '/', ctt.name) AS category_name, d.discount_value, d.min_value, p.recomended, p.new_in_come,
+        (SELECT json_agg(img) FROM (
+            SELECT destination 
+            FROM product_images pi
+            WHERE pi.product_id = ${id}
+        )img) AS images
         FROM products p
             INNER JOIN languages l
                 ON l.language_code = '${lang}'
