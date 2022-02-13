@@ -690,6 +690,19 @@ const GetTestimonials = async (req, res) =>{
         return res.status(status.error).send(false)
     }
 }
+
+const GetVideos = async (req, res) =>{
+    const query_text = `
+        SELECT * FROM videos WHERE video IS NOT NULL AND poster IS NOT NULL
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).json({rows})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.success).send(false)
+    }
+}
 module.exports = {
     GetCategories,
     GetProducers,
@@ -709,5 +722,6 @@ module.exports = {
     GeneratePdf,
     GetOrdersMobile,
     GetOrderById,
-    GetTestimonials
+    GetTestimonials,
+    GetVideos
 }
