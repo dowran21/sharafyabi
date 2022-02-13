@@ -32,7 +32,7 @@ router.post('/delete-product-image/:id', VerifyAdminAccessToken, AdminController
 router.post('/add-video-information', VerifyAdminAccessToken, AdminController.AddVideoInformation);
 router.post('/add-video-poster/:id', VerifyAdminAccessToken, upload.single("poster"), resize_banners, AdminController.AddVideoPoster)
 router.post('/add-video-file/:id', VerifyAdminAccessToken, upload_video.single("video"), AdminController.AddVideoFile)
-router.post('delete-video/:id', VerifyAdminAccessToken, AdminController.DeleteVideo)
+router.post('/delete-video/:id', VerifyAdminAccessToken, AdminController.DeleteVideo)
 
 router.post('/add-news', VerifyAdminAccessToken, AdminController.AddNews)
 router.post('/add-news-image/:id', VerifyAdminAccessToken, upload.single("picture"), resize_news, AdminController.AddNewsImage)
