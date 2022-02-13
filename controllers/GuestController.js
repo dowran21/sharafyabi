@@ -697,7 +697,7 @@ const GetVideos = async (req, res) =>{
         SELECT v.poster, v.video, vt.title 
         FROM videos v 
         INNER JOIN languages l
-            ON l.langauge_code = '${lang}'
+            ON l.language_code = '${lang}'
         INNER JOIN video_titles vt
             ON vt.video_id = v.id AND vt.language_id = l.id
         WHERE v.video IS NOT NULL AND v.poster IS NOT NULL
