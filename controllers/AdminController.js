@@ -1532,7 +1532,7 @@ const GetEmails = async (req,res) =>{
             SELECT id, email, to_char(created_at, 'DD.MM.YYYY') 
             FROM email_subscriptions
             ${offSet}
-        )da AS) data
+        )da) AS  data
     `
     try {
         const {rows} = await database.query(query_text, [])
