@@ -1529,7 +1529,7 @@ const GetEmails = async (req,res) =>{
     SELECT (
         SELECT COUNT(*) FROM email_subscriptions
         ), (SELECT json_agg (da) FROM (
-            SELECT id, email, to_char(created_at, 'DD.MM.YYYY') 
+            SELECT id, email, to_char(created_at, 'DD.MM.YYYY') AS created_at
             FROM email_subscriptions
             ${offSet}
         )da) AS  data
