@@ -400,7 +400,8 @@ const CreateOrder = async (req, res) =>{
                 <h4>Общая сумма ${totalPrice}</h4>
               `, // html body
             });
-            console.log("email message sent")
+            // console.log("email message sent")
+            console.log(info)
             return res.status(status.success).json({rows:id})
 
         } catch (e) {
