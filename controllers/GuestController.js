@@ -383,16 +383,16 @@ const CreateOrder = async (req, res) =>{
               port: 465,
               secure: true, // true for 465, false for other ports
               auth: {
-                user: "dovran@takyk.com", // generated ethereal user
-                pass: "Parola7cd4", // generated ethereal password
+                user: "order@sharafyabi.com", // generated ethereal user
+                pass: "ibragim2022", // generated ethereal password
               },
             });
           
             // send mail with defined transport object
             let info = await transporter.sendMail({
-              from: '"Sharafyabi Online Shop 👻" <dovran@takyk.com>', // sender address
-              to: "ddowran2106@gmail.com", // list of receivers
-              subject: "Hello ✔", // Subject line
+              from: '"Пришел заказ на Sharafyabi Online Shop " <order@sharafyabi.com>', // sender address
+              to: "ddowran2106@gmail.com, a.shpendyaev@sharafyabi.com, dok313@yandex.ru", // list of receivers
+              subject: "Заказ", // Subject line
               text: "Был принять заказ пожалуйста посмотрите его", // plain text body
               html: `<b>Заказ ${id}?</b>
                 <p>Заказ от ${name}</p>
