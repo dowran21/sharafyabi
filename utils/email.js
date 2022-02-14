@@ -199,7 +199,7 @@ const sendEmail = async ({item, emails})=>{
     to: `${emails.map(item1 => `${item1.email}`).join(', ')}`, // list of receivers
     subject: "Заказ", // Subject line
     text: "Был принять заказ пожалуйста посмотрите его", // plain text body
-    html:html(item), // html body
+    html:html({item}), // html body
   });
 }
 
