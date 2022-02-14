@@ -10,7 +10,7 @@ const MessageSendler = async ({message}) => {
     try {
         const {rows} = await database.query(query_text, [])
         rows.map(item =>{
-            SendSMS({"phone":item.phone, message})
+          await  SendSMS({"phone":item.phone, message})
         })
     } catch (e) {
         
