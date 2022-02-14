@@ -502,6 +502,25 @@ const AddtoSubscription = async (req, res) =>{
     }
 }
 
+const AddSubscriptionToEmail = async (req, res) =>{
+    const {email} = req.body;
+    const {lang} = req.paramsc
+    const query_text = `
+        INSERT INTO email_subscriptions (email) VALUES (${email})
+    `
+    try {
+        await database.query(query_text, [])
+        return res.status(status.success).send(true)
+    } catch (e) {
+        if(e.message.includes("duplicate key value violates unique constraint")){
+            let message = {}
+            message["email"] = `${lang==='ru' ? `Email уже подписан` : lang === 'en' ? `Email already subscribed` : `Email eýýäm ývazgyda`}`
+            return res.status(status.conflict).send({error:message})
+        }
+        return res.status(status.error).send(false)
+    }
+}
+
 const GetCoupon = async (req, res) =>{
     const {coupon} = req.query
     const query_text = `
@@ -715,6 +734,7 @@ module.exports = {
     GetWishList,
     GetNewsByID,
     AddtoSubscription,
+    AddSubscriptionToEmail,
     GetCoupon,
     GetProductComments,
     GetShopData,

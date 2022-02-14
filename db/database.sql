@@ -209,7 +209,7 @@ CREATE TABLE email_subscriptions(
     id BIGSERIAL PRIMARY KEY NOT NULL,
     email VARCHAR(150),
     created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT now(),
-    UNIQUE(phone)
+    UNIQUE(email)
 );
 
 CREATE TABLE sended_messages(
