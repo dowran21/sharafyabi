@@ -85,5 +85,6 @@ router.post('/add-testimonial', VerifyAdminAccessToken, AdminController.AddTesti
 router.get('/get-testimonial', VerifyAdminAccessToken, AdminController.GetTestimonial)
 router.post('/delete-testimonial/:id', VerifyAdminAccessToken, AdminController.DeleteTestimonial)
 
+router.post('/send-email', VerifyAdminAccessToken, AdminController.SendEmailNews)
 
 module.exports = router;

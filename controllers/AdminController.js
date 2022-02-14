@@ -1499,12 +1499,23 @@ const SendEmailNews = async (req, res) =>{
         SELECT * FROM email_subscriptions
     `
     const query_text2 = `
-       SELECT n.id
+       SELECT n.id, n.destination, nd.title, nd.article
+       FROM news n
+       INNER JOIN news_descriptions nd
+          ON nd.news_id = n.id AND nd.language_id = 2
+        ORDER BY n.id DESC
+        LIMIT 1
     `
     try {
-        
+        const {rows} = await database.query(query_text, [])
+        const k = await database.query(query_text2, [])
+        const emails = rows;
+        const item = k.rows[0];
+        await sendEmail({item, emails})
+        return res.status(status.success).send(true)
     } catch (e) {
-        
+        console.log(e)
+        return res.status(status.error).send(false)
     }
 }
 module.exports = {
@@ -1579,5 +1590,6 @@ module.exports = {
 
     AddTestimonial,
     GetTestimonial,
-    DeleteTestimonial
+    DeleteTestimonial,
+    SendEmailNews
 }
