@@ -376,7 +376,29 @@ const CreateOrder = async (req, res) =>{
             //     console.log(e)
             //     return res.status(status.success).send(true)
             // }
+            const nodemailer = require("nodemailer");
+            // create reusable transporter object using the default SMTP transport
+            let transporter = nodemailer.createTransport({
+              host: "smtp.yandex.ru",
+              port: 465,
+              secure: true, // true for 465, false for other ports
+              auth: {
+                user: "dovran@takyk.com", // generated ethereal user
+                pass: "Parola7cd4", // generated ethereal password
+              },
+            });
+          
+            // send mail with defined transport object
+            let info = await transporter.sendMail({
+              from: '"Fred Foo 👻" <dovran@takyk.com>', // sender address
+              to: "ddowran2106@gmail.com", // list of receivers
+              subject: "Hello ✔", // Subject line
+              text: "Был принять заказ пожалуйста посмотрите его", // plain text body
+            //   html: "<b>Hello world?</b>", // html body
+            });
+            console.log("email message sent")
             return res.status(status.success).json({rows:id})
+
         } catch (e) {
             console.log(e)
             return res.status(status.error).send(false)
