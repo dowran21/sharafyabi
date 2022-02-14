@@ -394,7 +394,11 @@ const CreateOrder = async (req, res) =>{
               to: "ddowran2106@gmail.com", // list of receivers
               subject: "Hello ✔", // Subject line
               text: "Был принять заказ пожалуйста посмотрите его", // plain text body
-            //   html: "<b>Hello world?</b>", // html body
+              html: `<b>Заказ ${id}?</b>
+                <p>Заказ от ${name}</p>
+                <h4>Номер ${phone}</h4>
+                <h4>Общая сумма ${totalPrice}</h4>
+              `, // html body
             });
             console.log("email message sent")
             return res.status(status.success).json({rows:id})
