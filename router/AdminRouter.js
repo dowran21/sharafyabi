@@ -86,5 +86,7 @@ router.get('/get-testimonial', VerifyAdminAccessToken, AdminController.GetTestim
 router.post('/delete-testimonial/:id', VerifyAdminAccessToken, AdminController.DeleteTestimonial)
 
 router.post('/send-email', VerifyAdminAccessToken, AdminController.SendEmailNews)
+router.get('/get-emails', VerifyAdminAccessToken, AdminController.GetEmails)
+router.post('/delete-email/:id', VerifyAdminAccessToken, AdminController.DeleteEmail)
 
 module.exports = router;

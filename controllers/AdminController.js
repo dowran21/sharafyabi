@@ -1518,6 +1518,42 @@ const SendEmailNews = async (req, res) =>{
         return res.status(status.error).send(false)
     }
 }
+
+const GetEmails = async (req,res) =>{
+    const {page, limit} = req.query
+    let offSet = ``
+    if(page && limit){
+        offSet = `OFFSET ${page*limit} LIMIT ${limit}`
+    }
+    const query_text = `
+    SELECT (
+        SELECT COUNT(*) FROM email_subscriptions
+        ), (SELECT json_agg (da) FROM (
+            SELECT id, email, to_char(created_at, 'DD.MM.YYYY') 
+            FROM email_subscriptions
+            ${offSet}
+        )da AS) data
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+    } catch (e) {
+        
+    }
+}
+
+const DeleteEmail = async (req, res) =>{
+    const {id} = req.params;
+    const query_text = `
+    DELETE FROM email_subscriptions WHERE id = ${id}
+    `
+    try {
+        await database.query(query_text, [])
+        return res.status(status.success).send(true)
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
 module.exports = {
     Login,
     LoadAdmin,
@@ -1587,7 +1623,8 @@ module.exports = {
     GetPushes,
     GetShopData,
     GetUsers,
-
+    GetEmails,
+    DeleteEmail,
     AddTestimonial,
     GetTestimonial,
     DeleteTestimonial,
