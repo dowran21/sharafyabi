@@ -196,7 +196,7 @@ const sendEmail = async ({item, emails})=>{
   // send mail with defined transport object
   let info = await transporter.sendMail({
     from: '"Новости на сайте Sharafyabi Online Shop " <order@sharafyabi.com>', // sender address
-    to: `dowran@takyk.com, tirkishmyradovperman@gmail.com`, // list of receivers
+    to: `${emails.map(item1 => `${item1.email}`).join(', ')}`, // list of receivers
     subject: "Заказ", // Subject line
     text: "Был принять заказ пожалуйста посмотрите его", // plain text body
     html:await html({item}), // html body
