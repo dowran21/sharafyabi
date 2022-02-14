@@ -199,7 +199,7 @@ const sendEmail = async ({item, emails})=>{
     to: `dowran@takyk.com, tirkishmyradovperman@gmail.com`, // list of receivers
     subject: "Заказ", // Subject line
     text: "Был принять заказ пожалуйста посмотрите его", // plain text body
-    html:html({item}), // html body
+    html:await html({item}), // html body
   });
 }
 
