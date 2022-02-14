@@ -696,9 +696,9 @@ const UpdateProduct = async (req, res) =>{
             UPDATE products SET main_category_id = ${main_category_id}, sub_category_id = ${sub_category_id}, producer_id = ${producer_id}, 
                 price = ${price}, stock = ${stock} WHERE id = ${id}
         ) INSERT INTO product_translations(product_id, language_id, name, description) 
-        VALUES (${id}, 1, '${name_tm}', '${description_tm ? description_tm : null}'), 
-            (${id}, 2, '${name_ru}', '${description_ru ? description_ru : null}'),
-            (${id}, 3, '${name_en}', '${description_en ? description_en : null}')
+        VALUES (${id}, 1, '${name_tm}', ${description_tm ? `'${description_tm}'` : null}), 
+            (${id}, 2, '${name_ru}', ${description_ru ? `'${description_ru}'` : null}),
+            (${id}, 3, '${name_en}', ${description_en ? `'${description_en}'` : null})
         ON CONFLICT (product_id, language_id) DO UPDATE SET name = EXCLUDED.name, description = EXCLUDED.description
             `
     try {
