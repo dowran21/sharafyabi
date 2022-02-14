@@ -1492,6 +1492,21 @@ const DeleteTestimonial = async (req, res) =>{
         return res.status(status.error).send(false)
     }
 }
+
+const SendEmailNews = async (req, res) =>{
+    const {sendEmail} = require("../utils/email")
+    const query_text = `
+        SELECT * FROM email_subscriptions
+    `
+    const query_text2 = `
+       SELECT n.id
+    `
+    try {
+        
+    } catch (e) {
+        
+    }
+}
 module.exports = {
     Login,
     LoadAdmin,

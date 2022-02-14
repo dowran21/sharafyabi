@@ -504,7 +504,7 @@ const AddtoSubscription = async (req, res) =>{
 
 const AddSubscriptionToEmail = async (req, res) =>{
     const {email} = req.body;
-    const {lang} = req.paramsc
+    const {lang} = req.params
     const query_text = `
         INSERT INTO email_subscriptions (email) VALUES (${email})
     `
