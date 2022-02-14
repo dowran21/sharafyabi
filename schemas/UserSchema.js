@@ -33,7 +33,8 @@ const Schema = {
         paymant_id:Joi.number().min(1).max(2).required()
     }),
     Subscription:Joi.object({
-        phone:Joi.number().required().min(61000000).max(65999999)
+        phone:Joi.number().required().min(61000000).max(65999999),
+        email:Joi.string().allow("")
     }),
     Real_estate:Joi.object({
         type_id:Joi.number().required().label('тип').messages({
