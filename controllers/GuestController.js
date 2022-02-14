@@ -237,8 +237,8 @@ const GetCartProducts = async (req, res) => {
         return res.status(status.success).json({"rows":null})
     }
     const query_text = `
-        SELECT p.id::int, p.price::text, p.stock, p.destination, p.main_category_id, p.producer_id, pt.name, pt.description, 
-        prod.name AS producer_name, ct.name AS category_name, d.discount_value, d.min_value
+        SELECT p.id::int, p.price::text, p.stock,  p.main_category_id, p.producer_id, pt.name, pt.description, 
+        prod.name AS producer_name, ct.name AS category_name, d.discount_value, d.min_value, (SELECT pi.destination FROM product_images pi WHERE pi.product_id = p.id LIMIT 1) AS destination
         FROM products p
             INNER JOIN languages l
                 ON l.language_code = '${lang}'
@@ -494,8 +494,8 @@ const GetWishList = async (req, res) =>{
         return res.status(status.success).json({rows:null})
     }
     const query_text = `
-    SELECT p.id::int, p.price::text, p.stock, p.destination, p.main_category_id, p.producer_id, pt.name, pt.description, 
-        prod.name AS producer_name, ct.name AS category_name, d.discount_value, d.min_value
+    SELECT p.id::int, p.price::text, p.stock, p.main_category_id, p.producer_id, pt.name, pt.description, 
+        prod.name AS producer_name, ct.name AS category_name, d.discount_value, d.min_value, (SELECT pi.destination FROM product_images pi WHERE pi.product_id = p.id LIMIT 1) AS destination
         FROM products p
             INNER JOIN languages l
                 ON l.language_code = '${lang}'
@@ -677,7 +677,7 @@ const GetOrdersMobile = async (req, res) =>{
 const GetOrderById = async (req, res) =>{
     const {lang, id} = req.params
     const query_text = `
-    SELECT p.id::integer, oi.price, oi.quantity, d.discount_value::integer, pt.name, p.destination, ct.name AS category_name, prod.name AS producer_name
+    SELECT p.id::integer, oi.price, oi.quantity, d.discount_value::integer, pt.name,(SELECT pi.destination FROM product_images pi WHERE pi.product_id = p.id LIMIT 1) AS destination, ct.name AS category_name, prod.name AS producer_name
         FROM order_items oi
             INNER JOIN languages l
                 ON l.language_code = '${lang}'

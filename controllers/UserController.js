@@ -109,7 +109,7 @@ const GetOrderByID = async (req, res) =>{
     const user_id = req.user?.id
     const {lang, id} = req.params
     const query_text = `
-    SELECT p.id::integer, oi.price, oi.quantity, d.discount_value::integer, pt.name, p.destination, ct.name AS category_name, prod.name AS producer_name
+    SELECT p.id::integer, oi.price, oi.quantity, d.discount_value::integer, pt.name, (SELECT pi.destination FROM product_images pi WHERE pi.product_id = p.id LIMIT 1) AS destination, ct.name AS category_name, prod.name AS producer_name
         FROM order_items oi
             INNER JOIN languages l
                 ON l.language_code = '${lang}'
