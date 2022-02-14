@@ -30,6 +30,6 @@ router.get('/:lang/get-shop-data', GuestController.GetShopData)
 router.get('/:lang/generate-pdf/:id', GuestController.GeneratePdf)
 router.get('/:lang/get-testimonials', GuestController.GetTestimonials)
 router.get('/:lang/get-videos', GuestController.GetVideos)
-router.post('/:lang/add-email-subscription')
+router.post('/:lang/add-email-subscription', GuestController.AddSubscriptionToEmail)
 
 module.exports = router;

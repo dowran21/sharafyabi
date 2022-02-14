@@ -1,6 +1,7 @@
+const database = require("../db/index")
 
 const html = async ({item}) => {
-  return 
+  let str =  
  `
 <!DOCTYPE html>    
 <html>    
@@ -152,7 +153,7 @@ table[name="bmeMainBody"], body {background-color:#000000;}
 <br><span style="font-size: 14px; font-family: Helvetica, Arial, sans-serif; color: #929292; line-height: 150%;">Дата публикации: </span><span style="font-size: 14px; font-family: Helvetica, Arial, sans-serif; color: #d63c3c; line-height: 150%;"><strong>${item.created_at}</strong></span></div></td></tr></tbody>    
 </table></td><td valign="top" align="center" class="tdPart">    
 <table cellspacing="0" cellpadding="0" border="0" class="bmeImageTable" style="float: right; height: 222px;" align="right" dimension="30%" width="187" height="222"><tbody><tr><td name="bmeImgHolder" style="padding:20px;" align="left" valign="top" height="182"><img    
- src="https://benchmarkemail.com/images/templates_n/new_editor/Templates/FlashSale/Jacket.jpg" width="147" style="max-width: 250px; display: block;" alt="" border="0"></td></tr></tbody>    
+ src="${item.destination}" width="147" style="max-width: 250px; display: block;" alt="" border="0"></td></tr></tbody>    
 </table></td></tr></tbody>    
 </table></td></tr></tbody>    
 </table></div><div id="dv_13" class="blk_wrapper" style="">    
@@ -165,9 +166,19 @@ table[name="bmeMainBody"], body {background-color:#000000;}
 </body>    
 </html>
 `
+return str;
 }
 const item = {}
 const sendEmail = async ({item, emails})=>{
+  // const query_text = `
+  // SELECT * FROM email_subscriptions
+  // `
+  // let emails = []
+  // try {
+  //   const {rows} = await database.query(query_text, [])
+  // } catch (error) {
+    
+  // }
   const nodemailer = require("nodemailer");
   // create reusable transporter object using the default SMTP transport
   let transporter = nodemailer.createTransport({
@@ -182,12 +193,12 @@ const sendEmail = async ({item, emails})=>{
 
   // send mail with defined transport object
   let info = await transporter.sendMail({
-    from: '"Пришел заказ на Sharafyabi Online Shop " <order@sharafyabi.com>', // sender address
-    to: "hello@takyk.com", // list of receivers
+    from: '"Новости на сайте Sharafyabi Online Shop " <order@sharafyabi.com>', // sender address
+    to: `${emails.map(item1 => `${item1.email}`).join(', ')}`, // list of receivers
     subject: "Заказ", // Subject line
     text: "Был принять заказ пожалуйста посмотрите его", // plain text body
     html:html(item), // html body
   });
 }
 
-sendEmail()
+module.exports = {sendEmail}
