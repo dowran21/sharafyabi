@@ -1499,7 +1499,7 @@ const SendEmailNews = async (req, res) =>{
         SELECT * FROM email_subscriptions
     `
     const query_text2 = `
-       SELECT n.id, n.destination, nd.title, nd.article
+       SELECT n.id, n.destination, nd.title, nd.article, to_char(n.created_at, 'DD.MM.YYYY') AS created_at
        FROM news n
        INNER JOIN news_descriptions nd
           ON nd.news_id = n.id AND nd.language_id = 2

@@ -145,7 +145,7 @@ table[name="bmeMainBody"], body {background-color:#000000;}
 <table cellspacing="0" cellpadding="0" border="0" width="100%"><tbody><tr><td valign="top" align="center" class="tdPart">    
 <br><span style="font-size: 30px; font-family: Helvetica, Arial, sans-serif; color: #d63c3c; line-height: 150%;">    
 <em><strong>${item.title}</strong></em></span>    
-<table cellspacing="0" cellpadding="0" border="0" class="bmeCaptionTable" style="float: left;" width="373" align="left"><tbody><tr><td style="padding: 20px 0px 20px 20px; font-family: Arial, Helvetica, sans-serif; font-weight: normal; font-size: 14px; color: rgb(56, 56, 56); text-align: left;" name="tblCell" valign="top" align="left" class="tblCell"><div style="line-height: 150%;"><span style="font-size: 15px; font-family: Helvetica, Arial, sans-serif; color: #1e1e1e; line-height: 150%;"><strong>${item.description}</strong></span>    
+<table cellspacing="0" cellpadding="0" border="0" class="bmeCaptionTable" style="float: left;" width="373" align="left"><tbody><tr><td style="padding: 20px 0px 20px 20px; font-family: Arial, Helvetica, sans-serif; font-weight: normal; font-size: 14px; color: rgb(56, 56, 56); text-align: left;" name="tblCell" valign="top" align="left" class="tblCell"><div style="line-height: 150%;"><span style="font-size: 15px; font-family: Helvetica, Arial, sans-serif; color: #1e1e1e; line-height: 150%;"><strong>${item.article}</strong></span>    
 
 <!-- <br><span style="font-size: 14px; font-family: Helvetica, Arial, sans-serif; color: #929292; line-height: 150%;"><strong>2 days only -</strong> Valid for all men's clothing</span>     -->
 <br>    
@@ -153,14 +153,14 @@ table[name="bmeMainBody"], body {background-color:#000000;}
 <br><span style="font-size: 14px; font-family: Helvetica, Arial, sans-serif; color: #929292; line-height: 150%;">Дата публикации: </span><span style="font-size: 14px; font-family: Helvetica, Arial, sans-serif; color: #d63c3c; line-height: 150%;"><strong>${item.created_at}</strong></span></div></td></tr></tbody>    
 </table></td><td valign="top" align="center" class="tdPart">    
 <table cellspacing="0" cellpadding="0" border="0" class="bmeImageTable" style="float: right; height: 222px;" align="right" dimension="30%" width="187" height="222"><tbody><tr><td name="bmeImgHolder" style="padding:20px;" align="left" valign="top" height="182"><img    
- src="${item.destination}" width="147" style="max-width: 250px; display: block;" alt="" border="0"></td></tr></tbody>    
+ src="https://sharafyabi.com/${item.destination}-big.webp" width="147" style="max-width: 250px; display: block;" alt="" border="0"></td></tr></tbody>    
 </table></td></tr></tbody>    
 </table></td></tr></tbody>    
 </table></div><div id="dv_13" class="blk_wrapper" style="">    
 <table width="600" cellspacing="0" cellpadding="0" border="0" class="blk" name="blk_button" style="padding:3px"><tbody><tr><td width="40"></td><td align="center">    
 <table class="tblContainer" cellspacing="0" cellpadding="0" border="0" width="100%"><tbody><tr><td height="0"></td></tr><tr><td align="left">    
 <table cellspacing="0" cellpadding="0" border="0" class="bmeButton" align="left" style="border-collapse: separate;"><tbody><tr><td style="border-radius: 20px; border: 0px none transparent; text-align: center; font-family: Arial, Helvetica, sans-serif; font-size: 14px; padding: 10px 40px; font-weight: bold; background-color: rgb(214, 60, 60);" class="bmeButtonText"><span style="font-family: Helvetica, Arial, sans-serif; font-size: 14px; color: rgb(255, 255, 255);">    
-<a style="color:#FFFFFF;text-decoration:none;" target="_blank">Shop Now</a></span></td></tr></tbody>    
+<a href = "https://sharafyabi.com" style="color:#FFFFFF;text-decoration:none;" target="_blank">Shop Now</a></span></td></tr></tbody>    
 </table></td></tr><tr><td height="0"></td></tr>
 </tbody>   
 </body>    
