@@ -9,9 +9,12 @@ const MessageSendler = async ({message}) => {
     `
     try {
         const {rows} = await database.query(query_text, [])
-        rows.map(item =>{
-          await  SendSMS({"phone":item.phone, message})
-        })
+        // rows.map(item =>{
+        //   await  
+        // })
+        for(let i = 0; i<rows.length; i++){
+            SendSMS({"phone":rows[i]?.phone, message})
+        }
     } catch (e) {
         
     }

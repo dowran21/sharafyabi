@@ -1307,7 +1307,7 @@ const SendSubscribeMessage = async (req, res) =>{
     const {message} = req.body;
     console.log("hello world")
     const {MessageSendler} = require('../utils/SubscribeSendler')
-    MessageSendler({message})
+    await MessageSendler({message})
     try {
         const query_text = `
             INSERT INTO sended_messages(message) VALUES ('${message}') 
