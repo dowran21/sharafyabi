@@ -1536,8 +1536,10 @@ const GetEmails = async (req,res) =>{
     `
     try {
         const {rows} = await database.query(query_text, [])
+        return res.status(status.success).json({rows:rows[0]})
     } catch (e) {
-        
+        console.log(e)
+        return res.status(status.error).send(false)
     }
 }
 
