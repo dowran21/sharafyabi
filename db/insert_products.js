@@ -9,21 +9,31 @@ const data = xlsx.utils.sheet_to_json(ws)
 
 const Adding = async (data)=>{
     let query_text = `
-        INSERT INTO products (name, articul, price, stock) VALUES 
+       WITH  
     `
     let k=0;
     for(let i=0; i<data.length; i++){
         item = data[i];
-        if((item.stock || item.articul)){
+        if(((item.stock || item.articul) && item.name_tm && item.name_en)){
             if(k ){
                 query_text += ", "
             }
-            query_text += `('${item.name}', '${item.articul ? item.articul : `null`}', ${item.price}, ${item.stock ? item.stock : 0 } )`
+            query_text += `inserted${i} AS (
+                INSERT INTO products (name, articul, price, stock) 
+                VALUES ('${item.name}', '${item.articul ? item.articul : `null`}', ${item.price}, ${item.stock ? item.stock : 0 })
+                ON CONFLICT (name, articul) DO UPDATE SET price = EXCLUDED.price, stock = EXCLUDED.stock RETURNING *
+                ), inserted_trans${i} AS (
+                    INSERT INTO product_translations (product_id, language_id, name)
+                    VALUES ((SELECT id FROM inserted${i}), 1, '${item.name_tm}'),
+                     ((SELECT id FROM inserted${i}), 2, '${item.name}'),
+                     ((SELECT id FROM inserted${i}), 3, '${item.name_en}')
+                    ON CONFLICT (product_id, language_id) DO UPDATE SET name = EXCLUDED.name
+                )`
             
             k++;
         }
     }
-    query_text += `ON CONFLICT (name, articul) DO UPDATE SET price = EXCLUDED.price, stock = EXCLUDED.stock`
+    query_text += `SELECT 1`
     try {
         // console.log(query_text)
         await database.query(query_text, [])

@@ -339,43 +339,7 @@ const CreateOrder = async (req, res) =>{
         
         try {
             const j = await database.query(order_query, [])
-            // console.log("After third query")
-            // console.log(j)
             const id = j?.rows[0]?.id;
-            // try {
-            //     const s_query_text = `
-            //     SELECT o.id, o.phone, o.address, o.name, to_char(o.created_at, 'DD.MM.YYYY HH24:MI') AS created_at,
-            //         o.total_price, o.coupon, o.discount_id, d.discount_value, o.paymant_id,
-            //         (SELECT json_agg(orde) FROM (
-            //             SELECT p.id, p.name, oi.price, oi.quantity, d.discount_value, pt.name AS name_ru
-            //             FROM order_items oi
-            //                 INNER JOIN products p 
-            //                     ON p.id = oi.product_id
-            //                 INNER JOIN product_translations pt
-            //                     ON pt.product_id = p.id AND pt.language_id = 2
-            //                 LEFT JOIN discounts d
-            //                     ON d.product_id = oi.product_id AND validity ::tsrange @> o.created_at
-            //                 WHERE oi.order_id = o.id
-            //         )orde) AS order_items
-            //     FROM orders o
-            //         LEFT JOIN discounts d
-            //             ON d.id = o.discount_id
-            //         WHERE o.id = ${id}
-            //     `
-            //     const s = await database.query(s_query_text, [])
-            //     // console.log(s.rows[0])
-            //     const data = s.rows[0]
-            //     if(data){
-            //         res.setHeader('Content-type', 'application/pdf');
-            //         res.setHeader('Access-Control-Allow-Origin', '*');
-            //         res.setHeader('Content-disposition', 'attachment; filename=Untitled.pdf');
-            //         const response = await OrderGenerator(data)
-            //         return res.status(status.success).send(response)
-            //     }
-            // } catch (e) {
-            //     console.log(e)
-            //     return res.status(status.success).send(true)
-            // }
             const nodemailer = require("nodemailer");
             // create reusable transporter object using the default SMTP transport
             let transporter = nodemailer.createTransport({
@@ -391,7 +355,7 @@ const CreateOrder = async (req, res) =>{
             // send mail with defined transport object
             let info = await transporter.sendMail({
               from: '"Пришел заказ на Sharafyabi Online Shop " <order@sharafyabi.com>', // sender address
-              to: "ddowran2106@gmail.com, a.shpendyaev@sharafyabi.com, dok313@yandex.ru", // list of receivers
+              to: "a.shpendyaev@sharafyabi.com, dok313@yandex.ru", // list of receivers
               subject: "Заказ", // Subject line
               text: "Был принять заказ пожалуйста посмотрите его", // plain text body
               html: `<b>Заказ ${id}?</b>
@@ -409,7 +373,6 @@ const CreateOrder = async (req, res) =>{
             return res.status(status.error).send(false)
         }
 
-        return res.status(status.success).send(true)
     } catch (e) {
         console.log(e)
         return res.status(status.error).send(false)
@@ -737,6 +700,8 @@ const GetVideos = async (req, res) =>{
         return res.status(status.success).send(false)
     }
 }
+
+
 module.exports = {
     GetCategories,
     GetProducers,

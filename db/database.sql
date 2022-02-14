@@ -87,7 +87,7 @@ CREATE TABLE product_translations(
     product_id BIGINT NOT NULL,
     language_id SMALLINT NOT NULL,
     "name" VARCHAR(150) NOT NULL,
-    "description" TEXT NOT NULL,
+    "description" TEXT,
     UNIQUE(product_id, language_id),
 
     CONSTRAINT product_id_fk FOREIGN KEY (product_id) REFERENCES products(id) ON UPDATE CASCADE,
