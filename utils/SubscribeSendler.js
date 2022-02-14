@@ -15,7 +15,7 @@ const MessageSendler = async ({message}) => {
         console.log(rows)
         for(let i = 0; i<rows.length; i++){
             setTimeout(()=>{
-                await SendSMS({"phone":rows[i]?.phone, message})
+                SendSMS({"phone":rows[i]?.phone, message})
             }, i*100)
         }
     } catch (e) {
