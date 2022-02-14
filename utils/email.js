@@ -168,8 +168,10 @@ table[name="bmeMainBody"], body {background-color:#000000;}
 `
 return str;
 }
-const item = {}
+// const item = {}
 const sendEmail = async ({item, emails})=>{
+  console.log(item)
+  console.log(emails)
   // const query_text = `
   // SELECT * FROM email_subscriptions
   // `
