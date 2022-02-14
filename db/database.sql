@@ -205,6 +205,13 @@ CREATE TABLE subscriptions(
     UNIQUE(phone)
 );
 
+CREATE TABLE email_subscriptions(
+    id BIGSERIAL PRIMARY KEY NOT NULL,
+    email VARCHAR(150),
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT now(),
+    UNIQUE(phone)
+);
+
 CREATE TABLE sended_messages(
     id SERIAL NOT NULL,
     "message" TEXT NOT NULL,
