@@ -42,10 +42,6 @@ app.use('/api', Routers)
 
 app.use('/uploads', express.static(dir))
 
-app.get('auth/', function (req, res) {
-    res.sendFile(path.join(__dirname, 'out/auth', 'login.html'));
-});
-
 app.get('*', function (req, res) {
     res.sendFile(path.join(__dirname, 'out', 'index.html'));
 });
