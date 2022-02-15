@@ -2,14 +2,14 @@ require('dotenv').config()
 const axios = require('axios');
  
 const SendSMS = async({phone, message}) => {
-    let tel_number = `${phone.replace('+', '')}`;
+    // let tel_number = `${phone.replace('+', '')}`;
     console.log(phone, message)
     try{
         await axios({
         method: 'post',
         url: `http://141.136.44.174:3333/send-sms/to/service/sharafyabi`,
         data: {
-            to:`+993${tel_number}`,
+            to:`+993${phone}`,
             message:message
         }
         })
