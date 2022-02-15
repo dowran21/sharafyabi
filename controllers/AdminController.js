@@ -785,6 +785,21 @@ const GetSales = async (req, res) =>{
     }
 }
 
+const DeleteSale = async (req, res) =>{
+    const {id} = req.params;
+    const query_text = `
+        DELETE FROM discounts WHERE id = ${id}
+    `
+    try {
+        await database.query(query_text, [])
+        return res.status(status.success).send(true)
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
+
 const DeactivateSales = async (req, res) =>{
     const {id} = req.params;
     const query_text = `
@@ -1607,6 +1622,8 @@ module.exports = {
     GetProducts,
     AddSale,
     GetSales,
+    DeleteSale,
+    
     GetNews,
     AddBanner,
     GetBanners,

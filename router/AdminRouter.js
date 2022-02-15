@@ -44,6 +44,7 @@ router.post('/update-news/:id', VerifyAdminAccessToken, AdminController.UpdateNe
 router.post("/add-sale", VerifyAdminAccessToken, AdminController.AddSale)
 router.get("/get-sales", VerifyAdminAccessToken, AdminController.GetSales)
 router.post('/deactivate-sale/:id', VerifyAdminAccessToken, AdminController.DeactivateSales)
+router.post('/delete-sale/:id', VerifyAdminAccessToken, AdminController.DeleteSale)
 
 router.get('/products', VerifyAdminAccessToken, AdminController.GetProducts);
 
