@@ -133,7 +133,7 @@ table[name="bmeMainBody"], body {background-color:#000000;}
 </table></div><div id="dv_3" class="blk_wrapper" style="">    
 <table width="600" cellspacing="0" cellpadding="0" border="0" class="blk" name="blk_image"><tbody><tr><td>    
 <table width="100%" cellspacing="0" cellpadding="0" border="0"><tbody><tr><td align="center" class="bmeImage" style="border-collapse: collapse; padding: 5px;display: flex; justify-content: center; align-items: center;"><img    
- src="./logo1.png" width="80" style="max-width: 80px; display: block; width: 80px;" alt="" border="0"><h1 style="color: rgb(76, 132, 76);">Sharafyabi</h1></td></tr></tbody>    
+ src="https://sharafyabi.com/uploads/images/logo1.png" width="80" style="max-width: 80px; display: block; width: 80px;" alt="" border="0"><h1 style="color: rgb(76, 132, 76);">Sharafyabi</h1></td></tr></tbody>    
 </table></td></tr></tbody>    
 </table></div><div id="dv_9" class="blk_wrapper" style="">    
 <table width="600" cellspacing="0" cellpadding="0" border="0" class="blk" name="blk_divider" style=""><tbody><tr><td class="tblCellMain" style="padding: 20px 0px;">    
