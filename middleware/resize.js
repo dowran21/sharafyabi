@@ -12,19 +12,19 @@ const resize_producers_categories  = async (req, res, next) =>{
         } 
         const date = moment().format('DDMMYYYY-HHmmss_SSS');
         const name = req.file.originalname.replace(' ', '').split('.')[0];
-        req.file.path = `uploads/producers_categories/${date}-${name}`
+        req.file.path = `uploads/producers_categories/${date}`
         await sharp(`./uploads/${req.file.filename}`)
             .toFormat("webp")
-            .toFile(`./uploads/producers_categories/${date}-${name}-mini.webp`)
+            .toFile(`./uploads/producers_categories/${date}-mini.webp`)
 
         await sharp(`./uploads/${req.file.filename}`)
             .toFormat("webp")
-            .toFile(`./uploads/producers_categories/${date}-${name}-big.webp`)
+            .toFile(`./uploads/producers_categories/${date}-big.webp`)
 
         await sharp(`./uploads/${req.file.filename}`)
             .toFormat("webp")
             .resize(900, 900)
-            .toFile(`./uploads/producers_categories/${date}-${name}-large.webp`)
+            .toFile(`./uploads/producers_categories/${date}-large.webp`)
         
         fs.unlinkSync(`./uploads/${req.file.filename}`)
     }else{
@@ -78,18 +78,18 @@ const resize_banners  = async (req, res, next) =>{
         } 
         const date = moment().format('DDMMYYYY-HHmmss_SSS');
         const name = req.file.originalname.replace(' ', '').split('.')[0];
-        req.file.path = `uploads/news/${date}-${name}`
+        req.file.path = `uploads/news/${date}`
 
         await sharp(`./uploads/${req.file.filename}`)
             .toFormat("webp")
-            .toFile(`./uploads/news/${date}-${name}-big.webp`)
+            .toFile(`./uploads/news/${date}-big.webp`)
 
         await sharp(`./uploads/${req.file.filename}`)
             .toFormat("webp")
             .resize(1600, 350, {
                 fit: 'fill',
             })
-            .toFile(`./uploads/news/${date}-${name}-slide-big.webp`)
+            .toFile(`./uploads/news/${date}-slide-big.webp`)
         
         fs.unlinkSync(`./uploads/${req.file.filename}`)
     }else{
@@ -110,18 +110,18 @@ const resize_product_images  = async (req, res, next) =>{
             const date = moment().format('DDMMYYYY-HHmmss_SSS');
             const name = req.files[i].originalname.replace(' ', '').split('.')[0];
             file = req.files[i]
-            req.files[i].path = `uploads/${id}/${date}-${name}`
+            req.files[i].path = `uploads/${id}/${date}`
             await sharp(`./uploads/${req.files[i].filename}`)
                 .toFormat("webp", {quality:50})
-                .toFile(`./uploads/${id}/${date}-${name}-mini.webp`)
+                .toFile(`./uploads/${id}/${date}-mini.webp`)
 
             await sharp(`./uploads/${req.files[i].filename}`)
                 .toFormat("webp", {quality:80})
-                .toFile(`./uploads/${id}/${date}-${name}-big.webp`)
+                .toFile(`./uploads/${id}/${date}-big.webp`)
 
             await sharp(`./uploads/${req.files[i].filename}`)
                 .toFormat("webp")
-                .toFile(`./uploads/${id}/${date}-${name}-large.webp`)
+                .toFile(`./uploads/${id}/${date}-large.webp`)
             
             fs.unlinkSync(`./uploads/${req.files[i].filename}`)
         }
