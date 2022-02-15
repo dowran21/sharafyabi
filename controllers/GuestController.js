@@ -358,7 +358,7 @@ const CreateOrder = async (req, res) =>{
               to: "a.shpendyaev@sharafyabi.com, dok313@yandex.ru, hello@takyk.com", // list of receivers
               subject: "Заказ", // Subject line
               text: "Был принять заказ пожалуйста посмотрите его", // plain text body
-              html: `<b>Заказ ${id}?</b>
+              html: `<b>Заказ ${id}</b>
                 <p>Заказ от ${name}</p>
                 <h4>Номер ${phone}</h4>
                 <h4>Общая сумма ${totalPrice}</h4>

@@ -937,7 +937,7 @@ const UpdateAccept = async (req, res)=>{
 const GetOrderByID = async (req, res) =>{
     const {id} = req.params;
     const query_text = `
-        SELECT p.name, oi.price, oi.quantity, d.discount_value, pt.name AS name_ru, o.paymant_id
+        SELECT p.name, p.id, oi.price, oi.quantity, d.discount_value, pt.name AS name_ru, o.paymant_id
         FROM order_items oi
             INNER JOIN products p 
                 ON p.id = oi.product_id
@@ -1480,7 +1480,6 @@ const AddTestimonial = async (req, res) =>{
     }
 }
 
-
 const GetTestimonial = async (req, res) =>{
     const query_text = `
         SELECT * FROM testimonial
@@ -1585,6 +1584,7 @@ const DeleteEmail = async (req, res) =>{
         return res.status(status.error).send(false)
     }
 }
+
 module.exports = {
     Login,
     LoadAdmin,
