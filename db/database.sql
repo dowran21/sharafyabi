@@ -166,7 +166,7 @@ CREATE TABLE orders(
     total_price NUMERIC (10, 2) NOT NULL,
     
 
-    CONSTRAINT user_id_fk FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE
+    CONSTRAINT user_id_fk FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE order_items(
