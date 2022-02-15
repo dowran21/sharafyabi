@@ -160,7 +160,7 @@ table[name="bmeMainBody"], body {background-color:#000000;}
 <table width="600" cellspacing="0" cellpadding="0" border="0" class="blk" name="blk_button" style="padding:3px"><tbody><tr><td width="40"></td><td align="center">    
 <table class="tblContainer" cellspacing="0" cellpadding="0" border="0" width="100%"><tbody><tr><td height="0"></td></tr><tr><td align="left">    
 <table cellspacing="0" cellpadding="0" border="0" class="bmeButton" align="left" style="border-collapse: separate;"><tbody><tr><td style="border-radius: 20px; border: 0px none transparent; text-align: center; font-family: Arial, Helvetica, sans-serif; font-size: 14px; padding: 10px 40px; font-weight: bold; background-color: rgb(214, 60, 60);" class="bmeButtonText"><span style="font-family: Helvetica, Arial, sans-serif; font-size: 14px; color: rgb(255, 255, 255);">    
-<a href = "https://sharafyabi.com" style="color:#FFFFFF;text-decoration:none;" target="_blank">Shop Now</a></span></td></tr></tbody>    
+<a href = "https://sharafyabi.com" style="color:#FFFFFF;text-decoration:none;" target="_blank">Перейти на сайт</a></span></td></tr></tbody>    
 </table></td></tr><tr><td height="0"></td></tr>
 </tbody>   
 </body>    
