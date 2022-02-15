@@ -158,7 +158,7 @@ CREATE TABLE orders(
     "name" VARCHAR(150) NOT NULL,
     user_id BIGINT,
     created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT now(),
-    accepted BOOLEAN DEFAULT true,
+    accepted BOOLEAN DEFAULT FALSE,
     discount_id INTEGER,
     coupon VARCHAR(150),
     comment VARCHAR(150),
