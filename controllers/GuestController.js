@@ -340,33 +340,39 @@ const CreateOrder = async (req, res) =>{
         try {
             const j = await database.query(order_query, [])
             const id = j?.rows[0]?.id;
-            const nodemailer = require("nodemailer");
+            try {
+                const nodemailer = require("nodemailer");
+
+                let transporter = nodemailer.createTransport({
+                    host: "smtp.yandex.ru",
+                    port: 465,
+                    secure: true, // true for 465, false for other ports
+                    auth: {
+                      user: "order@sharafyabi.com", // generated ethereal user
+                      pass: "ibragim2022", // generated ethereal password
+                    },
+                  });
+                
+                  // send mail with defined transport object
+                  let info = await transporter.sendMail({
+                    from: '"Пришел заказ на Sharafyabi Online Shop " <order@sharafyabi.com>', // sender address
+                    to: "a.shpendyaev@sharafyabi.com, dok313@yandex.ru, hello@takyk.com", // list of receivers
+                    subject: "Заказ", // Subject line
+                    text: "Был принять заказ пожалуйста посмотрите его", // plain text body
+                    html: `<b>Заказ ${id}</b>
+                      <p>Заказ от ${name}</p>
+                      <h4>Номер ${phone}</h4>
+                      <h4>Общая сумма ${totalPrice}</h4>
+                      <a href = "https://admin.sharafyabi.com/#/orders">Админ панель</a>
+                    `, // html body
+                  });
+                  // console.log("email message sent")
+                  console.log(info)
+            } catch (e) {
+                
+            }
             // create reusable transporter object using the default SMTP transport
-            let transporter = nodemailer.createTransport({
-              host: "smtp.yandex.ru",
-              port: 465,
-              secure: true, // true for 465, false for other ports
-              auth: {
-                user: "order@sharafyabi.com", // generated ethereal user
-                pass: "ibragim2022", // generated ethereal password
-              },
-            });
-          
-            // send mail with defined transport object
-            let info = await transporter.sendMail({
-              from: '"Пришел заказ на Sharafyabi Online Shop " <order@sharafyabi.com>', // sender address
-              to: "a.shpendyaev@sharafyabi.com, dok313@yandex.ru, hello@takyk.com", // list of receivers
-              subject: "Заказ", // Subject line
-              text: "Был принять заказ пожалуйста посмотрите его", // plain text body
-              html: `<b>Заказ ${id}</b>
-                <p>Заказ от ${name}</p>
-                <h4>Номер ${phone}</h4>
-                <h4>Общая сумма ${totalPrice}</h4>
-                <a href = "https://admin.sharafyabi.com/#/orders">Админ панель</a>
-              `, // html body
-            });
-            // console.log("email message sent")
-            console.log(info)
+            
             return res.status(status.success).json({rows:id})
 
         } catch (e) {

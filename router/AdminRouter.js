@@ -91,4 +91,6 @@ router.post('/send-email', VerifyAdminAccessToken, AdminController.SendEmailNews
 router.get('/get-emails', VerifyAdminAccessToken, AdminController.GetEmails)
 router.post('/delete-email/:id', VerifyAdminAccessToken, AdminController.DeleteEmail)
 
+router.post('/delete-user/:id', VerifyAdminAccessToken, AdminController.DeleteUser)
+
 module.exports = router;

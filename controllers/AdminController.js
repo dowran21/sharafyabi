@@ -1585,6 +1585,20 @@ const DeleteEmail = async (req, res) =>{
     }
 }
 
+const DeleteUser = async (req, res) =>{
+    const {id} = req.params;
+    const query_text = `
+        DELETE FROM users WHERE id = ${id}
+    `
+    try {
+        await database.query(query_text, [])
+        return res.status(status.success).send(true)
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
 module.exports = {
     Login,
     LoadAdmin,
@@ -1661,5 +1675,6 @@ module.exports = {
     AddTestimonial,
     GetTestimonial,
     DeleteTestimonial,
-    SendEmailNews
+    SendEmailNews,
+    DeleteUser
 }
