@@ -412,7 +412,7 @@ const GetNews = async (req, res) =>{
 const GetNewsByID = async (req, res) =>{
     const {id, lang} = req.params;
     const query_text = `
-        SELECT to_char(n.created_at, 'DD-MM-YYYY') AS created_at, n.destination, nt.title, SUBSTRING(nt.article, 1, 50) AS article
+        SELECT to_char(n.created_at, 'DD-MM-YYYY') AS created_at, n.destination, nt.title, nt.article
         FROM news n
         INNER JOIN languages l
             ON l.language_code = '${lang}'
