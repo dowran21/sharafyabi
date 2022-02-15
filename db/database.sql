@@ -90,7 +90,7 @@ CREATE TABLE product_translations(
     "description" TEXT,
     UNIQUE(product_id, language_id),
 
-    CONSTRAINT product_id_fk FOREIGN KEY (product_id) REFERENCES products(id) ON UPDATE CASCADE,
+    CONSTRAINT product_id_fk FOREIGN KEY (product_id) REFERENCES products(id) ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT language_id_fk FOREIGN KEY (language_id) REFERENCES languages(id) ON UPDATE CASCADE
 );
 
@@ -148,7 +148,7 @@ CREATE TABLE discounts(
     EXCLUDE USING gist(validity WITH &&) WHERE (discount_type_id = 4 AND is_active = TRUE),
 
     CONSTRAINT discount_type_id_fk FOREIGN KEY (discount_type_id) REFERENCES discount_types(id) ON UPDATE CASCADE,
-    CONSTRAINT product_id_fk FOREIGN KEY (product_id) REFERENCES products(id) ON UPDATE CASCADE
+    CONSTRAINT product_id_fk FOREIGN KEY (product_id) REFERENCES products(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
  
 CREATE TABLE orders(
@@ -176,7 +176,7 @@ CREATE TABLE order_items(
     price NUMERIC(8, 2) NOT NULL,
     order_id BIGINT NOT NULL,
 
-    CONSTRAINT product_id_fk FOREIGN KEY (product_id) REFERENCES products(id) ON UPDATE CASCADE,
+    CONSTRAINT product_id_fk FOREIGN KEY (product_id) REFERENCES products(id) ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT order_id_fk FOREIGN KEY (order_id) REFERENCES orders(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 

@@ -352,7 +352,7 @@ const AddProduct = async (req, res) =>{
 const AddProductImage = async (req, res) =>{
     const {id} = req.params;
     const files = req.files
-    console.log(req.files)
+    // console.log(req.files)
     try {
         // await database.query(`UPDATE products SET destination = '${file.path}' WHERE id = ${id}`, [])
         // if(files?.length){
@@ -1543,6 +1543,20 @@ const GetEmails = async (req,res) =>{
     }
 }
 
+const DeleteProduct = async (req, res) =>{
+    const {id} = req.params;
+    const query_text = `
+    DELETE FROM products WHERE id = ${id}
+    `
+    try {
+        await database.query(query_text, [])
+        return res.status(status.success).send(true)
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
 const DeleteEmail = async (req, res) =>{
     const {id} = req.params;
     const query_text = `
@@ -1589,7 +1603,7 @@ module.exports = {
     AddVideoFile, 
     AddVideoPoster,
     DeleteVideo,
-    
+    DeleteProduct,
     GetProducts,
     AddSale,
     GetSales,

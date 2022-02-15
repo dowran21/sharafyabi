@@ -99,7 +99,7 @@ const resize_banners  = async (req, res, next) =>{
 }
 
 const resize_product_images  = async (req, res, next) =>{
-    console.log(req.files)
+    // console.log(req.files)
     const {id} =req.params
     if (req.files.length){
         let dir = `./uploads/${id}`
