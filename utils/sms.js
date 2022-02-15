@@ -9,9 +9,8 @@ const SendSMS = async({phone, message}) => {
         method: 'post',
         url: `http://141.136.44.174:3333/send-sms/to/service/sharafyabi`,
         data: {
-            phone:`++93${tel_number}`,
-            sms_message:message,
-            service:"Sharafyabi"
+            to:`+993${tel_number}`,
+            message:message
         }
         })
         return true
