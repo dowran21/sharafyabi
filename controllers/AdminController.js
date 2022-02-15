@@ -745,7 +745,7 @@ const AddSale = async (req, res) =>{
         const {rows} = await database.query(query_text, [])
         const s_query = `
             SELECT dt.name AS discount_name, d.id,  d.discount_value, d.coupon, d.discount_type_id, d.product_id, d.min_value, 
-            lower(d.validity)::text AS low, upper(d.validity)::text AS upper, pt.name, (SELECT upper(d.validity) > localtimestamp) AS active, d.is_active
+            to_char(lower(d.validity)::date, 'DD.MM.YYYY') AS low, to_char(upper(d.validity)::date, 'DD.MM.YYYY'), pt.name, (SELECT upper(d.validity) > localtimestamp) AS active, d.is_active
             FROM discounts d
                 INNER JOIN discount_types dt
                     ON dt.id = d.discount_type_id
@@ -767,7 +767,7 @@ const GetSales = async (req, res) =>{
             SELECT COUNT(*) FROM discounts
         ), (SELECT json_agg(dis) FROM (
             SELECT dt.name AS discount_name, d.id,  d.discount_value, d.coupon, d.discount_type_id, d.product_id, d.min_value, 
-                lower(d.validity)::text AS low, upper(d.validity)::text, pt.name, (SELECT upper(d.validity) > localtimestamp) AS active, d.is_active
+                to_char(lower(d.validity)::date, 'DD.MM.YYYY') AS low, to_char(upper(d.validity)::date, 'DD.MM.YYYY'), pt.name, (SELECT upper(d.validity) > localtimestamp) AS active, d.is_active
                 FROM discounts d
                     INNER JOIN discount_types dt
                         ON dt.id = d.discount_type_id
