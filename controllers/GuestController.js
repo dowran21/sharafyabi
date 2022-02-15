@@ -362,6 +362,7 @@ const CreateOrder = async (req, res) =>{
                 <p>Заказ от ${name}</p>
                 <h4>Номер ${phone}</h4>
                 <h4>Общая сумма ${totalPrice}</h4>
+                <a href = "https://admin.sharafyabi.com/#/orders">Админ панель</a>
               `, // html body
             });
             // console.log("email message sent")

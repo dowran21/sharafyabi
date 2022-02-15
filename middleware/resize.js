@@ -42,18 +42,18 @@ const resize_news  = async (req, res, next) =>{
         } 
         const date = moment().format('DDMMYYYY-HHmmss_SSS');
         const name = req.file.originalname.replace(' ', '').split('.')[0];
-        req.file.path = `uploads/news/${date}-${name}`
+        req.file.path = `uploads/news/${date}`
 
         await sharp(`./uploads/${req.file.filename}`)
             .toFormat("webp")
-            .toFile(`./uploads/news/${date}-${name}-mini.webp`)
+            .toFile(`./uploads/news/${date}-mini.webp`)
 
         await sharp(`./uploads/${req.file.filename}`)
             .toFormat("webp")
             .resize(1000, 700, {
                 fit: 'fill',
             })
-            .toFile(`./uploads/news/${date}-${name}-big.webp`)
+            .toFile(`./uploads/news/${date}-big.webp`)
 
         // await sharp(`./uploads/${req.file.filename}`)
         //     .toFormat("webp")
