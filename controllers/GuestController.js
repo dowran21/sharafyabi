@@ -341,6 +341,30 @@ const CreateOrder = async (req, res) =>{
             const j = await database.query(order_query, [])
             const id = j?.rows[0]?.id;
             try {
+                const sel_query = `
+                    SELECT o.id, o.phone, o.address, o.name, to_char(o.created_at, 'DD.MM.YYYY HH24:MI') AS created_at,
+                        o.total_price, o.coupon, o.discount_id, d.discount_value, o.paymant_id,
+                        (SELECT json_agg(orde) FROM (
+                            SELECT p.id, p.name, oi.price, oi.quantity, d.discount_value, pt.name AS name_ru
+                            FROM order_items oi
+                                INNER JOIN products p 
+                                    ON p.id = oi.product_id
+                                INNER JOIN product_translations pt
+                                    ON pt.product_id = p.id AND pt.language_id = 2
+                                LEFT JOIN discounts d
+                                    ON d.product_id = oi.product_id AND validity ::tsrange @> o.created_at
+                                WHERE oi.order_id = o.id
+                        )orde) AS order_items
+                    FROM orders o
+                        LEFT JOIN discounts d
+                            ON d.id = o.discount_id
+                        WHERE o.id = ${id}
+                `
+                const k = await database.query(sel_query, [])
+                const data = k.rows[0];
+                if(data){
+                    const pdf = GeneratePdf(data)
+                }
                 const nodemailer = require("nodemailer");
 
                 let transporter = nodemailer.createTransport({
@@ -356,7 +380,7 @@ const CreateOrder = async (req, res) =>{
                   // send mail with defined transport object
                   let info = await transporter.sendMail({
                     from: '"Пришел заказ на Sharafyabi Online Shop " <order@sharafyabi.com>', // sender address
-                    to: "a.shpendyaev@sharafyabi.com, dok313@yandex.ru, hello@takyk.com", // list of receivers
+                    to: "a.shpendyaev@sharafyabi.com, dok313@yandex.ru, hello@takyk.com, dovran@takyk.com", // list of receivers
                     subject: "Заказ", // Subject line
                     text: "Был принять заказ пожалуйста посмотрите его", // plain text body
                     html: `<b>Заказ ${id}</b>
@@ -364,6 +388,7 @@ const CreateOrder = async (req, res) =>{
                       <h4>Номер ${phone}</h4>
                       <h4>Общая сумма ${totalPrice}</h4>
                       <a href = "https://admin.sharafyabi.com/#/orders">Админ панель</a>
+                      <a href = "data:application/pdf;base64,${pdf?.body}" target = "_blank">PDF файл</a>
                     `, // html body
                   });
                   // console.log("email message sent")
