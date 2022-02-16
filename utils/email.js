@@ -168,10 +168,12 @@ table[name="bmeMainBody"], body {background-color:#000000;}
 `
 return str;
 }
+  const nodemailer = require("nodemailer");
+
 // const item = {}
 const sendEmail = async ({item, emails})=>{
-  console.log(item)
-  console.log(emails)
+  // console.log(item)
+  // console.log(emails)
   // const query_text = `
   // SELECT * FROM email_subscriptions
   // `
@@ -181,26 +183,33 @@ const sendEmail = async ({item, emails})=>{
   // } catch (error) {
     
   // }
-  const nodemailer = require("nodemailer");
   // create reusable transporter object using the default SMTP transport
-  let transporter = nodemailer.createTransport({
-    host: "smtp.yandex.ru",
-    port: 465,
-    secure: true, // true for 465, false for other ports
-    auth: {
-      user: "order@sharafyabi.com", // generated ethereal user
-      pass: "ibragim2022", // generated ethereal password
-    },
-  });
-
-  // send mail with defined transport object
-  let info = await transporter.sendMail({
-    from: '"Новости на сайте Sharafyabi Online Shop " <order@sharafyabi.com>', // sender address
-    to: `${emails.map(item1 => `${item1.email}`).join(', ')}`, // list of receivers
-    subject: "Заказ", // Subject line
-    text: "Был принять заказ пожалуйста посмотрите его", // plain text body
-    html:await html({item}), // html body
-  });
+  for(let i=0; i<emails?.length; i++){
+    try {
+      let transporter = nodemailer.createTransport({
+        host: "smtp.yandex.ru",
+        port: 465,
+        secure: true, // true for 465, false for other ports
+        auth: {
+          user: "order@sharafyabi.com", // generated ethereal user
+          pass: "ibragim2022", // generated ethereal password
+        },
+      });
+    
+      // send mail with defined transport object
+      let info = await transporter.sendMail({
+        from: '"Новости на сайте Sharafyabi Online Shop " <order@sharafyabi.com>', // sender address
+        to: `${emails[i]}`, // list of receivers
+        subject: "Заказ", // Subject line
+        text: "Был принять заказ пожалуйста посмотрите его", // plain text body
+        html:await html({item}), // html body
+      });
+      console.log(info?.id)
+    } catch (e) {
+      
+    }
+  }
+  
 }
 
 module.exports = {sendEmail}
