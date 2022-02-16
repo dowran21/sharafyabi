@@ -638,7 +638,7 @@ const GetProducts = async (req, res) =>{
             WHERE p.id > 0 ${wherePart}
             ), 
             (SELECT json_agg(pro) FROM (
-                SELECT p.id, p.price, p.stock, p.name, p.destination, p.main_category_id, p.producer_id, pt.name AS name_tm, pt.description AS description_tm,
+                SELECT p.id, p.price, p.stock, p.name, (SELECT pi.destination FROM product_images pi WHERE pi.product_id = p.id LIMIT 1) AS destination, p.main_category_id, p.producer_id, pt.name AS name_tm, pt.description AS description_tm,
                 ptt.name AS name_ru, ptt.description AS description_ru, pttt.name AS name_en, pttt.description AS description_en, p.sub_category_id,
                 prod.name AS producer_name, ct.name AS category_name, d.discount_value, p.recomended, p.new_in_come,
                 d.id AS discount_id, to_char(lower(validity)::date, 'DD.MM.YYYY') AS low_val, to_char(upper(validity), 'DD.MM.YYYY') AS upper_val
