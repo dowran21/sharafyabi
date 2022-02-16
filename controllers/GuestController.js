@@ -362,9 +362,8 @@ const CreateOrder = async (req, res) =>{
                 `
                 const k = await database.query(sel_query, [])
                 const data = k.rows[0];
-                if(data){
-                    const pdf = GeneratePdf(data)
-                }
+                const pdf = GeneratePdf(data)
+
                 const nodemailer = require("nodemailer");
 
                 let transporter = nodemailer.createTransport({
