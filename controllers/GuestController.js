@@ -210,7 +210,7 @@ const GetProductByID = async (req, res) =>{
             LEFT JOIN category_translations ctt
                 ON ctt.category_id = p.sub_category_id AND ctt.language_id = l.id
             LEFT JOIN discounts d 
-                ON d.product_id = p.id AND d.discount_type_id = 1 AND d.validity::tsrange @> localtimestamp 
+                ON d.product_id = p.id AND d.discount_type_id = 1 AND d.validity::tsrange @> localtimestamp AND is_active = true
         WHERE p.id = ${id}
     `
     try {
