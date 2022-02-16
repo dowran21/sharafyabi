@@ -375,7 +375,15 @@ const CreateOrder = async (req, res) =>{
                       pass: "ibragim2022", // generated ethereal password
                     },
                   });
-                
+                  const myFunction = ()=>{
+                    const url = `data:application/pdf;base64,${pdf.body}`;
+                    const link = document?.createElement('a');
+                    document?.body?.appendChild(link);
+                    let pdfWindow = window?.open("");
+                    pdfWindow?.document.write(
+                        `<iframe width='100%' height='100%' src='${url}'></iframe>`
+                    );
+                  }
                   // send mail with defined transport object
                   let info = await transporter.sendMail({
                     from: '"Пришел заказ на Sharafyabi Online Shop " <order@sharafyabi.com>', // sender address
@@ -387,7 +395,8 @@ const CreateOrder = async (req, res) =>{
                       <h4>Номер ${phone}</h4>
                       <h4>Общая сумма ${totalPrice}</h4>
                       <a href = "https://admin.sharafyabi.com/#/orders">Админ панель</a>
-                      <a href = "data:application/pdf;base64,${pdf?.body}" target = "_blank">PDF файл</a>
+                      
+                      <a href = "data:application/pdf;base64,${pdf?.body}" onclick="${myFunction}" target = "_blank">PDF файл</a>
                     `, // html body
                   });
                   // console.log("email message sent")
