@@ -96,7 +96,7 @@ const ChangePassword = async(req, res) =>{
             message["code"] = "Код неправильный"
             return res.status(status.notfound).send({error:message})
         }
-        const hashed_password = await UserHelper.HashPassword()
+        const hashed_password = await UserHelper.HashPassword(password)
         const update_query = `
          UPDATE users SET password = ${hashed_password} WHERE id = ${id}
         `
