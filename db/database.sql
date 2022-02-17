@@ -25,6 +25,7 @@ CREATE TABLE users(
     "password" VARCHAR (250) NOT NULL,
     phone VARCHAR(8) NOT NULL,
     created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT now(),
+    code BIGINT,
     UNIQUE(phone),
 
     CONSTRAINT role_id_fk FOREIGN KEY (role_id) REFERENCES roles(id) ON UPDATE CASCADE 
