@@ -84,29 +84,29 @@ async function OrderGenerator (data){
     doc
         .fontSize(10).font(montes)
         // .text('Код', itemCodeX+2, tableTop, {height:22, expanded:true}).highlight(itemCodeX, tableTop-4, descriptionX-itemCodeX-2, 22, {color:"#4C844C"})
-        doc.rect(itemCodeX, tableTop-4, descriptionX-itemCodeX-2, 22).fillAndStroke('#4C844C');
-        doc.fill('#FFFFFF').stroke();
-        doc.text("Код", itemCodeX+2, tableTop, {lineBreak: false, height:22, expanded:true} );
+        .rect(itemCodeX, tableTop-4, descriptionX-itemCodeX-2, 22).fillAndStroke('#4C844C')
+        .fill('#FFFFFF').stroke()
+        .text("Код", itemCodeX+2, tableTop, {lineBreak: false, height:22, expanded:true} )
 
-        doc.rect(descriptionX, tableTop-4, quantityX-descriptionX-2, 22).fillAndStroke('#4C844C');
-        doc.fill('#FFFFFF').stroke();
-        doc.text("Наименование", descriptionX+2, tableTop, {lineBreak: false, height:22, expanded:true} );
+        .rect(descriptionX, tableTop-4, quantityX-descriptionX-2, 22).fillAndStroke('#4C844C')
+        .fill('#FFFFFF').stroke()
+        .text("Наименование", descriptionX+2, tableTop, {lineBreak: false, height:22, expanded:true} )
         
-        doc.rect(quantityX, tableTop-4, discountX-quantityX-2, 22).fillAndStroke('#4C844C');
-        doc.fill('#FFFFFF').stroke();
-        doc.text("Кол.", quantityX+2, tableTop, {lineBreak: false, height:22, expanded:true} );
+        .rect(quantityX, tableTop-4, discountX-quantityX-2, 22).fillAndStroke('#4C844C')
+        .fill('#FFFFFF').stroke()
+        .text("Кол.", quantityX+2, tableTop, {lineBreak: false, height:22, expanded:true} )
         
-        doc.rect(discountX, tableTop-4, priceX-discountX-2, 22).fillAndStroke('#4C844C');
-        doc.fill('#FFFFFF').stroke();
-        doc.text("Скидка", discountX+2, tableTop, {lineBreak: false, height:22, expanded:true} );
+        .rect(discountX, tableTop-4, priceX-discountX-2, 22).fillAndStroke('#4C844C')
+        .fill('#FFFFFF').stroke()
+        .text("Скидка", discountX+2, tableTop, {lineBreak: false, height:22, expanded:true} )
 
-        doc.rect(priceX, tableTop-4, amountX-priceX-2, 22).fillAndStroke('#4C844C');
-        doc.fill('#FFFFFF').stroke();
-        doc.text("Цена", priceX+2, tableTop, {lineBreak: false, height:22, expanded:true} );
+        .rect(priceX, tableTop-4, amountX-priceX-2, 22).fillAndStroke('#4C844C')
+        .fill('#FFFFFF').stroke()
+        .text("Цена", priceX+2, tableTop, {lineBreak: false, height:22, expanded:true} )
 
-        doc.rect(amountX, tableTop-4, 560-amountX-2, 22).fillAndStroke('#4C844C');
-        doc.fill('#FFFFFF').stroke();
-        doc.text("Сумма", amountX+2, tableTop, {lineBreak: false, height:22, expanded:true} );
+        .rect(amountX, tableTop-4, 560-amountX-2, 22).fillAndStroke('#4C844C')
+        .fill('#FFFFFF').stroke()
+        .text("Сумма", amountX+2, tableTop, {lineBreak: false, height:22, expanded:true} )
         // doc.text('Наименование',  {height:22, expanded:true}).highlight(descriptionX, tableTop-4, quantityX-descriptionX-2, 22, {color:"#4C844C"})
         // doc.text('Кол.', quantityX+2, tableTop, {height:22, expanded:true}).highlight(quantityX, tableTop-4, discountX-quantityX-2, 22, {color:"#4C844C"})
         // doc.text('Скидка', discountX+2, tableTop, {height:22, expanded:true}).highlight(discountX, tableTop-4, priceX-discountX-2, 22, {color:"#4C844C"})
