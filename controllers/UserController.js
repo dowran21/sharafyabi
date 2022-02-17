@@ -99,14 +99,14 @@ const ChangePassword = async(req, res) =>{
         }
         const hashed_password = await UserHelper.HashPassword(password)
         const update_query = `
-         UPDATE users SET password = ${hashed_password} WHERE id = ${id}
+         UPDATE users SET password = '${hashed_password}' WHERE id = ${id}
         `
         try {
             await database.query(update_query, [])
             return res.status(status.success).send(true)
         } catch (e) {
             console.log(e)
-            return res.status(status.error).sen(false)
+            return res.status(status.error).send(false)
         }
         // return res.status(status.success).send( )
     } catch (e) {
