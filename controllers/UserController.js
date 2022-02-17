@@ -64,7 +64,7 @@ const ForgotPassword = async (req, res) =>{
         UPDATE users SET code = ${code} WHERE phone = ${phone} RETURNING *
     `
     try {
-        const {rows} = await database.query(query_text, [])
+        const {rows} = await database.query(select_query, [])
         if(!rows[0]){
             let message = {}
             message["phone"] = "Телефон или пароль неправильный"
