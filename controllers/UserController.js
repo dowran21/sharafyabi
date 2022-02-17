@@ -58,7 +58,8 @@ const UserLogin = async (req, res) =>{
 
 const ForgotPassword = async (req, res) =>{
     const {phone} = req.body;
-    let code = ``
+    // let code = ``
+    const code = Math.floor(Math.random()*(999999-100000) + 100000)
     const select_query = `
         UPDATE users SET code = ${code} WHERE phone = ${phone} RETURNING *
     `
