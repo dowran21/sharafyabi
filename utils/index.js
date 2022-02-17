@@ -39,7 +39,7 @@ const GenerateOperatorRefreshToken = async(data) =>{
 };
 
 const GenerateUserCodeToken = async (data) =>{
-    return JWT.sign(data, process.env.CODE_ACCESS_TOKEN, {expired:"5m"})
+    return JWT.sign(data, process.env.CODE_ACCESS_TOKEN, {expiredIn:"5m"})
 }
 module.exports = {
     HashPassword,
