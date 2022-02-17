@@ -76,6 +76,26 @@ const VerifyUserAccessTokenNext = async (req, res, next) =>{
     });
 }
 
+const VerifyUserCodeTokenNext = async (req, res, next) =>{
+    let token = req.headers?.authorization
+    if (!token){
+        return res.status(status.bad).send("Token not provided")
+        // next()
+    }
+
+    token = token?.replace("Bearer ", "")
+    JWT.verify(token, process.env.CODE_ACCESS_TOKEN, async (err, decoded) =>{
+        if(err){
+            console.log("I am in error")
+            console.log(err)
+            // next()
+            return res.status(status.forbidden).send("forbidden");
+        }
+        req.user = decoded;
+        next()
+    });
+}
+
 const VerifyUserRefreshToken = async (req, res, next) =>{
     let token = req.headers.authorization
     if (!token){
@@ -99,5 +119,6 @@ module.exports = {
     VerifyAdminRefreshToken,
     VerifyUserAccessToken,
     VerifyUserRefreshToken,
-    VerifyUserAccessTokenNext
+    VerifyUserAccessTokenNext,
+    VerifyUserCodeTokenNext
 }

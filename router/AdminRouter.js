@@ -34,6 +34,8 @@ router.post('/add-video-information', VerifyAdminAccessToken, AdminController.Ad
 router.post('/add-video-poster/:id', VerifyAdminAccessToken, upload.single("poster"), resize_banners, AdminController.AddVideoPoster)
 router.post('/add-video-file/:id', VerifyAdminAccessToken, upload_video.single("video"), AdminController.AddVideoFile)
 router.post('/delete-video/:id', VerifyAdminAccessToken, AdminController.DeleteVideo)
+router.post('/update-video/:id', VerifyAdminAccessToken, AdminController.UpdateVideo)
+router.get('/get-videos', VerifyAdminAccessToken, AdminController.GetVideos)
 
 router.post('/add-news', VerifyAdminAccessToken, AdminController.AddNews)
 router.post('/add-news-image/:id', VerifyAdminAccessToken, upload.single("picture"), resize_news, AdminController.AddNewsImage)
@@ -74,6 +76,7 @@ router.post(`/activate-comment/:id`, VerifyAdminAccessToken, AdminController.Acc
 router.post('/delete-comment/:id', VerifyAdminAccessToken, AdminController.DeleteComment)
 router.get('/get-user-statistics', VerifyAdminAccessToken, AdminController.GetUserStatistics)
 router.get('/get-pushes', VerifyAdminAccessToken, AdminController.GetPushes)
+router.post('/delete-push/:id', VerifyAdminAccessToken, AdminController.DeletePush)
 
 router.post('/send-subscribe-messsage', VerifyAdminAccessToken, AdminController.SendSubscribeMessage)
 router.get('/get-messages', VerifyAdminAccessToken, AdminController.GetMessages)

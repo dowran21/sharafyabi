@@ -37,6 +37,10 @@ const GenerateOperatorAccessToken = async(data) =>{
 const GenerateOperatorRefreshToken = async(data) =>{
     return JWT.sign(data, process.env.OPERATOR_REFRESH_KEY, {expiresIn:"15d"})
 };
+
+const GenerateUserCodeToken = async (data) =>{
+    return JWT.sign(data, process.env.CODE_ACCESS_TOKEN, {expired:"5m"})
+}
 module.exports = {
     HashPassword,
     ComparePassword,
@@ -46,5 +50,6 @@ module.exports = {
     GenerateAdminRefreshToken,
     GenerateCodeAccessToken,
     GenerateOperatorAccessToken,
-    GenerateOperatorRefreshToken
+    GenerateOperatorRefreshToken,
+    GenerateUserCodeToken
 }

@@ -449,6 +449,25 @@ const AddVideoInformation = async (req, res) =>{
     }
 }
 
+const UpdateVideo = async (req, res) =>{
+    const {title_ru, title_en, title_tm} = req.body;
+    const {id} = req.params;
+    const query_text = `
+        WITH updated1 AS (
+            UPDATE video_titles SET title = '${title_tm}' WHERE language_id = 1 AND video_id = ${id}
+        ), updated2 AS (
+            UPDATE video_titles SET title = '${title_ru}' WHERE language_id = 2 AND video_id = ${id}
+        ) UPDATE video_titles SET title = '${title_en}' WHERE language_id = 3 AND video_id = ${id}
+    `
+    try {
+        await database.query(query_text, [])
+        return res.status(status.success).send(true)
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
 const AddVideoFile = async (req, res) =>{
     const {id} = req.params
     const file = req.file
@@ -495,6 +514,27 @@ const DeleteVideo = async (req, res) =>{
     } catch (e) {
         console.log(e)
         return res.status(status.error).send(false)
+    }
+}
+
+const GetVideos = async (req, res) =>{
+    const query_text = `
+        SELECT v.id, v.poster, v.video, vt.title AS title_tm, vtt.title AS title_ru, vttt.title AS title_en
+        FROM videos v
+        LEFT JOIN video_titles vt  
+            ON vt.video_id = v.id AND vt.language_id = 1
+        LEFT JOIN video_titles vtt  
+            ON vtt.video_id = v.id AND vtt.language_id = 2
+        LEFT JOIN video_titles vttt  
+            ON vttt.video_id = v.id AND vttt.language_id = 3
+            `
+        
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).json({rows})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.success).send(true)
     }
 }
 
@@ -798,7 +838,6 @@ const DeleteSale = async (req, res) =>{
         return res.status(status.error).send(false)
     }
 }
-
 
 const DeactivateSales = async (req, res) =>{
     const {id} = req.params;
@@ -1413,6 +1452,20 @@ const GetSubsciptionPhones = async(req, res) =>{
     }
 }
 
+const DeletePush = async (req, res) =>{
+    const {id} = req.params;
+    const query_text = `
+        DELETE FROM push WHERE id = ${id}
+    `
+    try{
+        await database.query(query_text, [])
+        return res.status(status.success).send(false)
+    }catch(e){
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
 const GetShopData = async (req, res) =>{
     const query_text = `
         SELECT * FROM shop_data
@@ -1631,6 +1684,8 @@ module.exports = {
     AddVideoInformation,
     AddVideoFile, 
     AddVideoPoster,
+    UpdateVideo,
+    GetVideos,
     DeleteVideo,
     DeleteProduct,
     GetProducts,
@@ -1667,7 +1722,10 @@ module.exports = {
     DeleteSMS,
     DeleteSubsciption,
     GetSubsciptionPhones,
+    
     GetPushes,
+    DeletePush,
+    
     GetShopData,
     GetUsers,
     GetEmails,

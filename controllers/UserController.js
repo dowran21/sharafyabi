@@ -56,6 +56,60 @@ const UserLogin = async (req, res) =>{
     }   
 }
 
+const ForgotPassword = async (req, res) =>{
+    const {phone} = req.body;
+    let code = ``
+    const select_query = `
+        UPDATE users SET code = ${code} WHERE phone = ${phone} RETURNING *
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        if(!rows[0]){
+            let message = {}
+            message["phone"] = "Телефон или пароль неправильный"
+            return res.status(status.notfound).send({error:message})
+        }
+        const user = rows[0];
+        const data = {id:user.id, full_name:user.full_name, email:user.email, phone:user.phone}
+        const token = await UserHelper.GenerateUserCodeToken(data)
+        return res.status(status.success).json({token})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+
+}
+
+const ChangePassword = async(req, res) =>{
+    const {code, password} = req.body;
+    const id = req.user?.id
+    const query_text = `
+        SELECT * FROM users WHERE id = ${id} AND code = ${code}
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        if(!rows[0]){
+            let message = {}
+            message["code"] = "Код неправильный"
+            return res.status(status.notfound).send({error:message})
+        }
+        const hashed_password = await UserHelper.HashPassword()
+        const update_query = `
+         UPDATE users SET password = ${hashed_password} WHERE id = ${id}
+        `
+        try {
+            await database.query(update_query, [])
+            return res.status(status.success).send(true)
+        } catch (e) {
+            console.log(e)
+            return res.status(status.error).sen(false)
+        }
+        // return res.status(status.success).send( )
+    } catch (e) {
+        
+    }
+}
+
 const AddToWishList = async (req, res) =>{
     const user_id = req.user?.id;
     const {id} = req.params
@@ -89,7 +143,7 @@ const RemoveFromWishList = async (req, res) =>{
 const GetOrders = async (req, res) =>{
     const user_id = req.user?.id
     const query_text = `
-        SELECT o.id, o.phone, o.address, o.name, to_char(o.created_at, 'YYYY-MM-DD HH24:MI') AS created_at,
+        SELECT o.id, o.phone, o.address, o.name, to_char(o.created_at, 'DD.MM.YYYY') AS created_at, to_char(o.created_at, 'HH24:MI') AS created_time,
         o.total_price, o.coupon, o.discount_id, d.discount_value
         FROM orders o
         LEFT JOIN discounts d
@@ -194,6 +248,8 @@ const CreateSubComment = async (req, res) =>{
 module.exports = {
     UserRegistration,
     UserLogin,
+    ForgotPassword,
+    ChangePassword,
     AddToWishList,
     RemoveFromWishList,
     GetOrders,
