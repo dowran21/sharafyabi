@@ -83,12 +83,16 @@ async function OrderGenerator (data){
 
     doc
         .fontSize(10)
-        .fill("#FFFFFF").text('Код', itemCodeX+2, tableTop, {height:22, expanded:true}).highlight(itemCodeX, tableTop-4, descriptionX-itemCodeX-2, 22, {color:"#4C844C"})
-        .text('Наименование', descriptionX+2, tableTop, {height:22, expanded:true}).highlight(descriptionX, tableTop-4, quantityX-descriptionX-2, 22, {color:"#4C844C"})
-        .text('Кол.', quantityX+2, tableTop, {height:22, expanded:true}).highlight(quantityX, tableTop-4, discountX-quantityX-2, 22, {color:"#4C844C"})
-        .text('Скидка', discountX+2, tableTop, {height:22, expanded:true}).highlight(discountX, tableTop-4, priceX-discountX-2, 22, {color:"#4C844C"})
-        .text('Цена', priceX+2, tableTop, {height:22, expanded:true}).highlight(priceX, tableTop-4, amountX-priceX-2, 22, {color:"#4C844C"})
-        .text('Сумма', amountX+2, tableTop, {height:22, expanded:true}).highlight(amountX, tableTop-4, 560-amountX-2, 22, {color:"#4C844C"})
+        // .text('Код', itemCodeX+2, tableTop, {height:22, expanded:true}).highlight(itemCodeX, tableTop-4, descriptionX-itemCodeX-2, 22, {color:"#4C844C"})
+        doc.rect(itemCodeX, tableTop-4, descriptionX-itemCodeX-2, 22).fillAndStroke('#4C844C');
+        doc.fill('#FFFFFF').stroke();
+        // doc.fontSize(16);
+        doc.text("Код", itemCodeX+2, tableTop, {lineBreak: false, height:22, expanded:true} );
+        doc.text('Наименование', descriptionX+2, tableTop, {height:22, expanded:true}).highlight(descriptionX, tableTop-4, quantityX-descriptionX-2, 22, {color:"#4C844C"})
+        doc.text('Кол.', quantityX+2, tableTop, {height:22, expanded:true}).highlight(quantityX, tableTop-4, discountX-quantityX-2, 22, {color:"#4C844C"})
+        doc.text('Скидка', discountX+2, tableTop, {height:22, expanded:true}).highlight(discountX, tableTop-4, priceX-discountX-2, 22, {color:"#4C844C"})
+        doc.text('Цена', priceX+2, tableTop, {height:22, expanded:true}).highlight(priceX, tableTop-4, amountX-priceX-2, 22, {color:"#4C844C"})
+        doc.text('Сумма', amountX+2, tableTop, {height:22, expanded:true}).highlight(amountX, tableTop-4, 560-amountX-2, 22, {color:"#4C844C"})
     // doc.rect(17, tableTop - 5, 540, 0.2).fillColor('#000').stroke('#000')
 
     // const items = invoice.items
