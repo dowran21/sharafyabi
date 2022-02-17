@@ -83,7 +83,7 @@ async function OrderGenerator (data){
 
     doc
         .fontSize(10)
-        .fill("#000000").text('Код', itemCodeX+2, tableTop, {height:22, expanded:true}).highlight(itemCodeX, tableTop-4, descriptionX-itemCodeX-2, 22, {color:"#4C844C"})
+        .fill("#FFFFFF").text('Код', itemCodeX+2, tableTop, {height:22, expanded:true}).highlight(itemCodeX, tableTop-4, descriptionX-itemCodeX-2, 22, {color:"#4C844C"})
         .text('Наименование', descriptionX+2, tableTop, {height:22, expanded:true}).highlight(descriptionX, tableTop-4, quantityX-descriptionX-2, 22, {color:"#4C844C"})
         .text('Кол.', quantityX+2, tableTop, {height:22, expanded:true}).highlight(quantityX, tableTop-4, discountX-quantityX-2, 22, {color:"#4C844C"})
         .text('Скидка', discountX+2, tableTop, {height:22, expanded:true}).highlight(discountX, tableTop-4, priceX-discountX-2, 22, {color:"#4C844C"})
