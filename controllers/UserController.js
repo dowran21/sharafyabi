@@ -44,7 +44,8 @@ const UserLogin = async (req, res) =>{
         const compare = await UserHelper.ComparePassword(password, user?.password)
         if(!compare){
             let message = {}
-            message["phone"] = "Телефон или пароль неправильный"
+            message["phone"] = `${lang==='ru' ? `Телефон или пароль неправильный` : lang === 'en' ? `Phone or Password incorrect` : `Telefon ýa-da gizlin kod nädogry`}`
+            // message["phone"] = ""
             return res.status(status.notfound).send({error:message})
         }
         const data = {id:user.id, full_name:user.full_name, email:user.email, phone:user.phone}
@@ -69,7 +70,8 @@ const ForgotPassword = async (req, res) =>{
         const {rows} = await database.query(select_query, [])
         if(!rows[0]){
             let message = {}
-            message["phone"] = "Телефон или пароль неправильный"
+            // message["phone"] = "Телефон или пароль неправильный"
+            message["phone"] = `${lang==='ru' ? `Телефон неправильный` : lang === 'en' ? `Phone incorrect` : `Telefon nädogry`}`
             return res.status(status.notfound).send({error:message})
         }
         const user = rows[0];
@@ -94,7 +96,9 @@ const ChangePassword = async(req, res) =>{
         const {rows} = await database.query(query_text, [])
         if(!rows[0]){
             let message = {}
-            message["code"] = "Код неправильный"
+            // message["code"] = "Код неправильный"
+            message["phone"] = `${lang==='ru' ? `Телефон или код неправильный` : lang === 'en' ? `Phone or code incorrect` : `Telefon ýa-da kod nädogry`}`
+            message["code"] = `${lang==='ru' ? `Телефон или код неправильный` : lang === 'en' ? `Phone or code incorrect` : `Telefon ýa-da kod nädogry`}`
             return res.status(status.notfound).send({error:message})
         }
         const hashed_password = await UserHelper.HashPassword(password)

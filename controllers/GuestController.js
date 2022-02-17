@@ -1,6 +1,7 @@
 const database = require("../db/index");
 const {status} = require("../utils/status");
 const {OrderGenerator} = require("../pdfmaker/pdf.js");
+const { SendSMS } = require("../utils/sms");
 
 
 const GetCategories = async (req, res) =>{
@@ -365,7 +366,8 @@ const CreateOrder = async (req, res) =>{
                 const pdf = GeneratePdf(data)
 
                 const nodemailer = require("nodemailer");
-
+                SendSMS({phone:`64311313`, message:"Пришел заказ на сайт Sharafyabi"})
+                SendSMS({phone:`788024`, message:"Пришел заказ на сайт Sharafyabi"})
                 let transporter = nodemailer.createTransport({
                     host: "smtp.yandex.ru",
                     port: 465,
