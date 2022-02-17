@@ -81,14 +81,11 @@ const resize_banners  = async (req, res, next) =>{
         req.file.path = `uploads/news/${date}`
 
         await sharp(`./uploads/${req.file.filename}`)
-            .toFormat("webp")
+            .toFormat("webp", {quality:50})
             .toFile(`./uploads/news/${date}-big.webp`)
 
         await sharp(`./uploads/${req.file.filename}`)
-            .toFormat("webp")
-            .resize(1600, 350, {
-                fit: 'fill',
-            })
+            .toFormat("webp", {quality:50})
             .toFile(`./uploads/news/${date}-slide-big.webp`)
         
         fs.unlinkSync(`./uploads/${req.file.filename}`)
