@@ -110,7 +110,8 @@ const ChangePassword = async(req, res) =>{
         }
         // return res.status(status.success).send( )
     } catch (e) {
-        
+        console.log(e)
+        return res.status(status.success).send(false)
     }
 }
 
