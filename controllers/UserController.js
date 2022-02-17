@@ -1,6 +1,7 @@
 const database = require ("../db/index.js")
 const {status} = require('../utils/status')
-const UserHelper = require('../utils/index.js')
+const UserHelper = require('../utils/index.js');
+const { SendSMS } = require("../utils/sms.js");
 
 const UserRegistration = async (req, res) =>{
     const {full_name, password, email, phone} = req.body;
@@ -72,6 +73,7 @@ const ForgotPassword = async (req, res) =>{
         }
         const user = rows[0];
         const data = {id:user.id, full_name:user.full_name, email:user.email, phone:user.phone}
+        SendSMS({phone, message:`Code: ${code}`})
         const token = await UserHelper.GenerateUserCodeToken(data)
         return res.status(status.success).json({token})
     } catch (e) {
