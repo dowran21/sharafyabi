@@ -9,7 +9,7 @@ let montes = path.join(__dirname, 'Montserrat-Bold.ttf')
 let montes_light = path.join(__dirname, "Montserrat-Regular.ttf")
 
 async function OrderGenerator (data){
-    const {id, created_at, total_price, name, phone, address, discount_value, order_items, paymant_id} = data
+    const {id, created_at, total_price, name, phone, address, discount_value, order_items, paymant_id, comment} = data
     let total = 0;
     for(let i =0; i<order_items.length; i++){
         total += order_items[i]?.discount_value ? order_items[i].price*(100-order_items[i].discount_value)*order_items[i].quantity*0.01 : order_items[i].price*order_items[i].quantity
@@ -45,6 +45,8 @@ async function OrderGenerator (data){
         .fillColor("#515351").font(montes_light).text(total_price, 165, 182, {align:"left"})
         .fillColor('#4C844C').font(montes).text(`Способ оплаты`, 0, 195, {width:160, align: "right"})
         .fillColor("#515351").font(montes_light).text(`${paymant_id === 1 ? `Наличными` : `Карта`}`, 165, 195, {align:"left"})
+        .fillColor('#4C844C').font(montes).text(`комментарий`, 0, 208, {width:160, align: "right"})
+        .fillColor("#515351").font(montes_light).text(`${comment}`, 165, 208, {align:"left"})
         // .text(`номер Заказа: ${id}`, {align: 'right'})
         // .text(`Время оформления заказа: ${created_at}`, {align: 'right'})
         // .text(`Общая сумма: ${Math.floor(total*10)/10}`, {align:"right"})
@@ -73,7 +75,7 @@ async function OrderGenerator (data){
 
     doc.moveDown()
     doc.moveDown()
-    let tableTop = 220
+    let tableTop = 240
     const itemCodeX = 20
     const descriptionX = 60
     const quantityX = 360

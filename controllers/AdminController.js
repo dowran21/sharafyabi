@@ -1016,7 +1016,7 @@ const GeneratePdf = async (req, res) =>{
     const {id} = req.params;
     const query_text = `
         SELECT o.id, o.phone, o.address, o.name, to_char(o.created_at, 'DD.MM.YYYY HH24:MI') AS created_at,
-            o.total_price, o.coupon, o.discount_id, d.discount_value, o.paymant_id,
+            o.total_price, o.coupon, o.discount_id, d.discount_value, o.paymant_id, o.comment,
             (SELECT json_agg(orde) FROM (
                 SELECT p.id, p.name, oi.price, oi.quantity, d.discount_value, pt.name AS name_ru
                 FROM order_items oi
