@@ -29,7 +29,7 @@ router.post('/add-sub-category/:id', VerifyAdminAccessToken, AdminController.Add
 router.get('/get-product-images/:id',VerifyAdminAccessToken, AdminController.GetProductImages)
 router.post('/delete-product-image/:id', VerifyAdminAccessToken, AdminController.DeleteProductImage)
 router.post('/delete-product/:id', VerifyAdminAccessToken, AdminController.DeleteProduct)
-
+ 
 router.post('/add-video-information', VerifyAdminAccessToken, AdminController.AddVideoInformation);
 router.post('/add-video-poster/:id', VerifyAdminAccessToken, upload.single("poster"), resize_banners, AdminController.AddVideoPoster)
 router.post('/add-video-file/:id', VerifyAdminAccessToken, upload_video.single("video"), AdminController.AddVideoFile)
