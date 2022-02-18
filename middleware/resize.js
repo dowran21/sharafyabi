@@ -128,7 +128,7 @@ const resize_product_images  = async (req, res, next) =>{
     }
     next()
 }
-
+// 1MONTH300 
 
 module.exports = {
     resize_producers_categories,
