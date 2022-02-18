@@ -143,12 +143,12 @@ async function OrderGenerator (data){
         h=y;
         doc
             .fontSize(8).font(arial).fillColor("#000000")
-            .rect(itemCodeX, y-4, descriptionX-itemCodeX-2, 16).fillAndStroke(`${i%2 ?`#799E79` : `#FFFFFF`}`).fill('#000000').stroke().text(item?.id, itemCodeX+2, y, {height:15})
-            .rect(descriptionX, y-4, quantityX-descriptionX-2, 16, {color:`${i%2 ?`#799E79` : `#FFFFFF`}`}).fillAndStroke(`${i%2 ?`#799E79` : `#FFFFFF`}`).fill('#000000').stroke().text(`${item?.name ? item?.name : item?.name_ru}`, descriptionX+2, y, {height:15})
-            .rect(quantityX, y-4, discountX-quantityX-2, 16, {color:`${i%2 ?`#799E79` : `#FFFFFF`}`}).fillAndStroke(`${i%2 ?`#799E79` : `#FFFFFF`}`).fill('#000000').stroke().text(item?.quantity, quantityX+2, y, {height:15})
-            .rect(discountX, y-4, priceX-discountX-2, 16, {color:`${i%2 ?`#799E79` : `#FFFFFF`}`}).fillAndStroke(`${i%2 ?`#799E79` : `#FFFFFF`}`).fill('#000000').stroke().text(`${item?.discount_value ? item?.discount_value : `` }`, discountX+2, y, {height:15})
-            .rect(priceX, y-4, amountX-priceX-2, 16, {color:`${i%2 ?`#799E79` : `#FFFFFF`}`}).fillAndStroke(`${i%2 ?`#799E79` : `#FFFFFF`}`).fill('#000000').stroke().text(`${item?.price}`, priceX+2, y, {height:15})
-            .rect(amountX, y-4, 560-amountX-2, 16, {color:`${i%2 ?`#799E79` : `#FFFFFF`}`}).fillAndStroke(`${i%2 ?`#799E79` : `#FFFFFF`}`).fill('#000000').stroke().text(`${item?.discount_value ? item?.price*(100-item.discount_value)*item?.quantity*0.01 : item?.price*item?.quantity}`, amountX+2, y, {height:15})
+            .rect(itemCodeX, y-4, descriptionX-itemCodeX-2, 16).fillAndStroke(`${i%2 ?`#799E79` : `#FFFFFF`}`).fill(`${i%2 ? '#FFFFFF' : `#000000`}`).stroke().text(item?.id, itemCodeX+2, y, {height:15})
+            .rect(descriptionX, y-4, quantityX-descriptionX-2, 16, {color:`${i%2 ?`#799E79` : `#FFFFFF`}`}).fillAndStroke(`${i%2 ?`#799E79` : `#FFFFFF`}`).fill(`${i%2 ? '#FFFFFF' : `#000000`}`).stroke().text(`${item?.name ? item?.name : item?.name_ru}`, descriptionX+2, y, {height:15})
+            .rect(quantityX, y-4, discountX-quantityX-2, 16, {color:`${i%2 ?`#799E79` : `#FFFFFF`}`}).fillAndStroke(`${i%2 ?`#799E79` : `#FFFFFF`}`).fill(`${i%2 ? '#FFFFFF' : `#000000`}`).stroke().text(item?.quantity, quantityX+2, y, {height:15})
+            .rect(discountX, y-4, priceX-discountX-2, 16, {color:`${i%2 ?`#799E79` : `#FFFFFF`}`}).fillAndStroke(`${i%2 ?`#799E79` : `#FFFFFF`}`).fill(`${i%2 ? '#FFFFFF' : `#000000`}`).stroke().text(`${item?.discount_value ? item?.discount_value : `` }`, discountX+2, y, {height:15})
+            .rect(priceX, y-4, amountX-priceX-2, 16, {color:`${i%2 ?`#799E79` : `#FFFFFF`}`}).fillAndStroke(`${i%2 ?`#799E79` : `#FFFFFF`}`).fill(`${i%2 ? '#FFFFFF' : `#000000`}`).stroke().text(`${item?.price}`, priceX+2, y, {height:15})
+            .rect(amountX, y-4, 560-amountX-2, 16, {color:`${i%2 ?`#799E79` : `#FFFFFF`}`}).fillAndStroke(`${i%2 ?`#799E79` : `#FFFFFF`}`).fill(`${i%2 ? '#FFFFFF' : `#000000`}`).stroke().text(`${item?.discount_value ? item?.price*(100-item.discount_value)*item?.quantity*0.01 : item?.price*item?.quantity}`, amountX+2, y, {height:15})
         // doc.rect(17, y - 5, 540, 0.2).fillColor('#000').stroke('#000')
     }
     // doc.rect(17, h + 20, 540, 0.2).fillColor('#000').stroke('#000')
