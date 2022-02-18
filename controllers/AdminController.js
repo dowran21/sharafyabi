@@ -1216,7 +1216,7 @@ const UpdateShopData = async (req, res) =>{
 const AdminFirebase = async (req, res) =>{
     const body = req.body;
     console.log(body)
-    const {text, path_id, item_id} = req.body;
+    const {text, path_id, item_id, description} = req.body;
     console.log(path_id, item_id, text);
     let query_text =``
     if(path_id == 3){
@@ -1240,7 +1240,7 @@ const AdminFirebase = async (req, res) =>{
         console.log(e)
     }
     let message = {
-        data: {title:`${text}`, body:`${item?.name}`, destination: `${item?.destination}`, path_id:`${path_id}`, item_id:`${item_id}`}
+        data: {title:`${text}`, body:`${item?.name}`, description, destination: `${item?.destination}`, path_id:`${path_id}`, item_id:`${item_id}`}
         // token
     }
     // console.log(message)
@@ -1248,9 +1248,9 @@ const AdminFirebase = async (req, res) =>{
         let k = {}
         try {
             query_text = `
-                INSERT INTO push(path_id, item_id, text) 
-                    VALUES (${path_id}, ${item_id}, '${text}')
-                RETURNING id, path_id, item_id, text, to_char(created_at, 'DD.MM.YYYY HH24:MI') AS created_at
+                INSERT INTO push(path_id, item_id, text, description) 
+                    VALUES (${path_id}, ${item_id}, '${text}', '${description}')
+                RETURNING id, path_id, item_id, text, description, to_char(created_at, 'DD.MM.YYYY HH24:MI') AS created_at
                 
             `
              k = await database.query(query_text, [])
