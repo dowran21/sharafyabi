@@ -1269,7 +1269,7 @@ const AdminFirebase = async (req, res) =>{
 
 const GetPushes = async(req, res) =>{
     const query_text = `
-        SELECT id, path_id, item_id, text, to_char(created_at, 'DD.MM.YYYY HH24:MI') AS created_at
+        SELECT id, path_id, item_id, text, description, to_char(created_at, 'DD.MM.YYYY HH24:MI') AS created_at
         FROM push
         ORDER BY id DESC
     `

@@ -238,6 +238,7 @@ CREATE TABLE push(
     path_id SMALLINT NOT NULL,
     item_id SMALLINT NOT NULL,
     "text" VARCHAR (250) NOT NULL,
+    "description" VARCHAR(3000) NOT NULL,
     created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT now()
 );
 
