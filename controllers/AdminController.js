@@ -1219,13 +1219,13 @@ const AdminFirebase = async (req, res) =>{
     const {text, path_id, item_id} = req.body;
     console.log(path_id, item_id, text);
     let query_text =``
-    if(path_id == 2){
+    if(path_id == 3){
         query_text = `SELECT pt.name, p.destination FROM products p
             LEFT JOIN product_translations pt ON
                 pt.product_id = p.id AND pt.language_id = 2
             WHERE p.id = ${item_id}
             `
-    }else if(path_id == 3){
+    }else if(path_id == 2){
         query_text = `
             SELECT ct.name, c.destination FROM categories c
                 LEFT JOIN category_translations ct
