@@ -381,7 +381,7 @@ const CreateOrder = async (req, res) =>{
                   // send mail with defined transport object
                   let info = await transporter.sendMail({
                     from: '"Пришел заказ на Sharafyabi Online Shop " <order@sharafyabi.com>', // sender address
-                    to: "a.shpendyaev@sharafyabi.com", // list of receivers
+                    to: "a.shpendyaev@sharafyabi.com, shpendyaev.a@yandex.com", // list of receivers
                     subject: "Заказ", // Subject line
                     text: "Был принять заказ пожалуйста посмотрите его", // plain text body
                     html: `<b>Заказ ${id}</b>
