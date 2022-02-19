@@ -270,6 +270,21 @@ const UpdateProfile = async (req, res) =>{
     }
 }
 
+const AddUserLocations = async (req, res) =>{
+    const id = req.user?.id;
+    const {address, comment} = req.body;
+    const query_text = `
+        INSERT INTO user_locations (address, comment, user_id) VALUES ('${address}', '${comment}', ${id}) RETURNING *
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).json({rows:rows[0]})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.success).send(false)
+    }
+}
+
 module.exports = {
     UserRegistration,
     UserLogin,
@@ -281,5 +296,6 @@ module.exports = {
     GetOrderByID,
     CreateComment,
     CreateSubComment,
-    UpdateProfile
+    UpdateProfile,
+    AddUserLocations
 }

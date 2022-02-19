@@ -1,7 +1,7 @@
 const express = require('express');
 const router = new express.Router();
 const UserController = require("../controllers/UserController")
-const {VerifyUserAccessToken, VerifyUserCodeTokenNext} = require('../middleware/AuthMiddleware')
+const {VerifyUserAccessToken, VerifyUserCodeTokenNext, VerifyAdminAccessToken} = require('../middleware/AuthMiddleware')
 
 router.post('/:lang/registration', UserController.UserRegistration);
 router.post('/:lang/login', UserController.UserLogin)
@@ -18,6 +18,7 @@ router.get('/:lang/get-order/:id', VerifyUserAccessToken, UserController.GetOrde
 router.post('/:lang/create-sub-comment/:product_id/:main_comment_id', VerifyUserAccessToken, UserController.CreateSubComment)
 // router.post('/:lang/sub/:product_id/:main_comment_id', (req, res) => {console.log("hello world"); return res.status(200).send(true)})
 router.post('/:lang/create-comment/:product_id', VerifyUserAccessToken, UserController.CreateComment)
+router.post('/:lang/add-user-location', VerifyAdminAccessToken, UserController.AddUserLocations)
 
 
 
