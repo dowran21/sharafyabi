@@ -773,14 +773,23 @@ const UpdateProduct = async (req, res) =>{
 }
 
 const AddSale = async (req, res) =>{
-    const {start_date, end_date, coupon, discount_type_id, discount_value, product_id, min_value} = req.body;
+    const {start_date, end_date, coupon,category_id, discount_type_id, discount_value, product_id, min_value} = req.body;
     console.log(req.body)
-    const query_text = `
-        INSERT INTO discounts(validity, discount_value, coupon, discount_type_id, product_id, min_value)
-            VALUES ('[${start_date}, ${end_date}]',${discount_value}, 
-                ${discount_type_id == 4 ? `'${coupon}'` : `null`}, 
-                    ${discount_type_id}, ${discount_type_id == 1 ? `${product_id}` : `null`}, ${discount_type_id == 4 ? `null` : `${min_value}` } ) RETURNING *
-    `
+    let query_text = ``
+    if(discount_type_id == 2){
+        query_text = `
+        INSERT INTO discounts(validity, discount_value, coupon, discount_type_id, product_id, category_id, min_value)
+        SELECT '[${start_date}, ${end_date}]',${discount_value}, null, 1, id, ${category_id}, null 
+        FROM products WHERE main_category_id = ${category_id} RETURNING *
+        `
+    }else{
+        query_text = `
+            INSERT INTO discounts(validity, discount_value, coupon, discount_type_id, product_id, min_value)
+                VALUES ('[${start_date}, ${end_date}]',${discount_value}, 
+                    ${discount_type_id == 4 ? `'${coupon}'` : `null`}, 
+                        ${discount_type_id}, ${discount_type_id == 1 ? `${product_id}` : `null`}, ${discount_type_id == 4 ? `null` : `${min_value}` } ) RETURNING *
+                    `
+            }
     try {
         const {rows} = await database.query(query_text, [])
         const s_query = `
@@ -1132,7 +1141,7 @@ const GetProductsForSelect = async (req, res)=>{
 
 const GetSelectCategories = async (req, res) =>{
     const query_text = `
-        SELECT id AS value, name AS label FROM categories
+        SELECT id AS value, name AS label FROM categories WHERE main_category_id IS NULL
     `
     try {
         const {rows} = await database.query(query_text, [])

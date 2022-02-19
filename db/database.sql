@@ -141,6 +141,7 @@ CREATE TABLE discounts(
     discount_value INTEGER NOT NULL,
     coupon VARCHAR (150),
     product_id BIGINT,
+    category_id SMALLINT,---need to add to the server
     created_at TIMESTAMP WITHOUT TIME ZONE  NOT NULL DEFAULT now(),
     validity tsrange NOT NULL,
     is_active BOOLEAN DEFAULT TRUE,

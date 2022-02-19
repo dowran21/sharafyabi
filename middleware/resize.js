@@ -14,16 +14,15 @@ const resize_producers_categories  = async (req, res, next) =>{
         const name = req.file.originalname.replace(' ', '').split('.')[0];
         req.file.path = `uploads/producers_categories/${date}`
         await sharp(`./uploads/${req.file.filename}`)
-            .toFormat("webp")
+            .toFormat("webp", {quality:30})
             .toFile(`./uploads/producers_categories/${date}-mini.webp`)
 
         await sharp(`./uploads/${req.file.filename}`)
-            .toFormat("webp")
+            .toFormat("webp", {quality:60})
             .toFile(`./uploads/producers_categories/${date}-big.webp`)
 
         await sharp(`./uploads/${req.file.filename}`)
             .toFormat("webp")
-            .resize(900, 900)
             .toFile(`./uploads/producers_categories/${date}-large.webp`)
         
         fs.unlinkSync(`./uploads/${req.file.filename}`)
