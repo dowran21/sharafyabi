@@ -254,6 +254,22 @@ const CreateSubComment = async (req, res) =>{
     }
 }
 
+const UpdateProfile = async (req, res) =>{
+    const {phone, password, full_name} = req.body;
+    const id = req.user?.id
+    const hashed_password = await UserHelper.HashPassword(password)
+    try {
+        const query_text = `
+            UPDATE users SET password = '${hashed_password}', full_name = '${full_name}' WHERE phone = '${phone}' AND id = ${id}
+        `
+        await database.query(query_text, [])
+        return res.status(status.success).send(true);
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false);
+    }
+}
+
 module.exports = {
     UserRegistration,
     UserLogin,
@@ -264,5 +280,6 @@ module.exports = {
     GetOrders,
     GetOrderByID,
     CreateComment,
-    CreateSubComment
+    CreateSubComment,
+    UpdateProfile
 }
