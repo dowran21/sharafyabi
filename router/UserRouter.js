@@ -9,7 +9,8 @@ router.post('/:lang/forgot-password', UserController.ForgotPassword);
 router.post('/:lang/change-password', VerifyUserCodeTokenNext, UserController.ChangePassword)
 router.post('/:lang/update-user-profile', VerifyUserAccessToken, UserController.UpdateProfile)
 router.post('/:lang/add-user-location', VerifyUserAccessToken, UserController.AddUserLocations)
-
+router.get('/:lang/get-my-locations', VerifyUserAccessToken, UserController.GetMyLocations)
+router.post('/:lang/delete-location/:id', VerifyUserAccessToken, UserController.DeleteLocation)
 
 router.post('/:lang/add-to-wish-list/:id',VerifyUserAccessToken, UserController.AddToWishList)
 router.post('/:lang/remove-from-wish-list/:id', VerifyUserAccessToken, UserController.RemoveFromWishList)

@@ -31,12 +31,7 @@ const UserRegistration = async (req, res) =>{
 const UserLogin = async (req, res) =>{
     const {phone, password} = req.body;
     const query_text = `
-        SELECT u.id, u.full_name, u.phone, u.email, u.password, (
-            SELECT json_agg(loc) FROM(
-                SELECT ul.id AS location_id, ul.address, ul.comment
-                FROM user_locations ul
-                WHERE ul.user_id = u.id
-            )loc) AS locations FROM users WHERE phone = '${phone}'
+        SELECT * FROM users WHERE phone = '${phone}'
     `
     try {
         const {rows} = await database.query(query_text, []);
@@ -290,6 +285,34 @@ const AddUserLocations = async (req, res) =>{
     }
 }
 
+const GetMyLocations = async (req, res) =>{
+    const id = req.user.id;
+    const query_text = `
+        SELECT * FROM user_locations WHERE user_id = ${id}
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).json({rows})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
+const DeleteLocation = async (req, res) =>{
+    const {id} = req.params;
+    const query_text = `
+        DELETE FROM user_locations WHERE id = ${id}
+    `
+    try {
+        await database.query(query_text, [])
+        return res.status(status.success).send(true)
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
 module.exports = {
     UserRegistration,
     UserLogin,
@@ -302,5 +325,7 @@ module.exports = {
     CreateComment,
     CreateSubComment,
     UpdateProfile,
-    AddUserLocations
+    AddUserLocations,
+    GetMyLocations,
+    DeleteLocation
 }
