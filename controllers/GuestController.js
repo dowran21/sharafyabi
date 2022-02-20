@@ -663,12 +663,14 @@ const GeneratePdf = async (req, res) =>{
 
 const GetOrdersMobile = async (req, res) =>{
     const {ord} = req.query;
+    console.log(ord)
     let arr = []
     try {
         arr = JSON.parse(ord)
     } catch (e) {
         
     }
+    console.log(arr)
     if(!arr.length){
         return res.status(status.success).json({rows:null})
     }
