@@ -31,7 +31,12 @@ const UserRegistration = async (req, res) =>{
 const UserLogin = async (req, res) =>{
     const {phone, password} = req.body;
     const query_text = `
-        SELECT * FROM users WHERE phone = '${phone}'
+        SELECT u.id, u.full_name, u.phone, u.email, u.password, (
+            SELECT json_agg(loc) FROM(
+                SELECT ul.id AS location_id, ul.address, ul.comment
+                FROM user_locations ul
+                WHERE ul.user_id = u.id
+            )loc) AS locations FROM users WHERE phone = '${phone}'
     `
     try {
         const {rows} = await database.query(query_text, []);
