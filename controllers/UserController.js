@@ -288,7 +288,7 @@ const AddUserLocations = async (req, res) =>{
 const GetMyLocations = async (req, res) =>{
     const id = req.user.id;
     const query_text = `
-        SELECT * FROM user_locations WHERE user_id = ${id}
+        SELECT * FROM user_locations WHERE user_id = ${id} ORDER BY id DESC
     `
     try {
         const {rows} = await database.query(query_text, [])
