@@ -811,6 +811,11 @@ const AddSale = async (req, res) =>{
 }
 
 const GetSales = async (req, res) =>{
+    const {page, limit} = req.query;
+    let offSet = ``
+    if(page && limit){
+        offSet = `OFFSET ${page*limit} LIMIT ${limit}`
+    }
     const query_text = `
         SELECT (
             SELECT COUNT(*) FROM discounts
@@ -823,6 +828,7 @@ const GetSales = async (req, res) =>{
                     LEFT JOIN product_translations pt 
                         ON pt.product_id = d.product_id AND pt.language_id = 2
                 ORDER BY d.id DESC
+                ${offSet}
         )dis) AS discounts 
     `
     try {
