@@ -74,6 +74,7 @@ CREATE TABLE products(
     price NUMERIC(8,2) NOT NULL,
     "name" VARCHAR (150) NOT NULL,
     destination VARCHAR (350),
+    
     articul VARCHAR(30),
     recomended BOOLEAN NOT NULL DEFAULT FALSE,
     new_in_come BOOLEAN NOT NULL DEFAULT FALSE,
