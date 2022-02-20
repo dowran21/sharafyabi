@@ -8,7 +8,7 @@ router.post('/:lang/login', UserController.UserLogin)
 router.post('/:lang/forgot-password', UserController.ForgotPassword);
 router.post('/:lang/change-password', VerifyUserCodeTokenNext, UserController.ChangePassword)
 router.post('/:lang/update-user-profile', VerifyUserAccessToken, UserController.UpdateProfile)
-router.post('/:lang/add-user-location', VerifyAdminAccessToken, UserController.AddUserLocations)
+router.post('/:lang/add-user-location', VerifyUserAccessToken, UserController.AddUserLocations)
 
 
 router.post('/:lang/add-to-wish-list/:id',VerifyUserAccessToken, UserController.AddToWishList)
