@@ -729,8 +729,12 @@ const AddCategoryImage = async (req, res) =>{
 
 const UpdateProduct = async (req, res) =>{
     const {id} = req.params
-    const {main_category_id, producer_id, stock, price, name_tm, name_ru, name_en, sub_category_id,
+    let {main_category_id, producer_id, stock, price, name_tm, name_ru, name_en, sub_category_id,
         description_tm, description_ru, description_en} = req.body;
+        description_tm = description_tm.replace("'", "''")
+        description_ru = description_ru.replace("'", "''")
+        description_en = description_en.replace("'", "''")
+
     const query_text = `
         WITH update_product AS (
             UPDATE products SET main_category_id = ${main_category_id}, sub_category_id = ${sub_category_id}, producer_id = ${producer_id}, 
