@@ -78,7 +78,7 @@ const ForgotPassword = async (req, res) =>{
         const data = {id:user.id, full_name:user.full_name, email:user.email, phone:user.phone}
         SendSMS({phone, message:`Code: ${code}`})
         const token = await UserHelper.GenerateUserCodeToken(data)
-        return res.status(status.success).json({token})
+        return res.status(status.success).json({token, code})
     } catch (e) {
         console.log(e)
         return res.status(status.error).send(false)
