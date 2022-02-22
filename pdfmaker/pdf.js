@@ -10,10 +10,10 @@ let montes_light = path.join(__dirname, "Montserrat-Regular.ttf")
 
 async function OrderGenerator (data){
     const {id, created_at, total_price, name, phone, address, discount_value, order_items, paymant_id, comment} = data
-    let total = 0;
-    for(let i =0; i<order_items.length; i++){
-        total += order_items[i]?.discount_value ? order_items[i].price*(100-order_items[i].discount_value)*order_items[i].quantity*0.01 : order_items[i].price*order_items[i].quantity
-    }
+    // let total = 0;
+    // for(let i =0; i<order_items.length; i++){
+    //     total += order_items[i]?.discount_value ? order_items[i].price*(100-order_items[i].discount_value)*order_items[i].quantity*0.01 : order_items[i].price*order_items[i].quantity
+    // }
     let doc = new PDFDocument({ size: "A4", margins : {top: 0,bottom:30,left: 30,right: 30}});
     doc.font(montes);
     doc

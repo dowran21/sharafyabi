@@ -300,8 +300,8 @@ const CreateOrder = async (req, res) =>{
         }
         for(let i = 0; i<cart.length; i++){
             
-            if(cart[i].discunt_value){
-                totalPrice = totalPrice +  parseFloat(cart[i].price)*(100-(+cart[i].discount_value))*0.01*(+cart[i].quantity)
+            if(cart[i].discount_value){
+                totalPrice = totalPrice +  (parseFloat(cart[i].price)*(100-cart[i].discount_value)*0.01*(cart[i].quantity))
             }else{
                 totalPrice = totalPrice +  parseFloat(cart[i].price)*(+cart[i].quantity)
             }
@@ -342,28 +342,28 @@ const CreateOrder = async (req, res) =>{
             const j = await database.query(order_query, [])
             const id = j?.rows[0]?.id;
             try {
-                const sel_query = `
-                    SELECT o.id, o.phone, o.address, o.name, to_char(o.created_at, 'DD.MM.YYYY HH24:MI') AS created_at,
-                        o.total_price, o.coupon, o.discount_id, d.discount_value, o.paymant_id,
-                        (SELECT json_agg(orde) FROM (
-                            SELECT p.id, p.name, oi.price, oi.quantity, d.discount_value, pt.name AS name_ru
-                            FROM order_items oi
-                                INNER JOIN products p 
-                                    ON p.id = oi.product_id
-                                INNER JOIN product_translations pt
-                                    ON pt.product_id = p.id AND pt.language_id = 2
-                                LEFT JOIN discounts d
-                                    ON d.product_id = oi.product_id AND validity ::tsrange @> o.created_at
-                                WHERE oi.order_id = o.id
-                        )orde) AS order_items
-                    FROM orders o
-                        LEFT JOIN discounts d
-                            ON d.id = o.discount_id
-                        WHERE o.id = ${id}
-                `
-                const k = await database.query(sel_query, [])
-                const data = k.rows[0];
-                const pdf = GeneratePdf(data)
+                // const sel_query = `
+                //     SELECT o.id, o.phone, o.address, o.name, to_char(o.created_at, 'DD.MM.YYYY HH24:MI') AS created_at,
+                //         o.total_price, o.coupon, o.discount_id, d.discount_value, o.paymant_id,
+                //         (SELECT json_agg(orde) FROM (
+                //             SELECT p.id, p.name, oi.price, oi.quantity, d.discount_value, pt.name AS name_ru
+                //             FROM order_items oi
+                //                 INNER JOIN products p 
+                //                     ON p.id = oi.product_id
+                //                 INNER JOIN product_translations pt
+                //                     ON pt.product_id = p.id AND pt.language_id = 2
+                //                 LEFT JOIN discounts d
+                //                     ON d.product_id = oi.product_id AND validity ::tsrange @> o.created_at
+                //                 WHERE oi.order_id = o.id
+                //         )orde) AS order_items
+                //     FROM orders o
+                //         LEFT JOIN discounts d
+                //             ON d.id = o.discount_id
+                //         WHERE o.id = ${id}
+                // `
+                // // const k = await database.query(sel_query, [])
+                // const data = k.rows[0];
+                // const pdf = GeneratePdf(data)
 
                 const nodemailer = require("nodemailer");
                 SendSMS({phone:`64311313`, message:"Пришел заказ на сайт Sharafyabi"})
