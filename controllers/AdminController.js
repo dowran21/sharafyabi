@@ -1676,7 +1676,7 @@ const DeleteUser = async (req, res) =>{
 
 const GetAdminMessages = async (req, res) =>{
     const query_text = `
-        SELECT id, phone, email, name, text, to_char(created_at, 'DD.MM.YYYY') AS created_at 
+        SELECT id, phone, email, name, message, to_char(created_at, 'DD.MM.YYYY') AS created_at 
         FROM user_messages 
     `
     try {
