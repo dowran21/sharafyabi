@@ -1684,7 +1684,7 @@ const GetAdminMessages = async (req, res) =>{
         return res.status(status.success).json({rows})
     } catch (e) {
         console.log(e)
-        return res.status(status.success).send(false)
+        return res.status(status.error).send(false)
     }
 }
 
