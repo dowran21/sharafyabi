@@ -1674,6 +1674,34 @@ const DeleteUser = async (req, res) =>{
     }
 }
 
+const GetAdminMessages = async (req, res) =>{
+    const query_text = `
+        SELECT id, phone, email, name, text, to_char(created_at, 'DD.MM.YYYY') AS created_at 
+        FROM user_messages 
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).json({rows})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.success).send(false)
+    }
+}
+
+const DeleteAdminMessage = async (req, res) =>{
+    const {id} = req.params;
+    const query_text = `
+        DELETE FROM user_messages WHERE id = ${id}
+    `
+    try {
+        await database.query(query_text, [])
+        return res.status(status.success).send(true)
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
 module.exports = {
     Login,
     LoadAdmin,
@@ -1756,5 +1784,8 @@ module.exports = {
     GetTestimonial,
     DeleteTestimonial,
     SendEmailNews,
-    DeleteUser
+    DeleteUser,
+
+    GetAdminMessages,
+    DeleteAdminMessage
 }

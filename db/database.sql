@@ -289,7 +289,8 @@ CREATE TABLE video_titles(
 CREATE TABLE user_messages(
     id SERIAL PRIMARY KEY NOT NULL,
     phone VARCHAR(8) NOT NULL,
-    email VARCHAR (150) NOT NULL,
-    "name" VARCHAR (150) NOT NULL,
-    "message" TEXT NOT NULL
+    email VARCHAR (150),
+    "name" VARCHAR (150),
+    "message" TEXT NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT now()
 );
