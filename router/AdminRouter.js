@@ -96,7 +96,7 @@ router.post('/delete-email/:id', VerifyAdminAccessToken, AdminController.DeleteE
 
 router.post('/delete-user/:id', VerifyAdminAccessToken, AdminController.DeleteUser)
 
-router.get('/get-admin-messages', VerifyUserAccessToken, AdminController.GetAdminMessages);
-router.post('/delete-admin-message/:id', VerifyUserAccessToken, AdminController.DeleteAdminMessage)
+router.get('/get-admin-messages', VerifyAdminAccessToken, AdminController.GetAdminMessages);
+router.post('/delete-admin-message/:id', VerifyAdminAccessToken, AdminController.DeleteAdminMessage)
 
 module.exports = router;
