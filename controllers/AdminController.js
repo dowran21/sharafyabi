@@ -1154,7 +1154,11 @@ const GetProductsForSelect = async (req, res)=>{
 
 const GetSelectCategories = async (req, res) =>{
     const query_text = `
-        SELECT id AS value, name AS label FROM categories WHERE main_category_id IS NULL
+        SELECT c.id AS value, ct.name AS label 
+        FROM categories c 
+        INNER JOIN category_translations ct
+            ON ct.category_id = c.id AND ct.language_id = 2
+        WHERE main_category_id IS NULL
     `
     try {
         const {rows} = await database.query(query_text, [])
