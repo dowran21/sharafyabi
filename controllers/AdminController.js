@@ -1158,7 +1158,7 @@ const GetSelectCategories = async (req, res) =>{
         FROM categories c 
         INNER JOIN category_translations ct
             ON ct.category_id = c.id AND ct.language_id = 2
-        WHERE main_category_id IS NULL
+        WHERE main_category_id IS NULL 
     `
     try {
         const {rows} = await database.query(query_text, [])
