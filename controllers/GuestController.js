@@ -756,6 +756,22 @@ const GetVideos = async (req, res) =>{
 }
 
 
+const SendAdminMessage = async (req, res) =>{
+    let {name, phone, email, message} = req.body;
+    const query_text = `
+        INSERT INTO user_messages(name, phone, email, message) VALUES (
+            '${name}', '${phone}', '${email}', '${message}'
+        )
+    `
+    try {
+        await database.query(query_text, [])
+        return res.status(status.success).send(true)
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
 module.exports = {
     GetCategories,
     GetProducers,
@@ -777,5 +793,6 @@ module.exports = {
     GetOrdersMobile,
     GetOrderById,
     GetTestimonials,
-    GetVideos
+    GetVideos,
+    SendAdminMessage
 }

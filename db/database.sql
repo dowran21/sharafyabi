@@ -285,3 +285,12 @@ CREATE TABLE video_titles(
 
     CONSTRAINT video_id_fk FOREIGN KEY (video_id) REFERENCES videos(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
+
+CREATE TABLE user_messages(
+    id SERIAL PRIMARY KEY NOT NULL,
+    phone VARCHAR(8) NOT NULL,
+    email VARCHAR (150),
+    "name" VARCHAR (150),
+    "message" TEXT NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT now()
+);

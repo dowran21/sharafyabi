@@ -1,7 +1,7 @@
 const express = require('express');
 const router = new express.Router();
 const AdminController = require('../controllers/AdminController')
-const {VerifyAdminAccessToken, VerifyAdminRefreshToken} = require('../middleware/AuthMiddleware');
+const {VerifyAdminAccessToken, VerifyAdminRefreshToken, VerifyUserAccessToken} = require('../middleware/AuthMiddleware');
 // const { resize_producer_image,  } = require('../middleware/resize');
 const upload = require('../middleware/upload');
 const {resize_producers_categories, resize_product_images, resize_news, resize_banners} = require('../middleware/resize.js');
@@ -95,5 +95,8 @@ router.get('/get-emails', VerifyAdminAccessToken, AdminController.GetEmails)
 router.post('/delete-email/:id', VerifyAdminAccessToken, AdminController.DeleteEmail)
 
 router.post('/delete-user/:id', VerifyAdminAccessToken, AdminController.DeleteUser)
+
+router.get('/get-admin-messages', VerifyAdminAccessToken, AdminController.GetAdminMessages);
+router.post('/delete-admin-message/:id', VerifyAdminAccessToken, AdminController.DeleteAdminMessage)
 
 module.exports = router;
