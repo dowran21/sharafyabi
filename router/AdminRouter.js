@@ -99,4 +99,6 @@ router.post('/delete-user/:id', VerifyAdminAccessToken, AdminController.DeleteUs
 router.get('/get-admin-messages', VerifyAdminAccessToken, AdminController.GetAdminMessages);
 router.post('/delete-admin-message/:id', VerifyAdminAccessToken, AdminController.DeleteAdminMessage)
 
+router.get('/get-coupon-orders', VerifyAdminAccessToken, AdminController.GetCouponOrders)
+
 module.exports = router;

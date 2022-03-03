@@ -1707,6 +1707,22 @@ const DeleteAdminMessage = async (req, res) =>{
     }
 }
 
+const GetCouponOrders = async (req, res) =>{
+    const {coupon} = req.query;
+    const query_text = `
+        SELECT o.name, o.id, o.phone, o.total_price 
+        FROM orders o
+        WHERE o.coupon = '${coupon}'
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).json({rows})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
 module.exports = {
     Login,
     LoadAdmin,
@@ -1792,5 +1808,7 @@ module.exports = {
     DeleteUser,
 
     GetAdminMessages,
-    DeleteAdminMessage
+    DeleteAdminMessage,
+
+    GetCouponOrders
 }
