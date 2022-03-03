@@ -794,7 +794,7 @@ const AddSale = async (req, res) =>{
             INSERT INTO discounts(validity, discount_value, coupon, discount_type_id, product_id, min_value)
                 VALUES ('[${start_date}, ${end_date}]',${discount_value}, 
                     ${discount_type_id == 4 ? `'${coupon}'` : `null`}, 
-                        ${discount_type_id}, ${discount_type_id == 1 ? `${product_id}` : `null`}, ${discount_type_id == 4 ? `null` : `${min_value}` } ) RETURNING *
+                        ${discount_type_id}, ${discount_type_id == 1 ? `${product_id}` : `null`}, ${min_value} ) RETURNING *
                     `
             }
     try {
