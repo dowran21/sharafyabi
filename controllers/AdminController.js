@@ -1723,6 +1723,24 @@ const GetCouponOrders = async (req, res) =>{
     }
 }
 
+const GetSubCategories = async (req, res) =>{
+    const {id} = req.params;
+    const query_text = `
+        SELECT ct.name AS label, c.id AS value 
+        FROM categories c
+        INNER JOIN category_translations ct
+            ON ct.category_id = c.id AND ct.language_id = 2
+        WHERE c.main_category_id = ${id}
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).json({rows})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
 module.exports = {
     Login,
     LoadAdmin,
@@ -1810,5 +1828,6 @@ module.exports = {
     GetAdminMessages,
     DeleteAdminMessage,
 
-    GetCouponOrders
+    GetCouponOrders,
+    GetSubCategories
 }

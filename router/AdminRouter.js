@@ -100,5 +100,6 @@ router.get('/get-admin-messages', VerifyAdminAccessToken, AdminController.GetAdm
 router.post('/delete-admin-message/:id', VerifyAdminAccessToken, AdminController.DeleteAdminMessage)
 
 router.get('/get-coupon-orders', VerifyAdminAccessToken, AdminController.GetCouponOrders)
+router.get('/get-sub-categories/:id', VerifyAdminAccessToken, AdminController.GetSubCategories)
 
 module.exports = router;
