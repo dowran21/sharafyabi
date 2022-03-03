@@ -828,7 +828,8 @@ const GetSales = async (req, res) =>{
             SELECT COUNT(*) FROM discounts
         ), (SELECT json_agg(dis) FROM (
             SELECT dt.name AS discount_name, d.id,  d.discount_value, d.coupon, d.discount_type_id, d.product_id, d.min_value, 
-                to_char(lower(d.validity)::date, 'DD.MM.YYYY') AS low, to_char(upper(d.validity)::date, 'DD.MM.YYYY') AS upper, pt.name, (SELECT upper(d.validity) > localtimestamp) AS active, d.is_active
+                to_char(lower(d.validity)::date, 'DD.MM.YYYY') AS low, to_char(upper(d.validity)::date, 'DD.MM.YYYY') AS upper, pt.name, (SELECT upper(d.validity) > localtimestamp) AS active, d.is_active,
+                (SELECT COUNT(*) FROM orders o WHERE o.coupon = d.coupon) AS coupon_count
                 FROM discounts d
                     INNER JOIN discount_types dt
                         ON dt.id = d.discount_type_id
