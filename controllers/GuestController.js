@@ -310,7 +310,7 @@ const CreateOrder = async (req, res) =>{
         let discount = {}
         if(coupon){
             try{
-                discount = await database.query(`SELECT * FROM discounts WHERE discount_type_id = 4 AND validity:: tsrange @> localtimestamp AND coupon = '${coupon}' AND is_active = true AND min_value < (SELECT COUNT(*) FROM orders WHERE coupon = '${coupon}')`, [])
+                discount = await database.query(`SELECT * FROM discounts WHERE discount_type_id = 4 AND validity:: tsrange @> localtimestamp AND coupon = '${coupon}' AND is_active = true AND min_value > (SELECT COUNT(*) FROM orders WHERE coupon = '${coupon}')`, [])
             }catch(e){
                 throw(e)
             }
@@ -556,7 +556,7 @@ const AddSubscriptionToEmail = async (req, res) =>{
 const GetCoupon = async (req, res) =>{
     const {coupon} = req.query
     const query_text = `
-        SELECT discount_value FROM discounts WHERE coupon = '${coupon}' AND discount_type_id = 4 AND min_value < (SELECT COUNT(*) FROM orders WHERE coupon = '${coupon}')
+        SELECT discount_value FROM discounts WHERE coupon = '${coupon}' AND discount_type_id = 4 AND min_value > (SELECT COUNT(*) FROM orders WHERE coupon = '${coupon}')
     `
     try {
         const {rows} = await database.query(query_text, [])
