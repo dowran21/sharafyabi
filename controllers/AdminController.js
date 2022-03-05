@@ -1710,7 +1710,7 @@ const DeleteAdminMessage = async (req, res) =>{
 const GetCouponOrders = async (req, res) =>{
     const {coupon} = req.query;
     const query_text = `
-        SELECT o.name, o.id, o.phone, o.total_price 
+        SELECT o.name, o.id, o.phone, o.total_price, to_char(o.created_at, 'DD.MM.YYYY')
         FROM orders o
         WHERE o.coupon = '${coupon}'
     `
