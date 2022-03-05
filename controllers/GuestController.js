@@ -490,7 +490,7 @@ const GetWishList = async (req, res) =>{
         return res.status(status.success).json({rows:null})
     }
     const query_text = `
-    SELECT p.id::int, p.price::text, p.stock, p.main_category_id, p.producer_id, pt.name, pt.description, 
+    SELECT p.id::int, p.price::text, p.stock::integer, p.main_category_id, p.producer_id, pt.name, pt.description, 
         prod.name AS producer_name, ct.name AS category_name, d.discount_value, d.min_value, (SELECT pi.destination FROM product_images pi WHERE pi.product_id = p.id LIMIT 1) AS destination
         FROM products p
             INNER JOIN languages l
