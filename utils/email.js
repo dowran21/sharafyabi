@@ -206,7 +206,7 @@ const sendEmail = async ({item, emails})=>{
       });
       console.log(info?.id)
     } catch (e) {
-      
+      console.log(e)
     }
   }
   
