@@ -184,6 +184,7 @@ const sendEmail = async ({item, emails})=>{
     
   // }
   // create reusable transporter object using the default SMTP transport
+  console.log(emails)
   for(let i=0; i<emails?.length; i++){
     try {
       let transporter = nodemailer.createTransport({
