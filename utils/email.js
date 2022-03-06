@@ -192,7 +192,7 @@ const sendEmail = async ({item, emails})=>{
         secure: true, // true for 465, false for other ports
         auth: {
           user: "order@sharafyabi.com", // generated ethereal user
-          pass: "ibragim2022", // generated ethereal password
+          pass: "Order2022@", // generated ethereal password
         },
       });
     
@@ -201,7 +201,7 @@ const sendEmail = async ({item, emails})=>{
         from: '"Новости на сайте Sharafyabi Online Shop " <order@sharafyabi.com>', // sender address
         to: `${emails[i]}`, // list of receivers
         subject: "Sharafyabi", // Subject line
-        text: "Был принять заказ пожалуйста посмотрите его", // plain text body
+        text: "Горячие новости на сайте Sharafyabi.com", // plain text body
         html:await html({item}), // html body
       });
       console.log(info?.id)
