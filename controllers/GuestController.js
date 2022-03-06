@@ -374,7 +374,7 @@ const CreateOrder = async (req, res) =>{
                     secure: true, // true for 465, false for other ports
                     auth: {
                       user: "order@sharafyabi.com", // generated ethereal user
-                      pass: "ibragim2022", // generated ethereal password
+                      pass: "Order2022@", // generated ethereal password
                     },
                   });
                   
