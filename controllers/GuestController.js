@@ -388,8 +388,7 @@ const CreateOrder = async (req, res) =>{
                       <p>Заказ от ${name}</p>
                       <h4>Номер ${phone}</h4>
                       <h4>Общая сумма ${totalPrice}</h4>
-                      <br/>
-                      <br/>
+                     
                       <table>
                         <head>
                             <tr>
