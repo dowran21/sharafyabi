@@ -1267,7 +1267,7 @@ const AdminFirebase = async (req, res) =>{
         console.log(e)
     }
     let message = {
-        data: {title:`${text}`, body:`${item?.name}`, description, destination: `${item?.destination}`, path_id:`${path_id}`, item_id:`${item_id}`}
+        data: {title:`${description}`, body:`${text}`, description, destination: `${item?.destination}`, path_id:`${path_id}`, item_id:`${item_id}`}
         // token
     }
     // console.log(message)
