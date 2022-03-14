@@ -321,6 +321,10 @@ const CreateOrder = async (req, res) =>{
                 throw(e)
             }
         }
+        if(totalPrice < 50){
+            // return res.status(status.error).send(false)
+            return res.status(status.error).send(false)
+        }
 
         if(discount?.rows[0]){
             totalPrice = totalPrice * (100-(+discount.rows[0].discount_value))*0.01
@@ -342,28 +346,6 @@ const CreateOrder = async (req, res) =>{
             const j = await database.query(order_query, [])
             const id = j?.rows[0]?.id;
             try {
-                // const sel_query = `
-                //     SELECT o.id, o.phone, o.address, o.name, to_char(o.created_at, 'DD.MM.YYYY HH24:MI') AS created_at,
-                //         o.total_price, o.coupon, o.discount_id, d.discount_value, o.paymant_id,
-                //         (SELECT json_agg(orde) FROM (
-                //             SELECT p.id, p.name, oi.price, oi.quantity, d.discount_value, pt.name AS name_ru
-                //             FROM order_items oi
-                //                 INNER JOIN products p 
-                //                     ON p.id = oi.product_id
-                //                 INNER JOIN product_translations pt
-                //                     ON pt.product_id = p.id AND pt.language_id = 2
-                //                 LEFT JOIN discounts d
-                //                     ON d.product_id = oi.product_id AND validity ::tsrange @> o.created_at
-                //                 WHERE oi.order_id = o.id
-                //         )orde) AS order_items
-                //     FROM orders o
-                //         LEFT JOIN discounts d
-                //             ON d.id = o.discount_id
-                //         WHERE o.id = ${id}
-                // `
-                // // const k = await database.query(sel_query, [])
-                // const data = k.rows[0];
-                // const pdf = GeneratePdf(data)
 
                 const nodemailer = require("nodemailer");
                 SendSMS({phone:`64311313`, message:"Пришел заказ на сайт Sharafyabi"})
@@ -381,7 +363,7 @@ const CreateOrder = async (req, res) =>{
                   // send mail with defined transport object
                   let info = await transporter.sendMail({
                     from: '"Пришел заказ на Sharafyabi Online Shop " <order@sharafyabi.com>', // sender address
-                    to: "order@sharafyabi.com, dovran@takyk.com", // list of receivers
+                    to: "order@sharafyabi.com", // list of receivers
                     subject: "Заказ", // Subject line
                     text: "Был принять заказ пожалуйста посмотрите его", // plain text body
                     html: `<b>Заказ ${id}</b>

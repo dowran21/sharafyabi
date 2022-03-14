@@ -14,18 +14,20 @@ router.get('/load-admin', VerifyAdminRefreshToken, AdminController.LoadAdmin )
 router.post('/add-category',VerifyAdminAccessToken, AdminController.AddCategory);
 router.post('/update-category/:id', VerifyAdminAccessToken,  AdminController.UpdateCategory);
 router.post('/add-category-image/:id', VerifyAdminAccessToken, upload.single("picture"),resize_producers_categories, AdminController.AddCategoryImage)
+router.post('/delete-category/:id', VerifyAdminAccessToken, AdminController.DeleteCategory)
+router.get('/categories',VerifyAdminAccessToken, AdminController.GetCategories)
+router.post('/add-sub-category/:id', VerifyAdminAccessToken, AdminController.AddSubCategory)
+
+
 router.post('/add-producer', VerifyAdminAccessToken, AdminController.AddProducer);
 router.post('/update-producer/:id', VerifyAdminAccessToken, AdminController.UpdateProducer)
 router.post('/add-producer-image/:id', VerifyAdminAccessToken, upload.single("picture"), resize_producers_categories, AdminController.AddProducerImage)
 router.post('/delete-producer/:id', VerifyAdminAccessToken, AdminController.DeleteProducer)
-router.post('/delete-category/:id', VerifyAdminAccessToken, AdminController.DeleteCategory)
 
-router.get('/categories',VerifyAdminAccessToken, AdminController.GetCategories)
 router.get('/producers',VerifyAdminAccessToken, AdminController.GetProducers)
 router.post('/add-product', VerifyAdminAccessToken, AdminController.AddProduct);
 router.post('/add-product-images/:id', VerifyAdminAccessToken, upload.array("picture", 5), resize_product_images, AdminController.AddProductImage)
 router.post('/update-product/:id', VerifyAdminAccessToken, AdminController.UpdateProduct)
-router.post('/add-sub-category/:id', VerifyAdminAccessToken, AdminController.AddSubCategory)
 router.get('/get-product-images/:id',VerifyAdminAccessToken, AdminController.GetProductImages)
 router.post('/delete-product-image/:id', VerifyAdminAccessToken, AdminController.DeleteProductImage)
 router.post('/delete-product/:id', VerifyAdminAccessToken, AdminController.DeleteProduct)
@@ -70,7 +72,6 @@ router.get('/order-statistics', VerifyAdminAccessToken, AdminController.GetOrder
 router.post('/delete-order/:id', VerifyAdminAccessToken, AdminController.DeleteOrder)
 router.post('/update-accept/:id', VerifyAdminAccessToken, AdminController.UpdateAccept)
 router.post("/push", VerifyAdminAccessToken, AdminController.AdminFirebase)
-router.post('/update-shop-data', VerifyAdminAccessToken, AdminController.UpdateShopData)
 router.get('/get-comments', VerifyAdminAccessToken, AdminController.GetComments)
 router.post(`/activate-comment/:id`, VerifyAdminAccessToken, AdminController.AcceptComment)
 router.post('/delete-comment/:id', VerifyAdminAccessToken, AdminController.DeleteComment)
@@ -78,13 +79,16 @@ router.get('/get-user-statistics', VerifyAdminAccessToken, AdminController.GetUs
 router.get('/get-pushes', VerifyAdminAccessToken, AdminController.GetPushes)
 router.post('/delete-push/:id', VerifyAdminAccessToken, AdminController.DeletePush)
 
-router.post('/send-subscribe-messsage', VerifyAdminAccessToken, AdminController.SendSubscribeMessage)
 router.get('/get-messages', VerifyAdminAccessToken, AdminController.GetMessages)
 router.post('/delete-sms/:id', VerifyAdminAccessToken, AdminController.DeleteSMS)
 router.post('/delete-subsciption/:id', VerifyAdminAccessToken, AdminController.DeleteSubsciption)
 router.get('/get-phones', VerifyAdminAccessToken, AdminController.GetSubsciptionPhones)
+
 router.get('/get-shop-data', VerifyAdminAccessToken, AdminController.GetShopData)
+router.post('/update-shop-data', VerifyAdminAccessToken, AdminController.UpdateShopData)
+
 router.get('/get-users', VerifyAdminAccessToken, AdminController.GetUsers)
+router.post('/delete-user/:id', VerifyAdminAccessToken, AdminController.DeleteUser)
 
 router.post('/add-testimonial', VerifyAdminAccessToken, AdminController.AddTestimonial)
 router.get('/get-testimonial', VerifyAdminAccessToken, AdminController.GetTestimonial)
@@ -94,8 +98,8 @@ router.post('/send-email', VerifyAdminAccessToken, AdminController.SendEmailNews
 router.get('/get-emails', VerifyAdminAccessToken, AdminController.GetEmails)
 router.post('/delete-email/:id', VerifyAdminAccessToken, AdminController.DeleteEmail)
 
-router.post('/delete-user/:id', VerifyAdminAccessToken, AdminController.DeleteUser)
 
+router.post('/send-subscribe-messsage', VerifyAdminAccessToken, AdminController.SendSubscribeMessage)
 router.get('/get-admin-messages', VerifyAdminAccessToken, AdminController.GetAdminMessages);
 router.post('/delete-admin-message/:id', VerifyAdminAccessToken, AdminController.DeleteAdminMessage)
 

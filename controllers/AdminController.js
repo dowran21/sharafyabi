@@ -213,6 +213,24 @@ const GetCategories = async (req, res) =>{
     }
 }
 
+const AddCategoryImage = async (req, res) =>{
+    const {id} = req.params;
+    const file = req.file
+    try {
+        await database.query(`UPDATE categories SET destination = '${file.path}' WHERE id = ${id}`, [])
+        try {
+            const {rows} = await database.query(`SELECT * FROM categories WHERE id = ${id}`)
+            return res.status(status.success).json({"rows":rows[0]})
+        } catch (e) {
+            console.log(e)
+            return res.status(status.error).send(false)
+        }
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
 const AddProducer = async (req, res) =>{
     const {name} = req.body;
     const query_text = `
@@ -709,23 +727,7 @@ const GetProducts = async (req, res) =>{
     }
 }
 
-const AddCategoryImage = async (req, res) =>{
-    const {id} = req.params;
-    const file = req.file
-    try {
-        await database.query(`UPDATE categories SET destination = '${file.path}' WHERE id = ${id}`, [])
-        try {
-            const {rows} = await database.query(`SELECT * FROM categories WHERE id = ${id}`)
-            return res.status(status.success).json({"rows":rows[0]})
-        } catch (e) {
-            console.log(e)
-            return res.status(status.error).send(false)
-        }
-    } catch (e) {
-        console.log(e)
-        return res.status(status.error).send(false)
-    }
-}
+
 
 const UpdateProduct = async (req, res) =>{
     const {id} = req.params
