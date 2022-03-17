@@ -72,9 +72,11 @@ router.get('/order-statistics', VerifyAdminAccessToken, AdminController.GetOrder
 router.post('/delete-order/:id', VerifyAdminAccessToken, AdminController.DeleteOrder)
 router.post('/update-accept/:id', VerifyAdminAccessToken, AdminController.UpdateAccept)
 router.post("/push", VerifyAdminAccessToken, AdminController.AdminFirebase)
+
 router.get('/get-comments', VerifyAdminAccessToken, AdminController.GetComments)
 router.post(`/activate-comment/:id`, VerifyAdminAccessToken, AdminController.AcceptComment)
 router.post('/delete-comment/:id', VerifyAdminAccessToken, AdminController.DeleteComment)
+
 router.get('/get-user-statistics', VerifyAdminAccessToken, AdminController.GetUserStatistics)
 router.get('/get-pushes', VerifyAdminAccessToken, AdminController.GetPushes)
 router.post('/delete-push/:id', VerifyAdminAccessToken, AdminController.DeletePush)

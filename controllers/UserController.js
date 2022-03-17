@@ -216,23 +216,6 @@ const CreateComment = async (req, res) =>{
     }
 }
 
-// const CreateSubComment = async (req, res) =>{
-//     console.log("hello world")
-//     const {comment} = req.body;
-//     const {product_id} = req.params;
-//     const user_id = 1
-//     const query_text = `
-//         INSERT INTO product_comments (user_id, product_id, comment) VALUES (${user_id}, ${product_id}, '${comment}')
-//     `
-//     try {
-//         await database.query(query_text, [])
-//         return res.status(status.success).send(true)
-//     } catch (e) {
-//         console.log(e)
-//         return res.status(status.error).send(false)
-//     }
-// }
-
 const CreateSubComment = async (req, res) =>{
     console.log("Hello world")
     console.log(req.body)
