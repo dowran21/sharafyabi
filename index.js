@@ -14,7 +14,7 @@ let dir = path.join(__dirname, 'uploads')
 app.use(morgan('dev'))
 
 const allowedOrigins = [`http://localhost:3000`, 'http://sharafyabi.com','https://sharafyabi.com','http://admin.sharafyabi.com', 'https://admin.sharafyabi.com', 'http://141.136.44.174:7010','http://141.136.44.174:7015', 'http://141.136.44.174:7020', 
-'http://141.136.44.174:7005','http://141.136.44.174:7013','http://192.168.31.8:3000', 'http://192.168.31.30:3001', 'http://localhost:3001','http://192.168.31.30:3001', 'http://192.168.31.240:3000', 'http://sharafyabi.com',]
+'http://141.136.44.174:7005', 'http://95.85.125.39:3000', 'http://95.85.125.39:7000', 'http://141.136.44.174:7013','http://192.168.31.8:3000', 'http://192.168.31.30:3001', 'http://localhost:3001','http://192.168.31.30:3001', 'http://192.168.31.240:3000', 'http://sharafyabi.com',]
 
 app.use(cors({
     origin: function (origin, callback) {
