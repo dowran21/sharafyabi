@@ -193,7 +193,7 @@ const sendEmail = async ({item, emails})=>{
         secure: true, // true for 465, false for other ports
         auth: {
           user: "order@sharafyabi.com", // generated ethereal user
-          pass: "Order2022@", // generated ethereal password
+          pass: "W2T4,Q:+", // generated ethereal password
         },
       });
     
