@@ -158,6 +158,7 @@ const GetOrders = async (req, res) =>{
         LEFT JOIN discounts d
             ON d.id = o.discount_id
         WHERE o.user_id = ${user_id}
+        ORDER BY o.id DESC
     `
     try {
         const {rows} = await database.query(query_text, [])

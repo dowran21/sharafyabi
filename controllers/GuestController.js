@@ -702,7 +702,7 @@ const GetOrdersMobile = async (req, res) =>{
         LEFT JOIN discounts d
             ON d.id = o.discount_id
         WHERE o.id IN (${arr.map(item => item.id).join(', ')})
-        ORDER BY o.id ASC
+        ORDER BY o.id DESC
     `
     try {
         const {rows} = await database.query(query_text, [])
