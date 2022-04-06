@@ -294,3 +294,11 @@ CREATE TABLE user_messages(
     "message" TEXT NOT NULL,
     created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT now()
 );
+
+CREATE TABLE user_coupons (
+    id SERIAL PRIMARY KEY NOT NULL,
+    phone VARCHAR(8) NOT NULL,
+    coupon VARCHAR(150) NOT NULL,
+    validity tsrange NOT NULL,
+    discount_value SMALLINT NOT NULL
+);

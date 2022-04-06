@@ -1743,6 +1743,25 @@ const GetSubCategories = async (req, res) =>{
     }
 }
 
+const AddUserCoupon = async (req, res) =>{
+    const {coupon, phone, start_date, end_date, discount_value} = req.body;
+    const query_text = `
+        INSERT INTO user_coupons(phone, coupon, validity, discount_value)
+        VALUES ('${phone}', '${coupon}', '[${start_date}, ${end_date}]', ${discount_value}) RETURNING *
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).json({rows:rows[0]})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
+const GetUserCoupons = async (req, res) =>{
+    
+}
+
 module.exports = {
     Login,
     LoadAdmin,
