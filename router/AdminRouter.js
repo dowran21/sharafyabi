@@ -110,6 +110,6 @@ router.get('/get-sub-categories/:id', VerifyAdminAccessToken, AdminController.Ge
 
 router.get('/get-user-coupns', VerifyAdminAccessToken, AdminController.GetUserCoupons);
 router.post('/add-user-coupon', VerifyAdminAccessToken, AdminController.AddUserCoupon)
-router.post('/delete-user-coupon', VerifyAdminAccessToken, AdminController.DeleteUserCoupon)
+router.post('/delete-user-coupon/:id', VerifyAdminAccessToken, AdminController.DeleteUserCoupon)
 
 module.exports = router;
