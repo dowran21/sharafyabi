@@ -1747,7 +1747,8 @@ const AddUserCoupon = async (req, res) =>{
     const {coupon, phone, start_date, end_date, discount_value} = req.body;
     const query_text = `
         INSERT INTO user_coupons(phone, coupon, validity, discount_value)
-        VALUES ('${phone}', '${coupon}', '[${start_date}, ${end_date}]', ${discount_value}) RETURNING *
+        VALUES ('${phone}', '${coupon}', '[${start_date}, ${end_date}]', ${discount_value}) 
+        RETURNING id, phone, coupon, to_char(upper(validity), 'DD.MM.YYYY') AS upper, to_char(lower(validity), 'DD.MM.YYYY') AS lower, discount_value
     `
     try {
         const {rows} = await database.query(query_text, [])
@@ -1759,7 +1760,32 @@ const AddUserCoupon = async (req, res) =>{
 }
 
 const GetUserCoupons = async (req, res) =>{
-    
+    const query_text = `
+        SELECT id, phone, coupon, to_char(upper(validity), 'DD.MM.YYYY') AS upper, to_char(lower(validity), 'DD.MM.YYYY') AS lower, discount_value
+        FROM user_coupons
+        ORDER BY id ASC
+    `
+    try {
+        const {rows} = await database.query(query_text, [])
+        return res.status(status.success).json({rows})
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
+}
+
+const DeleteUserCoupon = async (req, res) =>{
+    const {id} = req.params;
+    const query_text = `
+        DELETE FROM user_coupons WHERE id = ${id}
+    `
+    try {
+        await database.query(query_text, [])
+        return res.status(status.success).send(true)
+    } catch (e) {
+        console.log(e)
+        return res.status(status.error).send(false)
+    }
 }
 
 module.exports = {
@@ -1850,5 +1876,9 @@ module.exports = {
     DeleteAdminMessage,
 
     GetCouponOrders,
-    GetSubCategories
+    GetSubCategories,
+
+    AddUserCoupon,
+    GetUserCoupons,
+    DeleteUserCoupon
 }
