@@ -108,4 +108,8 @@ router.post('/delete-admin-message/:id', VerifyAdminAccessToken, AdminController
 router.get('/get-coupon-orders', VerifyAdminAccessToken, AdminController.GetCouponOrders)
 router.get('/get-sub-categories/:id', VerifyAdminAccessToken, AdminController.GetSubCategories)
 
+router.get('/get-user-coupns', VerifyAdminAccessToken, AdminController.GetUserCoupons);
+router.post('/add-user-coupon', VerifyAdminAccessToken, AdminController.AddUserCoupon)
+router.post('/delete-user-coupon', VerifyAdminAccessToken, AdminController.DeleteUserCoupon)
+
 module.exports = router;
