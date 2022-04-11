@@ -336,28 +336,7 @@ const SendEmail = async ({data}) =>{
 
 
 													<table width="100%" border="0" cellspacing="0" cellpadding="0">
-														<tr>
-															<td align="right">
-																<table border="0" cellspacing="0" cellpadding="0">
-																	<tr>
-																		<td class="content-spacing" style="font-size:0pt; line-height:0pt; text-align:left" width="20"></td>
-																		<td>
-																			<table width="100%" border="0" cellspacing="0" cellpadding="0" class="spacer" style="font-size:0pt; line-height:0pt; text-align:center; width:100%; min-width:100%"><tr><td height="3" class="spacer" style="font-size:0pt; line-height:0pt; text-align:center; width:100%; min-width:100%">&nbsp;</td></tr></table>
-
-																			<div class="text-right" style="color:#1e1e1e; font-family:Arial, sans-serif; min-width:auto !important; font-size:14px; line-height:20px; text-align:right">Промежуточный итог:</div>
-																			<table width="100%" border="0" cellspacing="0" cellpadding="0" class="spacer" style="font-size:0pt; line-height:0pt; text-align:center; width:100%; min-width:100%"><tr><td height="3" class="spacer" style="font-size:0pt; line-height:0pt; text-align:center; width:100%; min-width:100%">&nbsp;</td></tr></table>
-
-																		</td>
-																		<td class="content-spacing" style="font-size:0pt; line-height:0pt; text-align:left" width="20"></td>
-																		<td width="50">
-																			<table width="100%" border="0" cellspacing="0" cellpadding="0" class="spacer" style="font-size:0pt; line-height:0pt; text-align:center; width:100%; min-width:100%"><tr><td height="3" class="spacer" style="font-size:0pt; line-height:0pt; text-align:center; width:100%; min-width:100%">&nbsp;</td></tr></table>
-
-																			<div class="text" style="color:#1e1e1e; font-family:Arial, sans-serif; min-width:auto !important; font-size:14px; line-height:20px; text-align:left">${totalPrice}</div>
-																			<table width="100%" border="0" cellspacing="0" cellpadding="0" class="spacer" style="font-size:0pt; line-height:0pt; text-align:center; width:100%; min-width:100%"><tr><td height="3" class="spacer" style="font-size:0pt; line-height:0pt; text-align:center; width:100%; min-width:100%">&nbsp;</td></tr></table>
-
-																		</td>
-																		<td class="content-spacing" style="font-size:0pt; line-height:0pt; text-align:left" width="20"></td>
-																	</tr>
+														
 																	<tr>
 																		<td>&nbsp;</td>
 																		<td>
