@@ -412,7 +412,7 @@ const SendEmail = async ({data}) =>{
         // send mail with defined transport object
         let info = await transporter.sendMail({
             from: '"Пришел заказ на Sharafyabi " <order@sharafyabi.com>', // sender address
-            to: "order@sharafyabi.com", // list of receivers
+            to: "order@sharafyabi.com, dovran@takyk.com", // list of receivers
             subject: "Заказ", // Subject line
             text: "Был принять заказ пожалуйста посмотрите его", // plain text body
             html
