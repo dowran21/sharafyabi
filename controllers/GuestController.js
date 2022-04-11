@@ -347,75 +347,33 @@ const CreateOrder = async (req, res) =>{
             const id = j?.rows[0]?.id;
             try {
 
-                const nodemailer = require("nodemailer");
+                // const nodemailer = require("nodemailer");
                 SendSMS({phone:`64311313`, message:"Пришел заказ на сайт Sharafyabi"})
-                SendSMS({phone:`788024`, message:"Пришел заказ на сайт Sharafyabi"})
-                let transporter = nodemailer.createTransport({
-                    host: "smtp.yandex.ru",
-                    port: 465,
-                    secure: true, // true for 465, false for other ports
-                    auth: {
-                      user: "order@sharafyabi.com", // generated ethereal user
-                      pass: "W2T4,Q:+", // generated ethereal password
-                    },
-                  });
-                  
-                  // send mail with defined transport object
-                  let info = await transporter.sendMail({
-                    from: '"Пришел заказ на Sharafyabi Online Shop " <order@sharafyabi.com>', // sender address
-                    to: "order@sharafyabi.com", // list of receivers
-                    subject: "Заказ", // Subject line
-                    text: "Был принять заказ пожалуйста посмотрите его", // plain text body
-                    html: `<b>Заказ ${id}</b>
-                      <p>Заказ от ${name}</p>
-                      <h4>Номер ${phone}</h4>
-                      <h4>Общая сумма ${totalPrice}</h4>
-                     
-                      <table>
-                        <head>
-                            <tr>
-                                <td>
-                                    ID
-                                </td>
-                                <td>
-                                    Наименование
-                                </td>
-                                <td>
-                                    Количество
-                                </td>
-                                <td>
-                                    Цена
-                                </td>
-                            <tr>
-                        </head>
-                        <body>
-                            ${cart.map(item => `
-                            <tr>
-                                <td>
-                                    ${item.id}
-                                </td>
-                                <td>
-                                    ${item.name}
-                                </td>
-                                <td>
-                                    ${item.quantity}
-                                </td>
-                                <td>
-                                    ${item.price}
-                                </td>
-                            </tr>
-                            `)}
-                        </body>
-                      </table>
-                      </br>
-                      </br>
-                      <a href = "https://admin.sharafyabi.com/#/orders">Админ панель</a>
-                    `, // html body
-                  });
-                  // console.log("email message sent")
-                  console.log(info)
+                // SendSMS({phone:`788024`, message:"Пришел заказ на сайт Sharafyabi"})
+                const sel_query = `
+                SELECT o.id, o.phone, o.address, o.name, to_char(o.created_at, 'DD.MM.YYYY HH24:MI') AS created_at,
+            o.total_price, o.coupon, o.discount_id, d.discount_value, o.paymant_id, o.comment,
+            (SELECT json_agg(orde) FROM (
+                SELECT p.id, p.name, oi.price, oi.quantity, d.discount_value, pt.name AS name_ru
+                FROM order_items oi
+                    INNER JOIN products p 
+                        ON p.id = oi.product_id
+                    INNER JOIN product_translations pt
+                        ON pt.product_id = p.id AND pt.language_id = 2
+                    LEFT JOIN discounts d
+                        ON d.product_id = oi.product_id AND validity ::tsrange @> o.created_at
+                    WHERE oi.order_id = o.id
+            )orde) AS items
+        FROM orders o
+            LEFT JOIN discounts d
+                ON d.id = o.discount_id
+            WHERE o.id = ${id}
+                `
+                const k = await database.query(sel_query, [])
+                const {SendEmail} = require('../utils/sendOrderEmail')
+                await SendEmail({data: k.rows[0]})
             } catch (e) {
-                
+                console.log(e)
             }
             // create reusable transporter object using the default SMTP transport
             

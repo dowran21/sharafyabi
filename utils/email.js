@@ -1,4 +1,5 @@
-const database = require("../db/index")
+// const database = require("../db/index")
+require('dotenv').config();
 
 const html = async ({item}) => {
   let str =  
@@ -193,7 +194,7 @@ const sendEmail = async ({item, emails})=>{
         secure: true, // true for 465, false for other ports
         auth: {
           user: "order@sharafyabi.com", // generated ethereal user
-          pass: "W2T4,Q:+", // generated ethereal password
+          pass: process.env.EMAIL_PASSWORD, // generated ethereal password
         },
       });
     
