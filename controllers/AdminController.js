@@ -791,6 +791,12 @@ const AddSale = async (req, res) =>{
         SELECT '[${start_date}, ${end_date}]',${discount_value}, null, 1, id, ${category_id}, null 
         FROM products WHERE main_category_id = ${category_id} RETURNING *
         `
+    }else if(discount_type_id == 5){
+        query_text = `
+        INSERT INTO discounts(validity, discount_value, coupon, discount_type_id, product_id, category_id, min_value)
+        SELECT '[${start_date}, ${end_date}]',${discount_value}, null, 1, id, ${category_id}, null 
+        FROM products WHERE sub_category_id = ${category_id} RETURNING *
+        `
     }else{
         query_text = `
             INSERT INTO discounts(validity, discount_value, coupon, discount_type_id, product_id, min_value)
@@ -1157,7 +1163,7 @@ const GetProductsForSelect = async (req, res)=>{
 
 const GetSelectCategories = async (req, res) =>{
     const query_text = `
-        SELECT c.id AS value, ct.name AS label 
+        SELECT c.id AS value, ct.name AS label  
         FROM categories c 
         INNER JOIN category_translations ct
             ON ct.category_id = c.id AND ct.language_id = 2
