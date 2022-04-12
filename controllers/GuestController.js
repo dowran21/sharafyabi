@@ -309,10 +309,17 @@ const CreateOrder = async (req, res) =>{
         // console.log(totalPrice)
         let discount = {}
         if(coupon){
-            try{
-                discount = await database.query(`SELECT * FROM discounts WHERE discount_type_id = 4 AND validity:: tsrange @> localtimestamp AND coupon = '${coupon}' AND is_active = true AND min_value > (SELECT COUNT(*) FROM orders WHERE coupon = '${coupon}')`, [])
-            }catch(e){
-                throw(e)
+            try {
+                discount = await database.query(`SELECT * FROM user_coupons WHERE coupon = '${coupon}' AND phone='${phone}' AND validity::tsrange @> localtimestamp`, [])
+            } catch (e) {
+                console.log(e)
+            }
+            if(!discount?.rows[0]){                
+                try{
+                    discount = await database.query(`SELECT * FROM discounts WHERE discount_type_id = 4 AND validity:: tsrange @> localtimestamp AND coupon = '${coupon}' AND is_active = true AND min_value > (SELECT COUNT(*) FROM orders WHERE coupon = '${coupon}')`, [])
+                }catch(e){
+                    throw(e)
+                }
             }
         }else{
             try {
