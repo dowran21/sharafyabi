@@ -7,7 +7,7 @@ const SendSMS = async({phone, message}) => {
     try{
         await axios({
         method: 'post',
-        url: `http://141.136.44.174:3333/send-sms/to/service/sharafyabi`,
+        url: `http://sms.sarweal.com/send-sms/to/service/sharafyabi`,
         data: {
             to:`+993${phone}`,
             message:message
