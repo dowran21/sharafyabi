@@ -566,7 +566,7 @@ const GetCoupon = async (req, res) =>{
             return res.status(status.error).send(false)
         }
     }
-    return res.status(status.success).json({"rows":resp.rows[0] ? rows[0] : null })
+    return res.status(status.success).json({"rows":resp.rows[0] ? resp.rows[0] : null })
     
     
 } 
