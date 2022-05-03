@@ -548,11 +548,13 @@ const GetCoupon = async (req, res) =>{
     let resp = {}
     try {
         resp = await database.query(query_text2, [])
+        console.log(resp?.rows[0])
     } catch (e) {
         console.log(e)
         return res.status(status.error).send(false)
     }
-    if(!resp.rows[0]?.discount_value){
+    if(!resp.rows[0]){
+        console.log("i am in if")
         const query_text = `
             SELECT discount_value FROM discounts WHERE coupon = '${coupon}' AND discount_type_id = 4 AND min_value > (SELECT COUNT(*) FROM orders WHERE coupon = '${coupon}')
         `
