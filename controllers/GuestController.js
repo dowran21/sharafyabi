@@ -541,6 +541,7 @@ const AddSubscriptionToEmail = async (req, res) =>{
 
 const GetCoupon = async (req, res) =>{
     const {coupon, phone} = req.query
+    console.log(coupon, phone)
     const query_text2 = `
         SELECT discount_value FROM user_coupons WHERE coupon = '${coupon}' AND phone = '${phone} AND validity::tsrange @> localtimestamp'
     `
