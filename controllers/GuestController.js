@@ -544,14 +544,14 @@ const GetCoupon = async (req, res) =>{
     const query_text2 = `
         SELECT discount_value FROM user_coupons WHERE coupon = '${coupon}' AND phone = '${phone} AND validity::tsrange @> localtimestamp'
     `
-    let res = {}
+    let resp = {}
     try {
-        res = await database.query(query_text2, [])
+        resp = await database.query(query_text2, [])
     } catch (e) {
         console.log(e)
         return res.status(status.error).send(false)
     }
-    if(!res.rows[0]?.discount_value){
+    if(!resp.rows[0]?.discount_value){
         const query_text = `
             SELECT discount_value FROM discounts WHERE coupon = '${coupon}' AND discount_type_id = 4 AND min_value > (SELECT COUNT(*) FROM orders WHERE coupon = '${coupon}')
         `
@@ -563,7 +563,7 @@ const GetCoupon = async (req, res) =>{
             return res.status(status.error).send(false)
         }
     }
-    return res.status(status.success).json({"rows":res.rows[0] ? rows[0] : null })
+    return res.status(status.success).json({"rows":resp.rows[0] ? rows[0] : null })
     
     
 } 
