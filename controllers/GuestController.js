@@ -540,17 +540,32 @@ const AddSubscriptionToEmail = async (req, res) =>{
 }
 
 const GetCoupon = async (req, res) =>{
-    const {coupon} = req.query
-    const query_text = `
-        SELECT discount_value FROM discounts WHERE coupon = '${coupon}' AND discount_type_id = 4 AND min_value > (SELECT COUNT(*) FROM orders WHERE coupon = '${coupon}')
+    const {coupon, phone} = req.query
+    const query_text2 = `
+        SELECT discount_value FROM user_coupons WHERE coupon = '${coupon}' AND phone = '${phone} AND validity::tsrange @> localtimestamp'
     `
+    let res = {}
     try {
-        const {rows} = await database.query(query_text, [])
-        return res.status(status.success).json({"rows":rows[0] ? rows[0] : null })
+        res = await database.query(query_text2, [])
     } catch (e) {
         console.log(e)
         return res.status(status.error).send(false)
     }
+    if(!res.rows[0]?.discount_value){
+        const query_text = `
+            SELECT discount_value FROM discounts WHERE coupon = '${coupon}' AND discount_type_id = 4 AND min_value > (SELECT COUNT(*) FROM orders WHERE coupon = '${coupon}')
+        `
+        try {
+            const {rows} = await database.query(query_text, [])
+            return res.status(status.success).json({"rows":rows[0] ? rows[0] : null })
+        } catch (e) {
+            console.log(e)
+            return res.status(status.error).send(false)
+        }
+    }
+    return res.status(status.success).json({"rows":res.rows[0] ? rows[0] : null })
+    
+    
 } 
 
 const GetProductComments = async (req, res) =>{
